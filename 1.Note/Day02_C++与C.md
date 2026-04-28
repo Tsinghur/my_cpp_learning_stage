@@ -906,5 +906,3 @@ extern "C"
    
    cout << foo(3,5) << endl;
    ```
-
-8. 
