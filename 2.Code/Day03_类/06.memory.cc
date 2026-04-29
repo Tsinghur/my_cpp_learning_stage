@@ -31,10 +31,13 @@ int main() {
     test();
 
     const int const_local = 40;
-    cout << "局部常量：\n" << &const_local << endl;
+    cout << "局部常量：\n" << &const_local << endl; // 所有非静态的局部变量（包括局部常量）都存储在栈区
     cout << "全局常量：\n" << &const_global << endl;
-    /* const char* s = "hello"; */
-    /* cout << "常量：\n" << &s << endl; */
+    const char* s = "hello";
+    /* cout << "字符串字面量：\n" << &s << endl; // 这样打印的是指针s的地址，不是字符串的地址 */
+    // 打印字符串字面量 "hello" 的实际存放地址，应该输出 s 的值（即指针指向的地址）
+    // 需要强制转成 void* 避免 cout 直接输出字符串内容：
+    cout << "字符串字面量：\n" << static_cast<const void*>(s) << endl;
     void (*func_p)() = &test;
     printf("函数地址：\n%p\n", func_p);
 

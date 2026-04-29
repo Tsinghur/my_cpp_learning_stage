@@ -17,5 +17,7 @@ int main() {
     int b = 10;
     int* p = &b;
     cout << "p = " << p << endl;
+
+    /* int* c  = new int[10](1, 2, 3); // ()只能初始化一个值，初始化列表方式的话使用{} */
     return 0;
 }
