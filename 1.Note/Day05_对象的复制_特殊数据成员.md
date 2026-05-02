@@ -25,10 +25,11 @@
 
 2. **拷贝构造函数的定义**
 
-   - 形式
+   - 1·形式
+
+     <font color=red>**<类名>(const <类名> & ) {}**</font>
 
      ```cpp
-     类名(const 类名 & ) {}
      // 该函数是一个构造函数 —— 拷贝构造也是构造
      // 该函数用一个已经存在的同类型的对象，来初始化新对象，即对'对象'本身进行复制
      ```
@@ -691,3 +692,326 @@ pt1 = pt2;//赋值操作
      int Student::ms_classID = 2;
      ```
 
+## 四、补充
+
+1. 变量初始化的顺序、构造函数参数的初始化顺序、构造函数中数据成员的初始化顺序
+
+   ```cpp
+   #include <math.h>   // C
+   #include <cmath>    // C++
+   #include <iostream>
+   using namespace std;
+   class Point {
+   public:
+       Point(int xx = 0, int yy = 0) {
+                   X = xx;
+                   Y = yy;
+                   cout << "point构造函数被调用" << endl;
+           }
+           Point(Point &p);
+           int GetX() {
+                   return X;
+           }
+           int GetY() {
+                   return Y;
+           }
+   private:
+           int X,Y;
+   };
+   Point::Point(Point &p) {
+           X = p.X;
+           Y = p.Y;
+           cout << "X = " << X << " Y=" << Y << "Point拷贝构造函数被调用" << endl;
+   }
+   class Distance {
+   public:
+           Distance(Point xp1, Point xp2);
+           double GetDis() {
+                   return dist;
+           }
+   private:
+           Point p1,p2;
+           double dist;
+   };
+   Distance::Distance(Point xp1, Point xp2)
+   : p1(xp1)
+   , p2(xp2)
+   {
+           cout << "Distance构造函数被调用" << endl;
+           double x = double(p1.GetX() - p2.GetX());
+           double y = double(p1.GetY() - p2.GetY());
+           dist = sqrt(x * x + y * y);
+   }
+   int main() {
+           Point myp1(1,1), myp2(4,5);
+           Distance myd(myp1, myp2);
+           cout << "The distance is:" ;
+           cout << myd.GetDis() << endl;
+   
+           return 0;
+   }
+   /*
+   运行结果：
+   point构造函数被调用
+   point构造函数被调用
+   X = 4 Y=5Point拷贝构造函数被调用
+   X = 1 Y=1Point拷贝构造函数被调用 // 说明形参初始化顺序从右往左 编译器行为
+   X = 1 Y=1Point拷贝构造函数被调用
+   X = 4 Y=5Point拷贝构造函数被调用
+   Distance构造函数被调用
+   The distance is:5
+   */
+   ```
+
+   - 声明语句中，逗号分隔的多个变量
+
+     ```cpp
+     Point myp1(1,1), myp2(4,5);
+     ```
+
+     这是**一条声明语句**中包含两个声明符，用逗号分隔
+     标准规定：初始化顺序**严格从左到右**。
+     所以输出首先是：
+
+     ```cpp
+     point构造函数被调用     ← myp1 构造
+     point构造函数被调用     ← myp2 构造
+     ```
+
+   - 函数实参的初始化顺序（关键！）
+
+     ```cpp
+     Distance myd(myp1, myp2);
+     ```
+
+     这里调用了 `Distance` 的构造函数：
+
+     ```cpp
+     Distance::Distance(Point xp1, Point xp2)  // 按值传递
+     ```
+
+     按值传递意味着需要将实参 **拷贝** 给形参 `xp1` 和 `xp2`
+
+     **C++ 标准规定：函数实参的求值顺序是“未指定的”（unspecified）。**
+     也就是说，编译器可以决定先初始化 `xp1` 还是先初始化 `xp2`，常见实现中，很多编译器是**从右向左**处理的（这与 C 调用约定 `__cdecl` 从右向左压栈一致）
+
+     ```cpp
+     X = 4 Y=5Point拷贝构造函数被调用     ← 形参 xp2 先被拷贝构造
+     X = 1 Y=1Point拷贝构造函数被调用     ← 形参 xp1 后被拷贝构造
+     ```
+
+     说明该编译器选择了**先右后左**的顺序。这完全是合法的，因为标准不强制顺序
+     注意：参考答案里的注释“说明形参初始化顺序从右往左 编译器行为”指的就是这一点
+
+   - 构造函数初始化列表中的成员初始化
+
+     进入 `Distance` 构造函数体之前，会先执行**初始化列表**：
+
+     ```cpp
+     : p1(xp1)
+     , p2(xp2)
+     ```
+
+     这里 `p1` 和 `p2` 是 `Distance` 的成员变量
+     初始化列表中的顺序**不决定**实际初始化顺序
+     **真正的顺序由成员在类中声明的顺序决定**：
+
+     ```cpp
+     private:	
+         Point p1, p2;   // 先 p1，后 p2
+     ```
+
+     所以成员初始化是**先 `p1` 后 `p2`**，而且都是调用拷贝构造函数
+
+     于是输出：
+
+     ```cpp
+     X = 1 Y=1Point拷贝构造函数被调用     ← 成员 p1 用 xp1 拷贝构造
+     X = 4 Y=5Point拷贝构造函数被调用     ← 成员 p2 用 xp2 拷贝构造
+     ```
+
+     注意这里的参数是 xp1 和 xp2，值分别是 (1,1) 和 (4,5)）
+
+     最后才执行构造函数的函数体，输出：
+
+     ```cpp
+     Distance构造函数被调用
+     ```
+
+   - **总结**
+
+     - 一条声明语句中的多个变量/声明符 → 严格从左到右
+     - 函数实参 → 求值顺序未指定，实践中常见从右向左
+     - 成员初始化列表 → 严格按类声明顺序，与列表顺序无关
+
+2. return返回的临时变量的生命周期
+
+   ```cpp
+   #include <iostream>
+   using namespace std;
+   class B {
+   public:
+           B() {
+           cout << "B()" << endl;
+       }
+       ~B() {
+           cout << "~B()" << endl;
+       }
+       B(const B &rhs) {
+           cout << "B(const B&)" << endl;
+       }
+       B &operator=(const B &rhs) {
+           cout << "B &operator=(const B &s)" << endl;
+           return  *this;
+       }
+   };
+   B func(const B &rhs) {
+       cout << "B func(const B &)" << endl;
+       return rhs;
+   }
+   int main(int argc, char **argv) {
+           B b1,b2;
+       b2=func(b1);//10#
+           return 0;
+   }
+   /*
+   B()
+   B()
+   B func(const B &)
+   B(const B&) // func函数return时发生
+   B &operator=(const B &s)
+   ~B()
+   ~B()
+   ~B()
+   */
+   ```
+
+   在 `b2 = func(b1);` 这条语句中，执行顺序是：
+
+   1. 调用 `func(b1)`
+      - 进入函数体，输出 `B func(const B &)`
+      - `return rhs;` 时，用 `b1` 拷贝构造出一个**临时 `B` 对象**（输出 `B(const B&)`）
+      - `func` 调用结束，该临时对象作为函数结果返回
+   2. 进行赋值
+      - `b2.operator=(临时对象)`，输出 `B &operator=(const B &s)`
+   3. 赋值完成后，**临时对象在分号处析构**
+      - 输出 `~B()`（如果扩展完整输出的话，会看到它紧接在赋值之后，但在 `main` 中后续代码之前）
+
+   这个临时 `B` 对象在**当前完整表达式结束时销毁**，也就是 `b2 = func(b1);` 这一整条语句执行完毕后立即析构，因为：
+
+   ++ 标准规定：==**临时对象的生命周期持续到创建它的完整表达式（full-expression）的末尾**==，除了极少数绑定到引用的情况；这里的完整表达式就是整个赋值语句 `b2 = func(b1);`，所以临时对象会在该语句结束时自动析构
+
+3. 构造函数、拷贝构造函数、赋值运算符函数、析构函数的实战小练习
+
+   ```cpp
+   #include <string.h>
+   #include <iostream>
+   
+   using namespace std;
+   
+   class Student {
+   public:
+       Student(int num, const char* name, int age)
+           : m_num(num)
+             , m_name(new char[strlen(name) + 1]{})
+             , m_age(age)
+             {
+                 strcpy(this->m_name, name);
+                 cout << "Student num " << this->m_num << endl;
+             }
+       // 构造函数的初始化列表阶段，只有基类和已经在列表中初始化完成的成员才是可用的
+       // 对于当前类中尚未被初始化的成员，通过 this 去访问它们（哪怕只读取）是未定义行为
+       Student(const Student& s) // 初始化列表中不能使用this指针
+           : m_num(s.m_num)
+             , m_name(new char[strlen(s.m_name) + 1]{})
+             , m_age(s.m_age)
+             {
+                 strcpy(this->m_name, s.m_name);
+                 cout << "copy Student num " << this->m_num << endl;
+             }
+       Student& operator=(const Student& s) {
+           if (this == &s) // 防止自我赋值
+               return *this;
+           if (this->m_name) {
+               delete [] this->m_name;
+               this->m_name = nullptr;
+           }
+           this->m_num = s.m_num;
+           this->m_name = new char[strlen(s.m_name) + 1]{};
+           strcpy(this->m_name, s.m_name);
+           this->m_age = s.m_age;
+           cout << "operator= Student num " << this->m_num << endl;
+           return *this;
+       }
+       ~Student() {
+           if (this->m_name) {
+               delete [] this->m_name;
+               this->m_name = nullptr;
+           }
+           cout << "~Student num " << this->m_num << endl;
+       }
+       void print() {
+           cout << "Student num " << this->m_num << endl;
+           cout << "Student name " << this->m_name << endl;
+           cout << "Student age " << this->m_age << endl;
+       }
+   private:
+       int m_num;
+       char* m_name;
+       int m_age;
+   };
+   
+   int main() {
+       Student s1(1, "zs", 20);
+       cout << "s1:" << endl;
+       s1.print();
+   
+       cout << endl;
+   
+       /* Student s2(s1); // 显式调用拷贝构造函数 */
+       Student s2 = s1; // 这种"拷贝初始化"语法要求隐式转换，如果用 explicit 修饰拷贝构造函数这种拷贝初始化就不合法
+       cout << "s2:" << endl;
+       s2.print();
+   
+       cout << endl;
+   
+       Student s3(3, "ls", 21);
+       cout << "s3 before = :" << endl;
+       s3.print();
+       s3 = s1;
+       cout << "s3 after = :" << endl;
+       s3.print();
+   
+       cout << endl;
+   
+       return 0;
+   }
+   /*
+   Student num 1
+   s1:
+   Student num 1
+   Student name zs
+   Student age 20
+   
+   copy Student num 1
+   s2:
+   Student num 1
+   Student name zs
+   Student age 20
+   
+   Student num 3
+   s3 before = :
+   Student num 3
+   Student name ls
+   Student age 21
+   operator= Student num 1
+   s3 after = :
+   Student num 1
+   Student name zs
+   Student age 20
+   
+   ~Student num 1
+   ~Student num 1
+   ~Student num 1
+   */
+   ```
