@@ -6,15 +6,15 @@ class Stack {
 private:
     int* data;      // 元素数组
     int top;        // 栈顶,永远指向栈顶元素,-1为空
-    int size;       // 当前元素数量
     int capacity;   // 最大容量
 public:
     // 构造函数，指定栈的容量
     Stack(int cap = 10) 
-    : capacity(cap)
+    : data(new int[cap]())
     , top(-1) 
+    , capacity(cap)
     {
-        data = new int[capacity]{};
+        cout << "Stack(int)" << endl;
     }
     // 析构函数
     ~Stack() {
@@ -101,4 +101,3 @@ int main() {
 
     return 0;
 }
-
