@@ -10,17 +10,175 @@ C++ 提供了 std::string （后面简写为 string ）类用于字符串的处�
 >
 > `basic_string` 是**模板基类**，`string` 是它针对**char 字符**的具体实现
 
-1. **string的构造**
+1. **string对象的构造函数**
 
+   > **`basic_string` 是一个类模板（Class Template）**，而 **`string` 是 `basic_string` 模板的一个具体实例（Concrete Instantiation）**
+   >
+   > basic_string的常用构造
+   >
+   > ```cpp
+   > // 无参构造
+   > basic_string(); 
+   > // count + 字符
+   > basic_string( size_type count,
+   >               CharT ch，
+   >               const Allocator& alloc = Allocator() );
+   > // 接收一个basic_string对象
+   > basic_string( const basic_string& other,
+   >               size_type pos,
+   >               size_type count,
+   >               const Allocator& alloc = Allocator() ); 
+   > // 接收一个C风格字符串
+   > basic_string( const CharT* s,
+   >               size_type count,
+   >               const Allocator& alloc = Allocator() ); 
+   > ```
+   >
+   > 在创建字符串对象时，我们可以直接使用std::string作为类名，如std::string str = "hello". 这是因为C++标准库已经为我们定义了std::string这个类型的别名
+
+   1. 无参构造
+
+      ```cpp
+      string();
+      // 生成一个空字符串
+      ```
+
+   2. 通过c风格字符串构造一个string对象
+
+      ```cpp
+      string(const char * rhs);
+      ```
+
+   3. 拷贝构造函数
+
+      ```cpp
+      string(const string & rhs);
+      ```
+
+   4. 通过string对象的一部分创建新的string
+
+      ```cpp
+      string(const string & rhs，size_t pos, size_t count);
+      ```
+
+   5. 生成一个string对象，该对象包含count个ch字符
+
+      ```cpp
+      string(size_type count, char ch);
+      // string(97, 'a'); // "97个a...a"
+      // 不等于string{97, 'a'}; // "aa"
+      ```
+
+   6. 以区间[first, last)内的字符创建一个string对象
+
+      ```cpp
+      string(InputIt first, InputIt last);
+      // InputIt 输入迭代器 ≈ 指针
+      // 在 C++ 中，指针（Pointer）本身就是天然的迭代器
+      ```
+
+2. **string的常用操作函数**
+
+   ```cpp
+   // 获取出C++字符串保存的字符串内容，返回指向字符串内部字符数组起始位置的指针
+   const CharT* data() const; // 在C++11之前，data()返回的数组不保证以'\0'结尾；对于非 const std::string（读写场景，C++17 起）有区别：C++17 为 data() 引入了非 const 重载，而 c_str() 始终是 const 的
+   const CHarT* c_str() const; // 以C风格字符串作为返回值
    
-
-2. **string的常用操作**
-
+   // 判空
+   bool empty() const; 
    
+   // 获取字符数
+   size_type size() const;
+   size_type length() const;
+   
+   // 在字符串末尾添加字符
+   void push_back(CharT ch);  
+   
+   // 在字符串末尾添加内容(字符串)，返回修改后的字符串
+   basic_string& append(size_type count, CharT ch); // 添加count个字符
+   basic_string& append(const basic_string& str); // 添加字符串
+   basic_string & append(const basic_string& str, size_type pos,size_type count); // 添加str的从pos位置的count个字符
+   basic_string& append(const charT* s); // 添加C风格字符串
+   
+   // 查找字符/子串
+   size_type find( const basic_string& str, size_type pos = 0 ) const; // 从C++字符串的pos位开始查找C++字符串str
+   size_type find( CharT ch, size_type pos = 0 ) const; // 从C++字符串的pos位开始查找字符ch
+   size_type find( const CharT* s, size_type pos, size_type count ) const; // 从C++字符串的pos位开始，去查找C字符串的前count个字符
+   ```
+
+   **补充：两个basic_string字符串比较，可以直接使用==等符号进行判断**
+
+   原理：basic_string对==运算符进行了默认重载（后续会学到）
+
+   ```cpp
+   // 非成员函数
+   bool operator==(const string & lhs, const string & rhs);
+   bool operator!=(const string & lhs, const string & rhs);
+   bool operator>(const string & lhs, const string & rhs);
+   bool operator<(const string & lhs, const string & rhs);
+   bool operator>=(const string & lhs, const string & rhs);
+   bool operator<=(const string & lhs, const string & rhs);
+   ```
 
 3. ==**string的遍历**==
 
-   
+   string实际上也可以看作是一种存储char型数据的容器，对string的遍历方法是之后对各种容器遍历的一个铺垫
+
+   1. **下标操作符[]**
+
+      ```cpp
+      for(size_t idx = 0; idx < str.size(); ++idx){
+          cout << str[idx] << " ";
+      }
+      cout << endl;
+      ```
+
+      **操作符[]并不检查索引是否有效**，如果索引超出范围，会引起未定义的行为。而**成员函数 at() 会检查**，如果使用 at()的时候索引无效，会抛出 out_of_range 异常
+
+      ```cpp
+      string str("hello");
+      cout << str.at(4) << endl; // 输出o
+      cout << str.at(5) << endl; // 运行时抛出异常
+      ```
+
+   2. **增强for循环**
+
+      增强for循环经常和auto关键字一起使用，auto关键字可以自动推导类型
+
+      ```cpp
+      string str("hello"); // 把string视作一个存放char元素的容器
+      for (auto& c : str) { // &意义在于对于容器中元素本身进行操作, 否则对其副本进行操作
+      	cout << c;
+      }
+      cout << endl;
+      ```
+
+   3. **迭代器方式**
+
+      ```cpp
+      // 如指针一样，迭代器也有其固定的形式
+      // 某容器的迭代器形式为 容器名::iterator
+      // 此处auto推导出来it的类型为string::iterator
+      // string::iterator itBegin = str.begin();
+      // string::iterator itEnd = str.end();
+      // 使用auto来简化操作
+      auto it = str.begin(); // auto = string::iterator
+      while(it != str.end()){
+          cout << *it << " ";
+      	++it;
+      }
+      cout << endl;
+      ```
+
+      **==补充：什么是迭代器==**
+
+      **迭代器**是一种用于遍历容器中元素的对象，这里可以理解为是**广义的指针**。它**可以**像指针一样进行**解引用、移位**等操作。迭代器是容器用来访问元素的重要手段，容器都有相应的函数来获取特定的迭代器（此处可以简单理解为指向特定元素的指针，在STL的阶段，会对迭代器进行更详细的讲解）
+
+      <font color=red>**begin函数返回首迭代器（指向首个元素的指针）**</font>
+
+      <font color=red>**end函数返回尾后迭代器（指向最后一个元素的后一位的指针）**</font>
+
+      ![image-20241203114859778](..\0.TyporaPicture\image-20241203114859778.png)
 
 ## 二、C++动态数组——vector
 
@@ -127,11 +285,55 @@ C++中，**std::vector**（向量）是一个**动态数组容器**，能存放�
 
 4. **vector的动态扩容**
 
-   
+   当vector存满后，仍然追加存放数据时，vector会进行自动扩容
+
+   GCC(gcc、g++)中vector是2倍的容量扩容机制：当vector存满后再添加新的元素，容量就会变成2倍，把新的元素存入其中；而MSVC是1.5倍的扩容
+
+   > 很多技术上具体的实现，在不同的平台上细节不同。C++标准给出功能的要求，各个编译器只需要实现此功能
+
+   - **工作步骤：**
+
+   （1）**(必然会)开辟(新)空间**
+
+   （2）Allocator分配（后面STL阶段学习）
+
+   （3）复制，再添加新元素
+
+   （4）**回收原空间**
+
+   ![image-20250225092256556](..\0.TyporaPicture\image-20250225092256556.png)
 
 5. ==**vector的底层实现**==
 
-   
+   利用**sizeof()查看vector对象**的大小时，发现无论存放的元素类型、数量如何，其**大小始终为24个字节**（64位环境）
+
+   - **vector对象由三个指针组成：**
+
+     - <span style=color:red;background:yellow>**_start指向当前数组中第一个元素存放的位置**</span>
+
+     - <span style=color:red;background:yellow>**_finish指向当前数组中最后一个元素存放的下一个位置**</span>
+
+     - <span style=color:red;background:yellow>**_end_of_storage指向当前数组能够存放元素的最后一个空间的下一个位置**</span>
+
+   - **可以推导出：**
+
+     - **size() = _finish - _start**
+
+     - **capacity() = _end_of_storage - start**
+
+   - **扩容时的底层行为：**
+
+     **逻辑上确实是 `size() == capacity()`，但绝大多数标准库源码不会写成直接比较两个函数返回值，而是用指针相等判断**
+
+     但实际源码如下：
+
+     ```cpp
+     if (_M_finish == _M_end_of_storage) {
+         // 需要扩容
+     }
+     ```
+
+     这等价于 `size() == capacity()`，但**避免了两次指针减法**，而且指针比较指令通常更轻量
 
 ## 三、C++输入输出流
 
@@ -280,7 +482,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
      }
      ```
 
-   - 输入整型数据的实现（要求如果是非法输入则继续输入）
+   - 实例：输入整型数据的具体实现（要求如果是非法输入则继续输入）
 
      ```cpp
      void readInt(int & num) {
@@ -357,8 +559,6 @@ C++标准库定义了三个预定义的标准输入输出流对象:
        // 第三步：再用 cin >> c
        // 即( (cin >> a) >> b ) >> c;
        ```
-
-       
 
 2. **缓冲机制**
 
