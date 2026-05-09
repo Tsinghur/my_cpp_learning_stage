@@ -20,7 +20,7 @@ public:
     MiddleLayer(Data * p)
     : _pdata(p)
     {}
-    Data* operator->() {
+    Data* operator->() { // 仅最内层返回对象指针
         return _pdata;
     }
     ~MiddleLayer() {
@@ -38,7 +38,8 @@ public:
     ThirdLayer(MiddleLayer * pm) 
     : _pml(pm)
     {}
-    MiddleLayer& operator->() { // 除了最内层均返回对象而不是对象指针
+    MiddleLayer& operator->() { // 除了最内层其余层均返回对象而不是对象指针，
+                                // 这样能一直调用operator->()函数，而不是在当前层对象中通过->调用getData()，因为只有最内层才存在getData
         return *_pml;
     }
     ~ThirdLayer() {
