@@ -1,4 +1,4 @@
-# Day12
+# Day12——函数/成员函数指针&类型转换函数&嵌套类&单例对象自动释放
 
 ## 一、可调用实体-函数指针与成员函数指针
 
@@ -642,21 +642,209 @@
 
        1. 如果还手动调用了Singleton类的destroy函数，会导致double free问题，所以**可以删掉destroy函数**，将**回收**堆上的单例对象的**工作完全交给AutoRelease对象**
        2. 不能用多个AutoRelease对象托管同一个堆上的单例对象
-       3. 需要将控制类AutoRelease设置为所托管的单例类的友元类, 这样可以调用单例类中的private权限的析构函数
+       3. 需要将控制类AutoRelease设置为所托管的单例类的友元类, 这样可以调用单例类中的private权限的析构函数——==**因为删除一个对象一定会触发它的析构函数**==
 
-   
+   - 源代码
+
+       ```cpp
+       // 管理者类
+       class AutoRelease {
+       public:
+           AutoRelease(Singleton* p)
+           : m_p(p)
+           {
+               cout << "AutoRelease(Singleton*)" << endl;
+           }
+           ~AutoRelease() {
+               if (m_p) {
+                   delete m_p; // 需要在Singleton类中将AutoReleas类声明友元类，因为Singleton类中析构函数是私有成员
+                   m_p = nullptr;
+               }
+               cout << "~AutoRelease()" << endl;
+           }
+       private:
+           Singleton* m_p;
+       };
+       ```
 
 2. ==**嵌套类 + 静态对象**==
 
-   
+   - 原理
+
+     ![image-20250225101010421](..\0.TyporaPicture\image-20250225101010421.png)
+
+     AutoRelease类对象m_ar是Singleton类的对象成员，创建Singleton对象，就会自动创建一个AutoRelease对象（静态区），**它的成员函数可以直接访问 ms_pInstance** 或者通过类名作用域访问
+
+     程序结束时会自动销毁全局静态区上的ms_ar，调用AutoRelease的析构函数，在这个析构函数执行delete ms_pInstance的语句，这样又会调用Singleton的析构函数，再调用operator delete，回收掉堆上的单例对象
+
+     利用嵌套类实现了一个比较完美的方案，不用担心手动调用了destroy函数
+
+   - 源代码
+
+     ```cpp
+     class Singleton {
+         // 内部类
+         class AutoRelease {
+         public:
+             AutoRelease() {
+                 cout << "AutoRelease()" << endl;
+             }
+     
+             ~AutoRelease() {
+                 if (m_pInstance) { // 内部类中可直接访问外部类的静态成员
+                     delete m_pInstance;
+                     m_pInstance = nullptr;
+                 }
+                 cout << "~AutoRelease()" << endl;
+             }
+         };
+     public:
+         static Singleton* getInstance() {
+             if (!m_pInstance) {
+                 m_pInstance = new Singleton();
+             }
+             return m_pInstance;
+         }
+         Singleton(const Singleton&) = delete;
+         Singleton& operator=(const Singleton&) = delete;
+         // 管理类中删除Singleton单例对象时一定会触发~Single()，而它是私有成员
+         friend class AutoRelease; // 本身就可以作为一个类的前向声明
+     private:
+         Singleton() {}
+         ~Singleton() {} // 其实非必要，但这是一种防御性设计：
+                         // 禁止除 AutoRelease 之外的任何代码直接 delete 单例对象
+         static Singleton* m_pInstance;
+         static AutoRelease m_autoRelease; // 内部类对象作为外部类成员 静态对象
+     };
+     Singleton* Singleton::m_pInstance = nullptr;
+     Singleton::AutoRelease Singleton::m_autoRelease; // 调用了AutoRelease的无参构造函数
+     ```
 
 3. **`atexit + destroy`**
 
-   
+   - 原理
+
+     - 很多时候需要在程序退出的时候做一些诸如释放资源的操作，但程序退出的方式有很多种，比如main()函数运行结束、在程序的某个地方用exit()结束程序、用户通过Ctrl+C操作来终止程序等等
+
+     - 所以需要有一种与程序退出方式无关的方法来进行程序退出时的必要处理——用atexit函数来注册程序正常终止时要被调用的函数（C/C++通用）
+
+     - **注册函数的调用顺序:** 如果注册了多个函数，先注册的后执行
+
+       ![image-20241129171136336](..\0.TyporaPicture\image-20241129171136336.png)
+
+     - atexit注册了destroy函数，相当于有了一次必然会进行的destroy（程序结束时)，即使手动调用了destroy，因为安全回收的机制，也不会有问题
+
+   - 源代码
+
+     ```cpp
+     class Singleton {
+     public:
+         // 由于这是单例模式，所以构造函数是万万不能重载的
+         /* Singleton() { */
+         /*     cout << "Singleton()" << endl; */
+         /* } */
+         static Singleton* getInstance() {
+             if (!m_pInstance) {
+                 m_pInstance = new Singleton();
+                 /* atexit(destroyInstance); // right */
+                 atexit(&destroyInstance); // 注册几次，程序结束时调用几次
+             }
+             return m_pInstance;
+         }
+         static void destroyInstance() {
+             if (m_pInstance) {
+                 delete m_pInstance;
+                 m_pInstance = nullptr;
+             }
+             cout << "destroyInstance()" << endl;
+         }
+         Singleton(const Singleton&) = delete;
+         Singleton& operator=(const Singleton&) = delete;
+     private:
+         Singleton() {}
+         ~Singleton() {} // 其实非必要，但这是一种防御性设计：
+                         // 禁止除 AutoRelease 之外的任何代码直接 delete 单例对象
+         static Singleton* m_pInstance;
+     };
+     Singleton* Singleton::m_pInstance = nullptr; // 懒加载
+     /* Singleton* Singleton::m_pInstance = new Singleton(); // 立即加载 */
+     ```
+
+   > 但是还遗留了一个问题，就是以上几种方式都无法解决<font color=red>**多线程安全**</font>问题。
+   >
+   > 以方式三为例，当多个线程同时进入if语句时，会造成单例对象被创建出多个，但是最终只有一个地址值会由ms_pInstance指针保存，因此造成内存泄漏
+   >
+   > 可以使用<font color=red>**饿汉式解决**</font>，但同时也可能带来内存压力（即使不用单例对象，也会被创建）
+   >
+   > ```cpp
+   > // 对于ms_pInstance的初始化有两种方式
+   > // 饱汉式（懒汉式）—— 懒加载，不使用到该对象，就不会创建
+   > Singleton* Singleton::ms_pInstance = nullptr; 
+   > // 饿汉式 —— 最开始就创建（即使不使用这个单例对象）
+   > Singleton* Singleton::ms_pInstance = Singleton::getInstance();
+   > ```
+   >
+   > **饿汉式**可以确保getInstance函数的第一次调用一定是在ms_pInstance的初始化时，之后再调用getInstance函数的时候,都不会进入if分支创建出对象
+   >
+   > 同时，还有一个要考虑的问题——如果多线程环境下手动调用了destroy函数，那么又会让ms_pInstance变为空指针，之后再调用getInstance函数还是有可能造成内存泄露——**故而应该将destroy函数私有**
 
 4. **`atexit + pthread_once + destroy`**
 
+   Linux平台可以使用的方法（能够保证创建单例对象时的多线程安全）
    
+   - 原理
+   
+     - pthread_once函数可以确保初始化代码只会执行一次, 无论在多少个线程中调用它
+   
+       ![image-20241129171227277](..\0.TyporaPicture\image-20241129171227277.png)
+   
+     - 传给pthread_once函数的参数：
+       1. 第一个参数比较特殊，形式固定
+       2. 第二个参数需要是一个`静态函数指针`，pthread_once可以确保这个函数只会执行一次
+   
+   - 注意
+   
+     - 如果手动调用initRoutine创建对象，没有通过getInstance创建对象，实际上绕开了pthread_once的控制，必然造成内存泄露 —— <span style=color:red;background:yellow>**需要将initRoutine私有**</span>
+   
+     - 如果手动调用了destroy函数，之后再使用getInstance来尝试创建对象，因为pthread_once的控制效果，不会再执行init函数，所以无法再创建出单例对象。所以不能允许手动调用destroy函数
+   
+       同时因为会使用atexit注册destroy函数实现资源回收，所以也不能将destroy删掉，应该<span style=color:red;background:yellow>**将destroy私有**</span>，避免在类外手动调用
+   
+   - 源代码
+   
+     ```cpp
+     class Singleton {
+     public:
+         static Singleton* getInstance() {
+             /* if (!m_pInstance) */
+             pthread_once(&m_once_control, &initRoute); // pthread_once可以确保这个函数只会执行一次
+             return m_pInstance;
+         }
+         Singleton(const Singleton&) = delete;
+         Singleton& operator=(const Singleton&) = delete;
+     private:
+         static void initRoute() {
+             // 初始化只会被执行一次
+             m_pInstance = new Singleton();
+             atexit(&destroyInstance);
+         }
+         static void destroyInstance() {
+             if (m_pInstance) {
+                 delete m_pInstance;
+                 m_pInstance = nullptr;
+             }
+             cout << "destroyInstance()" << endl;
+         }
+         Singleton() {}
+         ~Singleton() {} // 其实非必要，但这是一种防御性设计：
+                         // 禁止除 AutoRelease 之外的任何代码直接 delete 单例对象
+         static Singleton* m_pInstance;
+         static pthread_once_t m_once_control;
+     };
+     Singleton* Singleton::m_pInstance = nullptr; // 懒加载
+     /* Singleton* Singleton::m_pInstance = new Singleton(); // 立即加载 */
+     pthread_once_t Singleton::m_once_control = PTHREAD_ONCE_INIT;
+     ```
 
 ## 六、补充
 
@@ -867,5 +1055,228 @@
    }
    ```
 
-5. 
+5. **单例对象自动释放的四种方式**
+
+   ```cpp
+   #include <iostream>
+   
+   using std::cout;
+   using std::endl;
+   
+   // 方式一: 利用栈对象的生命周期进行自动释放
+   
+   class Singleton {
+   public:
+       static Singleton* getInstance() {
+           if (!m_pInstance) {
+               m_pInstance = new Singleton();
+           }
+           return m_pInstance;
+       }
+       /* static void destroyInstance() { */
+       /*     if (m_pInstance) { */
+       /*         delete  m_pInstance; */
+       /*         m_pInstance = nullptr; */
+       /*     } */
+       /* } */
+       Singleton(const Singleton&) = delete;
+       Singleton& operator=(const Singleton&) = delete;
+       // 管理类中删除Singleton单例对象时一定会触发~Single()，而它是私有成员
+       friend class AutoRelease; // 本身就可以作为一个类的前向声明
+   private:
+       Singleton() {}
+       ~Singleton() {} // 其实非必要，但这是一种防御性设计：
+                       // 禁止除 AutoRelease 之外的任何代码直接 delete 单例对象
+       static Singleton* m_pInstance;
+   };
+   Singleton* Singleton::m_pInstance = nullptr;
+   
+   // 管理者类
+   class AutoRelease {
+   public:
+       AutoRelease(Singleton* p)
+       : m_p(p)
+       {
+           cout << "AutoRelease(Singleton*)" << endl;
+       }
+       ~AutoRelease() {
+           if (m_p) {
+               delete m_p;
+               m_p = nullptr;
+           }
+           cout << "~AutoRelease()" << endl;
+       }
+   private:
+       Singleton* m_p;
+   };
+   
+   int main() {
+       AutoRelease ar(Singleton::getInstance()); // 创建管理者对象(栈对象)
+       cout << Singleton::getInstance() << endl;
+       cout << Singleton::getInstance() << endl;
+       cout << Singleton::getInstance() << endl;
+   
+       return 0;
+   }
+   // ----------------------------------------------------------------------------
+   #include <iostream>
+   
+   using std::cout;
+   using std::endl;
+   
+   // 方式二: 利用嵌套类 + 静态的内部类对象
+   
+   class Singleton {
+       // 内部类
+       class AutoRelease {
+       public:
+           AutoRelease() {
+               cout << "AutoRelease()" << endl;
+           }
+   
+           ~AutoRelease() {
+               if (m_pInstance) { // 内部类中可直接访问外部类的静态成员
+                   delete m_pInstance;
+                   m_pInstance = nullptr;
+               }
+               cout << "~AutoRelease()" << endl;
+           }
+       };
+   public:
+       static Singleton* getInstance() {
+           if (!m_pInstance) {
+               m_pInstance = new Singleton();
+           }
+           return m_pInstance;
+       }
+       Singleton(const Singleton&) = delete;
+       Singleton& operator=(const Singleton&) = delete;
+       // 管理类中删除Singleton单例对象时一定会触发~Single()，而它是私有成员
+       friend class AutoRelease; // 本身就可以作为一个类的前向声明
+   private:
+       Singleton() {}
+       ~Singleton() {} // 其实非必要，但这是一种防御性设计：
+                       // 禁止除 AutoRelease 之外的任何代码直接 delete 单例对象
+       static Singleton* m_pInstance;
+       static AutoRelease m_autoRelease; // 内部类对象作为外部类成员 静态对象
+   };
+   Singleton* Singleton::m_pInstance = nullptr;
+   Singleton::AutoRelease Singleton::m_autoRelease; // 调用了AutoRelease的无参构造函数
+   
+   int main() {
+       cout << Singleton::getInstance() << endl;
+       cout << Singleton::getInstance() << endl;
+       cout << Singleton::getInstance() << endl;
+   
+       return 0;
+   }
+   // ----------------------------------------------------------------------------
+   #include <iostream>
+   
+   using std::cout;
+   using std::endl;
+   
+   // 方式三: 利用atexit() + destroyInstance()
+   /*
+    * atexit(函数指针): 把函数指针指向的函数注册到atexit当中
+    * 参数的这个函数是一个回调函数
+    * 当程序结束时, 被注册到atexit当中的函数被自动调用
+    *
+    * 单例的两种模式:
+    * 1.懒加载(懒汉模式): 不用的时候不创建, 用的时候再创建
+    * 2.立即加载(饿汉模式) : 不管用不用这个单例对象, 先把这个单例对象
+    * 创建出来,用的时候给你返回
+    */
+   
+   class Singleton {
+   public:
+       // 由于这是单例模式，所以构造函数是万万不能重载的
+       /* Singleton() { */
+       /*     cout << "Singleton()" << endl; */
+       /* } */
+       static Singleton* getInstance() {
+           if (!m_pInstance) {
+               m_pInstance = new Singleton();
+               /* atexit(destroyInstance); // right */
+               atexit(&destroyInstance); // 注册几次，程序结束时调用几次
+           }
+           return m_pInstance;
+       }
+       static void destroyInstance() {
+           if (m_pInstance) {
+               delete m_pInstance;
+               m_pInstance = nullptr;
+           }
+           cout << "destroyInstance()" << endl;
+       }
+       Singleton(const Singleton&) = delete;
+       Singleton& operator=(const Singleton&) = delete;
+   private:
+       Singleton() {}
+       ~Singleton() {} // 其实非必要，但这是一种防御性设计：
+                       // 禁止除 AutoRelease 之外的任何代码直接 delete 单例对象
+       static Singleton* m_pInstance;
+   };
+   Singleton* Singleton::m_pInstance = nullptr; // 懒加载
+   /* Singleton* Singleton::m_pInstance = new Singleton(); // 立即加载 */
+   
+   
+   int main() {
+       cout << Singleton::getInstance() << endl;
+       cout << Singleton::getInstance() << endl;
+       cout << Singleton::getInstance() << endl;
+   
+       return 0;
+   }
+   // ----------------------------------------------------------------------------
+   #include <iostream>
+   
+   using std::cout;
+   using std::endl;
+   
+   // 方式四: 利用atexit() + destroyInstance() + pthread_once
+   // 线程安全
+   
+   class Singleton {
+   public:
+       static Singleton* getInstance() {
+           /* if (!m_pInstance) */
+           pthread_once(&m_once_control, &initRoute); // pthread_once可以确保这个函数只会执行一次
+           return m_pInstance;
+       }
+       Singleton(const Singleton&) = delete;
+       Singleton& operator=(const Singleton&) = delete;
+   private:
+       static void initRoute() {
+           // 初始化只会被执行一次
+           m_pInstance = new Singleton();
+           atexit(&destroyInstance);
+       }
+       static void destroyInstance() {
+           if (m_pInstance) {
+               delete m_pInstance;
+               m_pInstance = nullptr;
+           }
+           cout << "destroyInstance()" << endl;
+       }
+       Singleton() {}
+       ~Singleton() {} // 其实非必要，但这是一种防御性设计：
+                       // 禁止除 AutoRelease 之外的任何代码直接 delete 单例对象
+       static Singleton* m_pInstance;
+       static pthread_once_t m_once_control;
+   };
+   Singleton* Singleton::m_pInstance = nullptr; // 懒加载
+   /* Singleton* Singleton::m_pInstance = new Singleton(); // 立即加载 */
+   pthread_once_t Singleton::m_once_control = PTHREAD_ONCE_INIT;
+   
+   int main() {
+       cout << Singleton::getInstance() << endl;
+       cout << Singleton::getInstance() << endl;
+       cout << Singleton::getInstance() << endl;
+   
+       return 0;
+   }
+   ```
+
+
 
