@@ -1229,6 +1229,8 @@
        return 0;
    }
    // ----------------------------------------------------------------------------
+   #include <pthread.h>    // for pthread_once
+   #include <cstdlib>      // for atexit
    #include <iostream>
    
    using std::cout;
