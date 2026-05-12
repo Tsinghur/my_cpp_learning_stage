@@ -65,7 +65,7 @@ public:
         return _pstr[index];
     }
 
-    const char &operator[](std::size_t index) const {
+    const char &operator[](std::size_t index) const { // 常量对象只能调用这个版本
         return _pstr[index];
     }
 
@@ -118,6 +118,7 @@ private:
     char *_pstr;
 };
 
+// 标准做法：+ 通过 += 来实现
 String operator+(const String &lhs, const String &rhs) {
     String tmp(lhs);
     tmp += rhs;
@@ -138,4 +139,5 @@ String operator+(const char *lhs, const String &rhs) {
 
 int main() {
 
+    return 0;
 }
