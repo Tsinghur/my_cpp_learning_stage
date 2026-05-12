@@ -1,4 +1,4 @@
-# Day13
+# Day13_std::string的底层实现
 
 ## 一、std::string的底层实现-写时复制原理探究
 
@@ -396,9 +396,9 @@
 
         ![image-20241205102923993](..\0.TyporaPicture\image-20241205102923993.png)
 
-      - **CowString中operator[]重载——服务于operator<< 与 operator=，==即[]是<<与=的前提==**
+      - **CowString中operator[]重载——服务于operator[]结果的operator<< 与 operator=，==即[]是[]结果的<<与=的前提==**
 
-        根据分析过程，将CowString中下标访问运算符operator[]返回结果修改为内部类对象CharProxy
+        根据分析过程，**将CowString中下标访问运算符的重载函数operator[]返回结果修改为内部类对象CharProxy**
 
         为了能够在内部类对象CharProxy中处理字符数组中字符的读写操作, 需要2个参数（即CharProxy中的两个数据成员）
 
@@ -451,7 +451,7 @@
 
       - **(CharProxy中)operator<<重载实现——读操作**
 
-        因为定义的是私有的内部类CharProxy且在其之中还要访问CowString的私有成员，为了让输出流运算符能够处理CharProxy对象，所以需要将operator<<重载函数，**分别在CharProxy和CowString进行两次友元声明**
+        因为定义的是外部类中的私有的内部类CharProxy，为了让输出流运算符能够处理CharProxy对象，所以需要将operator<<重载函数，**分别在CharProxy和CowString进行两次友元声明**
 
         ```cpp
         // operator<<友元函数重载，从而可以访问私有成员
@@ -489,7 +489,7 @@
       - **(CharProxy中)operator=重载实现——写操作**
 
         ```cpp
-        // operator= CharProxy的成员函数重载 存在this指向当前CharProxy对象
+        // operator=，CharProxy的成员函数重载，其中this指向当前CharProxy对象
         char& CowString::CharProxy::operator=(const char& ch) {
             // index判断
             if (m_index < 0 || m_index >= m_self.size()) {
@@ -536,7 +536,7 @@
    - 当字符串的字符数小于等于15时：buffer直接存放整个字符串
    - 当字符串的字符数大于15时：buffer 存放的就是一个指针，指向堆空间的区域
 
-   这样做的好处是，当字符串较小时，直接拷贝字符串，放在 string内部，不用获取堆空间，开销小
+   这样做的好处是：**当字符串较小时，直接拷贝字符串，放在 string内部，不用获取堆空间，开销小**
 
    ![image-20241206102314843](..\0.TyporaPicture\image-20241206102314843.png)
 
