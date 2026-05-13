@@ -8,35 +8,35 @@ using std::ostream;
 class String {
 public:
     String(const char* pStr) {
-        _size = strlen(pStr);
-        if (_size < 16) {
-            strcpy(_buffer._local, pStr);
-            _capacity = 16;
+        m_size = strlen(pStr);
+        if (m_size < 16) {
+            strcpy(m_buffer.m_local, pStr);
+            m_capacity = 16;
         } else {
-            _buffer._pointer = new char[_size + 1]{};
-            strcpy(_buffer._pointer, pStr);
-            _capacity = _size + 1;
+            m_buffer.m_pointer = new char[m_size + 1]{};
+            strcpy(m_buffer.m_pointer, pStr);
+            m_capacity = m_size + 1;
         }
     }
     ~String() {
-        if (_size >= 16) {
-            delete[] _buffer._pointer;
-            _buffer._pointer = nullptr;
+        if (m_size >= 16) {
+            delete[] m_buffer.m_pointer;
+            m_buffer.m_pointer = nullptr;
         } else {
-            bzero(_buffer._local, 16);
+            bzero(m_buffer.m_local, 16);
         }
     }
     
     char& operator[](size_t idx) {
-        if (idx >= _size) {
+        if (idx >= m_size) {
             cout << "idx is illegal" << endl;
             static char nullChar = '\0';
             return nullChar;
         }
-        if (_size < 16) {
-            return _buffer._local[idx];
+        if (m_size < 16) {
+            return m_buffer.m_local[idx];
         } else {
-            return _buffer._pointer[idx];
+            return m_buffer.m_pointer[idx];
         }
     }
 
@@ -44,19 +44,19 @@ public:
     ostream& operator<<(ostream& os,const String& rhs);
 private:
 	union Buffer{
-		char * _pointer;
-		char _local[16];
+		char * m_pointer;
+		char m_local[16];
 	};
-	size_t _size;
-	size_t _capacity;
-    Buffer _buffer;
+	size_t m_size;
+	size_t m_capacity;
+    Buffer m_buffer;
 };
 
 ostream& operator<<(ostream& os,const String& rhs) {
-    if (rhs._size < 16) {
-        os << rhs._buffer._local;
+    if (rhs.m_size < 16) {
+        os << rhs.m_buffer.m_local;
     } else {
-        os << rhs._buffer._pointer;
+        os << rhs.m_buffer.m_pointer;
     }
     return os;
 }
