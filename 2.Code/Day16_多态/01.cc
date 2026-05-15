@@ -5,6 +5,7 @@ using std::endl;
 
 class Phone {
 public:
+    /* void print() { */
     virtual void print() {
         cout << "Phone" << endl;
     }
@@ -59,8 +60,10 @@ void test1() {
     P3->print();
     cout << "-------" << endl;
     Phone1 p;
-    Phone& P = p;
-    P.print();
+    Phone& P4 = p;
+    Phone P5 = p;
+    P4.print();
+    P5.print();
     cout << "-------" << endl;
 }
 
@@ -89,8 +92,8 @@ Phone2 对象内存（总32字节）
 */
 
 int main() {
-    /* test1(); */
-    test2();
+    test1();
+    /* test2(); */
 
     return 0;
 }
