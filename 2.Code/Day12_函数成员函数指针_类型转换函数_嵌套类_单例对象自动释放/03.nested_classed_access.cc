@@ -24,8 +24,12 @@ public:
             /* cout << Line::a << endl; // error:因为内部类不知道这个a是哪一个外层类对象的 */
             /*                          // 外层可以直接使用是因为隐含一个this指针，其永远指向调用函数的对象 */
             /*                          // 而内层类而言，而编译器不会凭空给你一个 Line 对象，所以 Line::a 这样的写法毫无意义，直接报错 */
+            Line line(1, 2, 3, 4);
+            cout << line.length << endl;
         }
+        static int b;
     private:
+        static int c;
         int m_ix;
         int m_iy;
     };
@@ -39,16 +43,25 @@ public:
         /* func(); // error */
         /* Line::Point::func(); // right */
         Point::func();
+        cout << Point::b << endl;
+
+        Line::Point pt(1, 2);
+        /* pt.m_ix; // error: private */
+        /* length = 1; // right */
     }
     friend void test1();
     static void func4() {
-        cout << "Line::func4()" << endl;
+        /* lengtg = 1; // error: no objection */
+        /* Point::c; // error: c is private */
     }
 private:
     Point m_pt1;
     Point m_pt2;
     double length = 10;
 };
+
+int Line::Point::b = 1;
+int Line::Point::c = 2;
 
 void test1() {
     Line line(1, 2, 3, 4);
@@ -73,4 +86,3 @@ int main() {
 
     return 0;
 }
-
