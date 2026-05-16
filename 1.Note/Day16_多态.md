@@ -378,11 +378,11 @@
 
      说明**即使Parent中没有对Grandpa中的func1和fucn2覆盖，在Son中也可以对func1和func2覆盖**
 
-     ![image-20231103150156687](D:\Typora Picture\image-20231103150156687.png)
+     ![image-20231103150156687](..\0.TyporaPicture\image-20231103150156687.png)
 
    - <font color=red>**如果在Parent类的构造和析构函数中调用虚函数**</font>
 
-     ![undefined202403191632256](D:\Typora Picture\undefined202403191632256.png)
+     ![undefined202403191632256](..\0.TyporaPicture\undefined202403191632256.png)
 
      - 构造函数中调用虚函数
 
