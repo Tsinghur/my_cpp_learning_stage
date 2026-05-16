@@ -312,19 +312,309 @@
 
 ==**引用/指针保留多态，值拷贝丢失多态**==
 
+虚函数机制的触发条件中规定了要<font color=red>**使用基类指针（或引用）来调用虚函数**</font>
 
+而其他调用方式的具体情况如下：
+
+1. **通过派生类对象直接调用虚函数**
+
+   并没有满足动态多态触发机制的条件，此时只是Derived中定义的display函数对Base中的display函数形成了**隐藏**
+
+2. **在构造函数和析构函数中访问虚函数&”隔代“覆盖**
+
+   ```cpp
+   class Grandpa {
+   public:
+       Grandpa() { cout << "Grandpa()" << endl; }
+       ~Grandpa() { cout << "~Grandpa()" << endl; }
+       virtual void func1() {
+           cout << "Grandpa::func1()" << endl;
+       }
+       virtual void func2() {
+           cout << "Grandpa::func2()" << endl;
+       }
+   };
+   
+   class Parent
+   : public Grandpa
+   {
+   public:
+       Parent() {
+           cout << "Parent()" << endl;
+           // func1(); // 构造函数中可以调用虚函数
+       }
+       ~Parent() {
+           cout << "~Parent()" << endl;
+           // func2(); // 析构函数中可以调用虚函数
+       }
+   };
+   
+   class Son : public Parent {
+   public:
+       Son() { cout << "Son()" << endl; }
+       ~Son() { cout << "~Son()" << endl; }
+       virtual void func1() override {
+           cout << "Son::func1()" << endl;
+       }
+       virtual void func2() override {
+           cout << "Son::func2()" << endl;
+       }
+   };
+   
+   void test0() {
+       Son ss;
+       Grandpa* p = &ss;
+       p->func1();
+       p->func2();
+   }
+   ```
+
+   - 用Grandpa类指针p指向Son类对象，用这个指针p调用func1/func2.结果是指针p调用到的是Son类的func1和func2函数即结果是
+
+     ```cpp
+     Son::func1()
+     Son::func2()
+     ```
+
+     说明**即使Parent中没有对Grandpa中的func1和fucn2覆盖，在Son中也可以对func1和func2覆盖**
+
+     ![image-20231103150156687](D:\Typora Picture\image-20231103150156687.png)
+
+   - <font color=red>**如果在Parent类的构造和析构函数中调用虚函数**</font>
+
+     ![undefined202403191632256](D:\Typora Picture\undefined202403191632256.png)
+
+     - 构造函数中调用虚函数
+
+       在Son对象构造时，先调用Parent的构造函数执行时，这里的Parent构造函数并不知道是在构造Son的对象，在此过程中，**只能看到本层及以上的部分**（因为此时Grandpa类的基类子对象已经创建完毕，虚表中当前仅记录了Grandpa::func1和func2的地址，还未被覆盖）
+
+     - 析构函数中调用虚函数
+
+       在Parent的析构函数执行时，此时Son的析构函数已经执行完了，可以理解为Son需要进行的回收工作都已经结束了。所以Parent的析构函数**也只能看到本层及以上的部分**
+
+     由分析可以看出这里表现出来的事**静态联编**，且<font color=red>**如果Parent类中也覆盖了func1和func2，那么会调用Parent本层的虚函数（即隐藏）**</font>
+
+     <span style=color:red;background:yellow>**总结：**</span>
+
+     C++标准规定，**在构造函数和析构函数中**，通过`this`指针（隐式或显式）调用的虚函数会被解析为**当前类（即构造函数或析构函数所属的类）的版本**，**而不是通过虚函数表来动态解析**
+
+3. **在普通成员函数中调用虚函数**
+
+   ```cpp
+   class Base {
+   public:
+       Base(long x)
+       : m_base(x)
+       {}
+       virtual void display() const {
+           cout << "Base::display()" << endl;
+       }
+       void func1() {
+           display();
+           cout << m_base << endl;
+       }
+       void func2() {
+           Base::display();
+       }
+   private:
+       long m_base = 10;
+   };
+   
+   class Derived : public Base {
+   public:
+       Derived(long base,long derived)
+       : Base(base)
+       , m_derived(derived)
+       {}
+       void display() const override {
+           cout << "Derived::display()" << endl;
+       }
+   private:
+       long m_derived;
+   };
+   
+   void test1() {
+       Base base(10); 
+       Derived derived(1,2);
+   
+       base.func1();
+       base.func2(); 
+       derived.func1();
+       derived.func2(); 
+   }
+   ```
+
+   ```cpp
+   // 程序执行结果
+   Base::display()
+   10
+   Base::display()
+   Derived::display()
+   1
+   Base::display()
+   ```
+
+   <span style=color:red;background:yellow>**第3次调用即`derived.func1()`的情况比较特殊：**</span>
+
+   derived对象调用func1函数，因为Derived类中没有重新定义自己的func1函数，所以会去调用基类子对象的func1函数（通过基类子对象调用func1函数），可以理解为**this指针此时发生了向上转型，成为了Base*类型**。且此时this指针还是**指向的derived对象**，就符合基类指针指向派生类对象的条件，在func1中调用虚函数display，**触发动态多态机制**
+
+   调用虚函数时, C++ 会根据对象的实际类型（`Derived`）动态绑定到相应虚函数 `Derived::display()`（动态绑定，由对象实际类型决定）
+
+   > **==注意==**：
+   >
+   > 这里并不会丢失多态，因为丢失多态是发生在值拷贝的向上转型中的，这里并没有值拷贝，而是直接使用派生类对象来调用func1()，若是值拷贝的话，即最终会使用一个独立的基类对象来调用func1()了即`Base bs = derived; bs.func1();`
+   >
+   > **补充：**
+   >
+   > - **静态类型**：声明时写的类型（如 `Base*`）
+   > - **动态类型**：当前实际指向/引用的对象的类型（如 `Derived` 对象）
 
 ## 五、抽象类&纯虚函数
 
+1. **抽象类**
 
+   在 C++ 中，**抽象类**（Abstract Class）是指至少包含一个**纯虚函数**（Pure Virtual Function）的类
 
-## ==六、析构函数设为虚函数==
+   - 含有纯虚函数的类是抽象类
+   - 未经覆盖直接继承纯虚函数的类是抽象类
 
+2. **什么是纯虚函数**
 
+   **纯虚函数**是一种特殊的虚函数，在许多情况下，在基类中不能对虚函数给出有意义的实现，而把它声明为纯虚函数，**它的实现留给该基类的派生类去做**。这就是纯虚函数的作用。纯虚函数的格式如下：
 
-## ==七、验证虚表的存在==
+   ```cpp
+   class 类名 {
+   public:
+   	virtual 返回类型 函数名(参数 ...) = 0;
+   };
+   ```
 
-## 八、补充
+3. **纯虚函数的效果**
+
+   - 在基类中声明纯虚函数就是在让派生类提供一个纯虚函数的实现，但不关心具体如何实现
+
+   - 多个派生类可以对纯虚函数进行多种不同的实现，但是都需要遵循基类给出的接口（纯虚函数的声明）
+   - <span style=color:red;background:yellow>**声明了纯虚函数的类成为抽象类，抽象类不能实例化对象。**</span>
+
+4. **抽象类的两种情况**
+
+   - 含有纯虚函数(1个或多个)的类是抽象类
+
+     ```cpp
+     // 抽象类
+     class AbstractClass {
+     public:
+         virtual void virtualFunc1() = 0;
+         virtual void virtualFunc2() = 0;
+     	// ...
+     };
+     ```
+
+   - 未经覆盖直接继承纯虚函数的派生类是抽象类
+
+     ```cpp
+     // A类属于第一种情况,是抽象类，有2个纯虚函数
+     class A {
+     public:
+         virtual void print() = 0;
+         virtual void display() = 0;
+     };
+     
+     // B类继承A类，但是没有override完全A类中的纯虚函数，即还存在未被覆盖的纯虚函数 ---> 即第二种情况，B类也是抽象类
+     class B : public A {
+     public:
+         virtual void print() override{
+             cout << "B::print()" << endl;
+         }
+     };
+     
+     class C : public B {
+     public:
+         virtual void display() override {
+             cout << "C::display()" << endl;
+         }
+     };
+     
+     void test0() {
+         // A类定义了纯虚函数，A类是抽象类
+         // 抽象类无法创建对象
+         // A a; // error
+         // B b; // error
+         C c;
+         A* pa2 = &c;
+         pa2->print();
+         pa2->display();
+     }
+     ```
+
+     **解释说明：**
+
+     - 在A类中声明纯虚函数，A类就是抽象类，无法创建对象
+
+     - 在B类中去覆盖A类的纯虚函数，**如果把所有的纯虚函数都覆盖了（即都实现了）**，B类可以创建对象；只要还有一个纯虚函数没有实现，B类也会是抽象类，也无法创建对象
+
+     - 再往下派生C类，完成所有的纯虚函数的实现，C类才能够创建对象
+
+     - **最顶层的基类（声明纯虚函数的类）==虽然无法创建对象，但是可以定义此类型的指针，指向派生类对象==，去调用实现好的纯虚函数**
+
+       > <font color=red>**这种使用方式也归类为动态多态**</font>，尽管不符合第一个条件（即基类中只声明纯虚函数，没有定义），最终的效果仍然是基类指针调用到了派生类实现的虚函数，属于**动态多态的特殊情况**
+
+5. **纯虚函数的使用案例**
+
+   实现一个图形库，获取图形名称，获取图形之后计算它的面积
+
+   ```cpp
+   #define PI 3.14
+   class Figure {
+   public:
+       virtual string getName() const = 0;
+       virtual double getArea() const = 0;
+   };
+   
+   void display() {
+       cout << getName() 
+            << "的面积是:" 
+            << getArea() << endl ;
+   }
+   
+   class Rectangle : public Figure { // 矩形
+   public:
+       Rectangle(double len,double wid)
+       : m_length(len)
+       , m_width(wid)
+       {}
+       string getName() const override {
+           return "矩形";
+       }
+       double getArea() const override {
+           return m_length * m_width;
+       }
+   private:
+       double m_length;
+       double m_width;
+   };
+   
+   class Circle : public Figure {
+   public:
+       Circle(double r)
+       : m_radius(r)
+       {}
+       string getName() const override {
+           return "圆形";
+       }
+       double getArea() const override {
+           return PI * m_radius * m_radius;
+       }
+   private:
+       double m_radius;
+   };
+   ```
+
+   基类Figure中定义纯虚函数，交给多个派生类去实现，最后可以使用基类的指针（引用）指向（绑定）不同类型的派生类对象，再去调用已经被实现的纯虚函数
+
+   <font color=red>**纯虚函数就是为了后续扩展而预留的接口**</font>
+
+## 六、补充
 
 1. **赋值运算符函数在赋值运算符函数里的使用方式**
 
