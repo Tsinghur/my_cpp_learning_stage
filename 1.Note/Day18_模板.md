@@ -383,7 +383,7 @@
    >     // add.h
    >     template <class T>
    >     T add(T t1, T t2);
-   >         
+   >                 
    >     #include "add.cc"
    >     ```
    >
@@ -619,11 +619,404 @@
 
 2. **成员函数模板**
 
+   - 在普通类中也可以定义成员函数模板，如下：
    
+       ```cpp
+       class Point {
+       public:
+           Point(double x,double y)
+       	: m_x(x)
+       	, m_y(y)
+       	{}
+           // 定义一个成员函数模板
+           // 将m_x转换成目标类型
+           template <class T>
+               T convert() {
+               return (T)m_x;
+           }
+       private:
+        	double m_x;
+       	double m_y;
+       };
+       
+       void test0() {
+       	Point pt(1.1,2.2);
+           cout << pt.convert<int>() << endl;
+           cout << pt.convert() << endl; // error
+       }
+       ```
+
+       此时调用这个成员函数模板，不能采用隐式实例化的方式，因为编译器不知道要将`pt.m_x`转换成什么类型
+   
+   - 可以给成员函数模板中类型参数赋默认值，有了默认值后才可以进行隐式实例化
+   
+       ```cpp
+       // 定义一个成员函数模板
+       // 将m_x转换成目标类型
+       template <class T = int>
+       T convert() {
+       	return (T)m_x;
+       }
+       
+       cout << pt.convert() << endl; // ok
+       ```
+   
+   - 示例
+   
+       在Point类中定义一个add函数模板
+   
+       ```cpp
+       class Point {
+       public:
+       	Point(double x,double y)
+       	: m_x(x)
+       	, m_y(y)
+       	{}
+       	template <class T>
+       	T add(T t1) {
+       		return m_x + m_y + t1;
+       	}
+       private:
+       	double m_x;
+       	double m_y;
+       };
+       
+       void test0() {
+           Point pt(1.5,3.8);
+       	cout << pt.add(8.8) << endl;
+       }
+       ```
+   
+       - 在add函数模板中可以访问Point的数据成员，说明成员函数模板的使用原理同普通函数模板一样，在调用时会实例化出一个模板成员函数
+       - 普通的成员函数会有隐含的this指针作为参数，这里生成的模板成员函数中也会有。如果定义一个static的成员函数模板，那么在其中就不能访问非静态数据成员（与普通的static成员函数一样没有this指针）
+       - <span style=color:red;background:yellow>**成员函数模板不能加上virtual修饰**</span>，否则编译器报错，因为函数模板是在编译时生成函数，而虚函数机制起作用的时机是在运行时
+   
+   - 如果要将成员函数模板在类之外进行实现，需要<span style=color:red;background:yellow>**注意带上模板的声明**</span>
+   
+       ```cpp
+       class Point {
+       public:
+               Point(double x,double y)
+               : m_x(x)
+               , m_y(y)
+               {}
+               // ...
+           template <class T>
+               T add(T t1);
+       private:
+           double m_x;
+           double m_y;
+       };
+       
+       template <class T>
+       T Point::add(T t1) {
+               return m_x + m_y + t1;
+       }
+       ```
 
 ## 五、可变参数模板
 
+1. **什么是可变参数模板**
 
+   可变参数模板(variadic templates)是 C++11 新增的最强大的特性之一，它对参数进行了高度泛化，它能表示0到任意个数、任意类型的参数。由于可变参数模板比较抽象，使用起来需要一定的技巧，所以它也是 C++11 中最难理解和掌握的特性之一
+
+   **关键点**：
+
+   - **参数数量不固定**：模板可以接受任意数量的参数
+   - **参数类型多样**：参数可以是不同类型的，甚至是混合类型
+
+   回想一下C语言中的`printf`函数，其实是比较特殊的。`printf`函数的参数个数可能有很多个，用...表示，参数的个数、类型、顺序可以随意，可以写0到任意多个参数
+
+   ![image-20241218094433651](..\0.TyporaPicture\image-20241218094433651.png)
+
+2. **基本语法**
+
+   可变参数模板和普通模板的语义是一样的，只是写法上稍有区别，声明可变参数模板时需要在`typename`或`class`后面带上省略号 “**...**” 
+
+   ```cpp
+   template <class... Args>  
+   void func(Args... args);
+   
+   // 与普通函数模板做对比
+   template <class T1,class T2>
+   void func(T1 t1, T2 t2);
+   ```
+
+   - `Args`叫做**模板参数包**，相当于将 T1/T2/T3/...等类型参数打了包
+
+   - `args`叫做**函数参数包**，相当于将 t1/t2/t3/...等函数参数打了包
+
+   <span style=color:red;background:yellow>**省略号写在参数包的左边，代表打包**</span>
+
+3. **什么情况使用**
+
+   例如在定义一个函数时，可能有很多个不同类型的参数，不适合一个一个写出，就可以使用可变参数模板的方法，利用可变参数模板输出参数包中参数的个数
+
+   ```cpp
+   template <class... Args> // Args，模板参数包
+   void display(Args... args) { //args，函数参数包
+       // 输出模板参数包中类型参数个数
+       cout << "sizeof...(Args) = " << sizeof...(Args) << endl;
+       // 输出函数参数包中参数的个数
+       cout << "sizeof...(args) = " << sizeof...(args) << endl;
+   }
+   
+   void test0() {
+       display();
+       display(1,"hello",3.3,true,5);
+   }
+   ```
+
+4. **示例**
+
+   - 需求：希望打印出传入的不同类型参数的内容
+
+   - 处理思路
+
+     对于可变参数模板的处理，主要通过**递归模板**来解包(展开参数包)，这种递归方法需要定义一个递归基例和一个递归模板，以逐步处理每个参数，直到<span style=color:red;background:yellow>**递归出口**</span>
+
+   - **具体实现方法**：
+
+     1. **定义一个递归基例**：当没有参数时，什么也不做，作为递归出口
+     2. **定义一个递归模板**：处理第一个参数，并递归处理剩余参数
+
+     ```cpp
+     // 递归的出口
+     void print() {
+     	cout << endl;
+     }
+     
+     // 重新定义一个可变参数模板，至少得有一个参数
+     template <class T,class ...Args>
+     void print(T x, Args ...args) {
+     	cout << x << " ";
+     	print(args...);  // 省略号在参数包右边
+     }
+     ```
+
+     <span style=color:red;background:yellow>**省略号写在参数包的右边，代表解包**</span>
+
+   - 调用时的过程分析
+
+     如下所示，各种调用的步骤：
+
+     ```cpp
+     void test1(){
+     // 调用普通函数
+     // 不会调用函数模板，因为函数模板至少有一个参数
+     print();
+         
+     print(2.3);
+     // cout << 2.3 << " ";
+     // cout << endl;
+     
+     print(1,"hello",3.6,true);
+     // cout << 1 << " "; 		print("hello",3.6,true);
+     // cout << "hello" << " "; 	print(3.6,true);
+     // ...
+     }
+     ```
+
+     <font color=red>**如果没有准备递归的出口，那么在可变参数模板中解包解到print()时，不知道该调用什么，因为这个模板至少需要一个参数。**</font>
+
+   - 设置不同的递归出口
+
+     ```cpp
+     // 出口1 —— 在这里有出口2的前提下出口1不会被使用，除非print函数模板中一次性打印两个参数，即：
+     /*
+     template <class T,class... Args>
+     void print(T x1, T x2, Args... args) {
+         cout << x1 << " " << x2 << " ";
+         print(args...);
+     }
+     */
+     // 这样的话，原始的函数参数包中参数个数为奇数的话最终调用出口2，参数个数为偶数的话最终调用出口1
+     void print() {
+         cout << endl;
+     }
+     
+     // 出口2
+     // 只剩下一个int型参数的时候，不会再使用函数模板，而是通过普通函数即出口2结束递归
+     void print(int x) {
+         cout << x << endl;
+     }
+     
+     template <class T,class... Args>
+     void print(T x, Args... args) {
+         cout << x << " ";
+         print(args...);
+     }
+     
+     print(1,"hello",3.6,true,100);
+     ```
 
 ## 六、类模板
+
+1. **形式**
+
+   ```cpp
+   template <class/typename T, ...>
+   class 类名 {
+   // 类定义．．．
+   };
+   ```
+
+   实际上，之前已经多次见到了类模板，打开c++参考文档，发现vector、set、map等等都是使用类模板定义的
+
+2. **不使用与使用类模板的对比**
+
+   - 需求：不使用/使用类模板, 定义一个Box类型的容器, 可以存放不同类型的数据,体会一下差别
+
+   - 不使用模板
+
+     ```cpp
+     // 存放int类型数据
+     class Box {
+     private:
+         int m_data;
+     };
+     // 存放double类型的数据
+     class Box2 {
+     private:
+         double m_data;
+     };
+     // 存放string类型数据
+     class Box3 {
+     private:
+         string m_data;
+     };
+     // ...
+     ```
+
+   - 使用类模板
+
+     ```cpp
+     // 使用模板
+     template <typename T>
+     class Box {
+     public:
+         Box(T data)
+         : m_data(data)
+         {
+             cout << "store data" << endl;
+         }
+         // 成员函数定义在类内部
+         void display() {
+             cout << "data = " << m_data << endl;
+         }
+         // 成员函数声明和实现分开 实现在类外部
+         void show();
+     private:
+         T m_data;
+     };
+     
+     template <typename T>
+     void Box<T>::show() {
+         cout << "data is = " << m_data << endl;
+     }
+     
+     void test1() {
+         // 类模板使用跟普通类一样,只需要指定模板参数
+         // 实例化类模板
+         Box<int> box{100}; // 存放int数据
+         box.display();
+         
+         Box<double> box2{3.14}; // 存放double数据
+         box2.display();
+         
+         string s = "abc";
+         Box<string> box3{s}; // 放string数据
+         box3.display();
+         box.show();
+     }
+     ```
+
+3. **类模板的成员函数如果放在类模板定义之外进行实现**
+
+   需要**注意**：
+
+   - 需要带上**template模板形参列表**（**如果有默认参数，此处不要写，写在声明时就够了**）
+   - 在添加作用域限定时需要写上**完整的类名和模板实参列表**
+
+   ```cpp
+   template <typename T>
+   void Box<T>::show() {
+       cout << "data is = " << m_data << endl;
+   }
+   ```
+
+## 七、补充
+
+1. **用类模板的方式实现一个Stack类，可以存放任意类型的数据，模拟栈的相关操作**
+
+   ![image-20241218105957026](..\0.TyporaPicture\image-20241218105957026.png)
+
+   ```cpp
+   template <typename T, size_t capacity = 10>
+   class Stack {
+   public:
+       Stack()
+       : m_data(new T[capacity]{})
+       , m_top(-1)
+       {
+           cout << "init stack" << endl;
+       }
+       ~Stack() {
+               delete[] m_data; // 对空指针使用 delete 或 delete[] 是合法的，什么都不会发生
+               /* m_data = nullptr; // 多余，析构函数结束之后，成员变量 m_data 所占用的内存也会随着对象一起被回收 */
+       }
+   
+       void push(const T& value);
+       void pop();
+       bool empty() const;
+       bool full() const;
+       T top() const;
+   private:
+       T* m_data;
+       int m_top; // 永远指向栈顶元素
+   };
+   
+   // 类外实现成员函数
+   template <typename T, size_t capacity>
+   bool Stack<T,capacity>::empty() const {
+       return m_top == -1;
+   }
+   
+   template <typename T, size_t capacity>
+   bool Stack<T,capacity>::full() const {
+       return m_top == capacity - 1;
+   }
+   
+   template <typename T, size_t capacity>
+   void Stack<T,capacity>::push(const T & value) {
+       if (full()) {
+           cout << "stack is full" << endl;
+           return;
+       } else {
+           m_data[++m_top] = value;
+       }
+   }
+   
+   template <typename T, size_t capacity>
+   void Stack<T,capacity>::pop() {
+       if (empty()) {
+           cout << "stack is empty" << endl;
+           return;
+       } else {
+           --m_top;
+       }
+   }
+   
+   template <typename T, size_t capacity>
+   T Stack<T,capacity>::top() const {
+       if (!empty()) {
+           return m_data[m_top];
+       } else {
+           cout << "stack is empty" << endl;
+           /* throw "stack is empty"; */
+       }
+   }
+   ```
+
+   
 
