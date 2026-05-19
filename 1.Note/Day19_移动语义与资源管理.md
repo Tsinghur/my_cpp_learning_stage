@@ -459,17 +459,180 @@
 
    **总结：**当类中同时定义移动构造函数和拷贝构造函数，需要对以前的规则进行补充，<span style=color:red;background:yellow>**调用哪个函数还需要取决于返回的对象本体的生命周期**</span>
 
-## 二、RAII技术
+## 二、资源管理
+
+C语言在进行资源管理的时候，比如文件指针，由于分支较多，或者由于写代码的人与维护的人不一致，导致分支没有写的那么完善，从而导致文件指针没有释放
+
+```cpp
+void UseFile(char const* fn) {
+    // 1. 获取资源
+    FILE* f = fopen(fn, “r”);
+    // 2.使用资源
+    // ... 
+    // 3.回收资源有很多分支
+    if (!g()) { fclose(f); return; }
+    // ...
+    if (!h()) { fclose(f); return; }
+    // ...
+    // 4.释放资源
+    fclose(f); 
+}
+```
+
+根据之前单例对象(AutoRelease)自动释放的经验，我们可以想到**利用对象的生命周期去管理资源**。那么就可以尝试**实现一个安全回收文件的程序**了
+
+```cpp
+class SafeFile {
+public:
+    // 在构造函数中初始化资源（托管资源）
+    SafeFile(FILE* fp)
+    : m_fp(fp)
+    {
+        cout << "SafeFile(FILE*) " << endl;
+    }
+    // 提供方法访问资源
+    void write(const string& msg) {
+        fwrite(msg.c_str(), 1, msg.size(), m_fp);
+    }
+    // 利用析构函数释放资源
+    ~SafeFile() {
+        cout << "~SafeFile()" << endl;
+        if (m_fp) {
+            fclose(m_fp); 
+            cout << "fclose(m_fp)" << endl;
+        }
+    }
+private:
+    FILE* m_fp;
+};
+
+void test0() {
+    string msg = "hello,world";
+    SafeFile sf(fopen("wd.txt", "a+"));
+    sf.write(msg);
+}
+```
+
+## 三、RAII(资源获取即初始化)技术
+
+以上例子其实已经用到了RAII的技术。所谓RAII，是**C++提出的资源管理的技术**，全称为Resource Acquisition Is Initialization，由C++之父Bjarne Stroustrup提出
+
+其**本质是利用对象的生命周期来管理资源**（内存资源、文件描述符、文件、锁等），**因为当对象的生命周期结束时，会自动调用析构函数**
 
 1. **常见特征**
 
+   - 在构造函数中托管资源（在给构造函数传参时初始化资源）
+
+   - 在析构函数中释放资源
+
+   - 一般不允许进行复制或者赋值（对象语义）
+
+   - 提供若干访问资源的方法（如：读写文件）
+
+2. **对象语义与值语义**
+
+   - **对象语义：不允许复制或者赋值**
+
+     就像全世界不会有两个完全一样的人，程序世界中也不会有两个完全一样的对象
+
+     **实现常用手段：**
+
+     1. 将拷贝构造函数与赋值运算符函数设置为私有的
+
+     2. 将拷贝构造函数与赋值运算符函数 = delete
+
+     3. 使用继承的思想，将基类的拷贝构造函数与赋值运算符函数删除（或设为私有），让派生类继承基类
+
+        > - 派生类无法自动生成拷贝构造 / 赋值运算符
+        >
+        >   编译器**只会在「所有基类、所有成员变量都支持拷贝 / 赋值」的前提下**，才会为派生类自动生成：默认拷贝构造函数、默认拷贝赋值运算符
+        >
+        >   如果**基类的拷贝 / 赋值被禁用（delete / 私有）**，编译器**绝对不会**为派生类生成这两个函数
+        >
+        > - 并且也无法手动定义
+        >
+        >   因为派生类的**拷贝构造函数 / 拷贝赋值运算符**，有一个**强制性义务**：必须先初始化 / 赋值「基类子对象」，而基类 `Base` 已经把**拷贝构造、拷贝赋值**都 `= delete` 了 → **基类根本不允许拷贝**
+        >
+        >   所以：手动写派生类的拷贝函数 → 必须调用基类的拷贝函数 → 基类拷贝函数被删除 → **编译直接报错**
+
+   - **值语义：可以进行复制或赋值**（两个变量的值可以相同）
+
+     与对象语义相反
+
+     ```cpp
+     int a = 10;
+     int b = a;
+     int c = 20;     
+     
+     c = a; // 赋值
+     int d = c; // 复制
+     ```
+
+3. **模拟实现**
+
+   可以实现一个类模板，模拟RAII的思想
+
+   ```cpp
+   template <class T>
+   class RAII {
+   public:
+       // 1.在构造函数中初始化资源（托管资源）
+       RAII(T* data)
+       : m_data(data)
+       {
+           cout << "RAII(T*)" << endl;
+       }
    
+       // 2.在析构函数中释放资源
+       ~RAII() {
+           cout << "~RAII()" << endl;
+           if (m_data) {
+               delete m_data;
+               m_data = nullptr;
+           }
+       }
+       // 3.提供若干访问资源的方法
+       T* operator->() {
+           return m_data;
+       }
+       T& operator*() {
+           return *m_data;
+       }
+       T* get() const {
+           return m_data;
+       }
+       void set(T* data) {
+           if (m_data) {
+               delete m_data;
+               m_data = nullptr;
+           }
+           m_data = data;
+       }
+       // 4.不允许复制或赋值
+       RAII(const RAII& rhs) = delete;
+       RAII& operator=(const RAII& rhs) = delete;
+   private:
+       T* m_data;
+   };
+   ```
 
-2. **模拟实现**
+   如下，**raii不是一个指针，而是一个对象**，但是它的**使用已经和指针完全一致**了。**此对象可以托管堆上的Point对象，而且不用考虑delete**
 
-   
+   ```cpp
+   void test0() {
+   	Point* pt = new Point(1, 2);
+   	// 智能指针的雏形
+   	RAII<Point> raii(pt);
+   	raii->print();
+   	(*raii).print();
+   }
+   ```
 
-## 三、智能指针
+4. <span style=color:red;background:yellow>**RAII技术的本质**</span>
+
+   利用**栈对象**的生命周期管理资源，因为栈对象在离开作用域时候，会执行析构函数
+
+## 四、智能指针
 
 1. **`auto_ptr(C++17已弃用)`**
 
@@ -486,5 +649,3 @@
 4. **`weak_ptr`**
 
    
-
-## 四、删除器
