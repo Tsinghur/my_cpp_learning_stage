@@ -314,66 +314,64 @@
       - 为什么需要`std::move`
 
         在一些使用移动语义的场景下，有时需要将左值转为右值，std::move函数的作用是**显式的将一个左值转换为右值**，<span style=color:red;background:yellow>**其实现本质上就是一个强制转换**</span>
-
-
-      - 修改`std::move`返回值导致的问题
-    
-        当**将一个左值转换为右值后**，如果**利用右值引用绑定std::move的返回值**，并**进行修改操作**，**那么原来的左值对象也会随之修改**，可能无法正常工作了，所以**原对象必须要重新赋值才可以继续使用**
-    
-        ```cpp
-        void test() {
-            int a = 1;
-            &(std::move(a)); // error，左值转成了右值
-            
-        	String s1("hello");
-        	s1.print();
-            // 如果经历了std::move的强转后没有进行修改操作，之后s1对象还是可以正常使用的
-            std::move(s1); // 没有使用返回值
-            s1.print(); // 原左值对象仍能正常使用
-            
-            // 若是使用std::move的返回值调用移动赋值运算符函数，在移动赋值运算符函数中形参String&& rhs = std::move(s1)即使用右值引用，在移动赋值函数中：rhs.m_pstr = nullptr; 进行了修改操作，会使得s1对象本身的m_pstr变成空指针 再进行print操作时会出现问题
-            String s2("abc");
-            s2 = std::move(s1);
-            s1.print(); // 这里程序中断
-            s2.print();
-        }
-        ```
-
-
-      - **移动赋值函数**在使用`std::move`时**需要考虑自复制问题**
-    
-        如果将移动赋值函数的自赋值判断去除，如下情况依然会调用移动赋值函数，但是s1的pstr所指向的空间被回收，且被设为了空指针，会出错
-    
-        ```cpp
-        String s1("hello");
-        s1 = std::move(s1);
-        s1.print();
-        ```
-    
-        - **验证**
-    
-          去掉移动赋值函数中的浅拷贝，移动赋值函数中：先让左操作数s1 的 `m_pstr`**重新指向一片空间**，再将右操作数rhs的 `m_pstr`设为空指针
-    
+      
+        - 修改`std::move`返回值导致的问题
+      
+          当**将一个左值转换为右值后**，如果**利用右值引用绑定std::move的返回值**，并**进行修改操作**，**那么原来的左值对象也会随之修改**，可能无法正常工作了，所以**原对象必须要重新赋值才可以继续使用**
+      
           ```cpp
-          String& operator=(String&& rhs){
-              delete [] m_pstr;
-              m_pstr = new char[1]();
-              rhs.m_pstr = nullptr;
-              cout << "String& operator=(String&&)" << endl;
-              return *this;
+          void test() {
+              int a = 1;
+              &(std::move(a)); // error，左值转成了右值
+              
+          	String s1("hello");
+          	s1.print();
+              // 如果经历了std::move的强转后没有进行修改操作，之后s1对象还是可以正常使用的
+              std::move(s1); // 没有使用返回值
+              s1.print(); // 原左值对象仍能正常使用
+              
+              // 若是使用std::move的返回值调用移动赋值运算符函数，在移动赋值运算符函数中形参String&& rhs = std::move(s1)即使用右值引用，在移动赋值函数中：rhs.m_pstr = nullptr; 进行了修改操作，会使得s1对象本身的m_pstr变成空指针 再进行print操作时会出现问题
+              String s2("abc");
+              s2 = std::move(s1);
+              s1.print(); // 这里程序中断
+              s2.print();
           }
           ```
-    
-          即使这样，但通过输出流运算符输出s1的 `m_pstr`仍然造成了程序的中断，所以说明对std::move(s1)的内容进行修改，会导致s1的内容也被修改
-    
-          > `std::move`的返回值是右值引用
-          >
-          > std::move(s1).m_pstr = nullptr;——合法，但是不推荐，因为会内存泄漏、破坏对象，不要手动修改 move 后的对象成员，交给移动构造 / 移动赋值处理
-    
-        - **`std::move`原理**
-    
-          `std::move`的本质是在底层做了类型转换来标记一个对象为右值（它本身并**不移动数据或资源**，只是**为移动操作提供条件**，使得移动构造函数和移动赋值运算符函数能够被调用）
-    
+      
+      - **移动赋值函数**在使用`std::move`时**需要考虑自复制问题**
+      
+          如果将移动赋值函数的自赋值判断去除，如下情况依然会调用移动赋值函数，但是s1的pstr所指向的空间被回收，且被设为了空指针，会出错
+      
+          ```cpp
+          String s1("hello");
+          s1 = std::move(s1);
+          s1.print();
+          ```
+      
+          - **验证**
+      
+            去掉移动赋值函数中的浅拷贝，移动赋值函数中：先让左操作数s1 的 `m_pstr`**重新指向一片空间**，再将右操作数rhs的 `m_pstr`设为空指针
+      
+            ```cpp
+            String& operator=(String&& rhs){
+                delete [] m_pstr;
+                m_pstr = new char[1]();
+                rhs.m_pstr = nullptr;
+                cout << "String& operator=(String&&)" << endl;
+                return *this;
+            }
+            ```
+      
+            即使这样，但通过输出流运算符输出s1的 `m_pstr`仍然造成了程序的中断，所以说明对std::move(s1)的内容进行修改，会导致s1的内容也被修改
+      
+            > `std::move`的返回值是右值引用
+            >
+            > std::move(s1).m_pstr = nullptr;——合法，但是不推荐，因为会内存泄漏、破坏对象，不要手动修改 move 后的对象成员，交给移动构造 / 移动赋值处理
+      
+      - **`std::move`原理**
+      
+        `std::move`的本质是在底层做了类型转换来标记一个对象为右值（它本身并**不移动数据或资源**，只是**为移动操作提供条件**，使得移动构造函数和移动赋值运算符函数能够被调用）
+      
         `std::move()` 的关键作用是告诉编译器，“我不再需要这个对象的资源，你可以安全地转移它”，所以==**移动赋值函数的自赋值判断不应该省略**==
 
 7. **右值引用本身的性质**
@@ -440,23 +438,25 @@
           
           ![image-20250124104555895](..\0.TyporaPicture\image-20250124104555895.png)
           
-- <font color=red>**如果返回的对象其本身生命周期大于函数生命周期时，执行return语句时还是调用拷贝构造函数**</font>
-      
-    ```cpp
-          String str1("beijing");
-          String func3() {
-              str1.print();
-              return str1;
-          }
-          
-          void test3() {
-              func3(); // 调用拷贝构造函数
-          }
+
+      - <font color=red>**如果返回的对象其本身生命周期大于函数生命周期时，执行return语句时还是调用拷贝构造函数**</font>
+        
+          ```cpp
+                String str1("beijing");
+                String func3() {
+                    str1.print();
+                    return str1;
+                }
+                
+                void test3() {
+                    func3(); // 调用拷贝构造函数
+                }
           ```
-      
-    ![image-20250124104716862](..\0.TyporaPicture\image-20250124104716862.png)
-      
-**总结：**当类中同时定义移动构造函数和拷贝构造函数，需要对以前的规则进行补充，<span style=color:red;background:yellow>**调用哪个函数还需要取决于返回的对象本体的生命周期**</span>
+          
+          ![image-20250124104716862](..\0.TyporaPicture\image-20250124104716862.png)
+          
+
+      **总结：**当类中同时定义移动构造函数和拷贝构造函数，需要对以前的规则进行补充，<span style=color:red;background:yellow>**调用哪个函数还需要取决于返回的对象本体的生命周期**</span>
 
 ## 二、资源管理
 
