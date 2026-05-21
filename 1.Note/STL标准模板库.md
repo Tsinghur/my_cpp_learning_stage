@@ -176,7 +176,7 @@ box.pop_front(); // 1 2 3
      };
      ```
 
-     在源码中，除了vector的数据成员，还可以看到一些成员函数的实现，比如push_back有可能发生的动态扩容，2倍扩容的机制就写在源码中（主流实现分**1.5倍(GCC、MSVC)**和**2倍(Clang)**）
+     在源码中，除了vector的数据成员，还可以看到一些成员函数的实现，比如push_back有可能发生的动态扩容，2倍扩容的机制就写在源码中（主流实现分**1.5倍(MSVC)**和**2倍(GCC、Clang)**）
 
   3. 获取vector的第一个元素的首地址，应该怎么做？
 
@@ -304,6 +304,70 @@ box.pop_front(); // 1 2 3
        ![image-20250315161952642](D:\Typora Picture\image-20250315161952642.png)
 
 #### ==1.7 insert操作==
+
+之前的push_back和push_front尽管可以插入元素，但是插入的位置都比较固定
+
+实际上三种序列式容器都允许在任意位置插入元素，使用insert函数即可
+
+- 它们都具备以下四种插入的功能
+
+  ![image-20240806144651816](D:\Typora Picture\image-20240806144651816.png)
+
+  以vector为例
+
+  ```cpp
+  vector<int> box{1,2,3,4,5};
+  cout <<"size=" << box.size() << endl; // 5
+  cout << "capacity=" << box.capacity() << endl; // 5
+  print(box); // 1 2 3 4 5
+  // 1.给定位置，插入单个元素
+  auto it =box.begin();
+  ++it;
+  // box.insert(it, 100); 由于扩容机制，所以可能会有迭代器失效的问题
+  it = box.insert(it, 100); // 所以必须更新迭代器
+  cout <<"size=" << box.size() << endl; // 6
+  cout << "capacity=" << box.capacity() << endl; // 10
+  print(box); // 1 100 2 3 4 5
+  cout << "*it=" << *it << endl; // 100
+  // 2.给定位置，插入多个元素
+  it = box.insert(it, 2, 200); // 更新迭代器
+  print(box); // 1 200 200 100 2 3 4 5
+  cout << "*it=" << *it << endl; // 200
+  ++it;
+  cout << "*it=" << *it << endl; // 200
+  ++it;
+  cout << "*it=" << *it << endl; // 100
+  // 3.给定位置，插入迭代器范围
+  auto it2 = box.begin();
+  ++it2;
+  vector<int> box2{10,20,30};
+  it2 = box.insert(it2, box2.begin(), box2.end());
+  print(box); // 1 10 20 30 200 200 100 2 3 4 5
+  // 4.给定位置, 用初始化列表插入
+  it2 = box.insert(it2, {1000,2000});
+  print(box); // 1 1000 2000 10 20 30 200 200 100 2 3 4 5
+  cout << "*it2=" << *it2 << endl; // 1000
+  ```
+
+- 以list为例
+
+  1. 双向链表由于其底层结构的原因，插入是非常方便的
+
+     ![image-20241203105613687](D:\Typora Picture\image-20241203105613687.png)
+
+  2. 从参考文档出发可知三种序列式容器都有这样的插入方式，但insert过程中的细节却值得注意
+
+     ![image-20241203112930981](D:\Typora Picture\image-20241203112930981.png)
+
+  3. 如果把list换成deque，情况会有所不同
+
+     ![image-20241203151641204](D:\Typora Picture\image-20241203151641204.png)
+
+  4. 在利用迭代器遍历容器元素并做出处理时，往往需要更新迭代器
+
+     <span style=color:red;background:yellow>**虽然insert函数有多种形式，但它们的返回值都是指向第一个被插入元素的迭代器**</span>
+
+     ![image-20241203152546132](D:\Typora Picture\image-20241203152546132.png)
 
 
 
