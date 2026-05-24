@@ -28,9 +28,45 @@
         3. unordered_multiset
         4. unordered_multimap
 
-   2. **迭代器**
+   2. **迭代器：为了访问容器中的元素，可以将其看成是一种指针，称为泛型指针**
 
-      
+      ```cpp
+      vector<int> nums = {1,2,3};
+      vector<int>::iterator it = nums.begin();
+      ```
+
+   3. **算法：一些普通函数，可以操作容器中的元素**
+
+      ```cpp
+      std::sort(vec.begin(),vec.end());
+      ```
+
+   4. **适配器：起到适配的作用**
+
+      - 容器适配器  stack、queue、priority_queue
+      - 迭代器的适配器
+      - 函数适配器   bind、bind1st、bind2nd、function等
+
+   5. **函数对象：做定制化的操作**
+
+   6. **空间配置器：管理内存**
+
+3. **数据结构 + 算法 = 程序**
+
+   ![image-20260302155445054](..\0.TyporaPicture\image-20260302155445054.png)
+
+4. **STL六大组件之间的关系**
+
+   - 容器作为STL的主体，是许多不同的数据结构 
+   - 分配器为容器的实现分配应有的空间 
+
+   - 泛型算法用来处理容器中的数据 
+
+   - 迭代器是泛型算法和容器之间的桥梁
+
+   - 仿函数使得算法可以有更加灵活的自定义模式 
+
+   - 适配器保证了自定义的功能可以和STL中现有的功能相融合
 
 ## 二、序列式容器
 
@@ -120,7 +156,7 @@ box.pop_front(); // 1 2 3
 
 - **vector**
 
-  ![image-20250314113757563](D:\Typora Picture\image-20250314113757563.png)
+  ![image-20250314113757563](..\0.TyporaPicture\image-20250314113757563.png)
 
   vector头部是固定的，不能通过`push_front`与`pop_front`进行插入与删除，因为其没有这两个成员函数，只提供了在尾部进行插入与删除的操作，如果真的要在头部插入或者删除，必须用通用的 **`insert()`** 和 **`erase()`**，但是这样的话，其他的元素会发生移动，这样操作就比较复杂（时间复杂度O(n)）
 
@@ -130,7 +166,7 @@ box.pop_front(); // 1 2 3
 
 - **deque**
 
-  ![image-20250314113918079](D:\Typora Picture\image-20250314113918079.png)
+  ![image-20250314113918079](..\0.TyporaPicture\image-20250314113918079.png)
 
   **实现效果**是**双端队列**
 
@@ -138,7 +174,7 @@ box.pop_front(); // 1 2 3
 
 - **list**
 
-  ![image-20250314114024724](D:\Typora Picture\image-20250314114024724.png)
+  ![image-20250314114024724](..\0.TyporaPicture\image-20250314114024724.png)
 
   list的**实现效果**是**双向链表**
 
@@ -150,7 +186,7 @@ box.pop_front(); // 1 2 3
 
   1. 继承图
 
-     ![image-20241114211419722](D:\Typora Picture\image-20241114211419722.png)
+     ![image-20241114211419722](..\0.TyporaPicture\image-20241114211419722.png)
 
   2. 源码
 
@@ -180,15 +216,15 @@ box.pop_front(); // 1 2 3
 
   3. 获取vector的第一个元素的首地址，应该怎么做？
 
-     ![image-20240806111634713](D:\Typora Picture\image-20240806111634713.png)
+     ![image-20240806111634713](..\0.TyporaPicture\image-20240806111634713.png)
 
      验证如下：
 
-     ![image-20250314144207535](D:\Typora Picture\image-20250314144207535.png)
+     ![image-20250314144207535](..\0.TyporaPicture\image-20250314144207535.png)
 
      vector中`at()`与`operator[]`都具备随机访问的含义，但是**operator[]完全不做范围检查**，存在越界的风险，也就是不安全，但是**at具备范围限制，更加安全**，测试如下：
 
-     ![image-20250314144256583](D:\Typora Picture\image-20250314144256583.png)
+     ![image-20250314144256583](..\0.TyporaPicture\image-20250314144256583.png)
 
      > - **迭代器 ≠ 原生地址**，它是**对指针 / 节点的封装（抽象化的指针）**
      >
@@ -237,7 +273,7 @@ box.pop_front(); // 1 2 3
 
   1. 继承图
 
-     ![image-20250324164403999](D:\Typora Picture\image-20250324164403999.png)
+     ![image-20250324164403999](..\0.TyporaPicture\image-20250324164403999.png)
 
   2. 原理
 
@@ -279,13 +315,13 @@ box.pop_front(); // 1 2 3
 
           在deque头部添加元素或者尾部添加元素的过程中，原本已经存在deque中的元素始终没有改变位置，这一点与vector形成很大的区别
 
-          ![image-20250315160520768](D:\Typora Picture\image-20250315160520768.png)
+          ![image-20250315160520768](..\0.TyporaPicture\image-20250315160520768.png)
 
      - 每个缓冲区片段的元素个数
 
        每个缓冲区是**固定大小的连续数组**（SGI 实现默认 512 字节）
 
-       ![image-20250314162540413](D:\Typora Picture\image-20250314162540413.png)
+       ![image-20250314162540413](..\0.TyporaPicture\image-20250314162540413.png)
 
        如果deque存放的元素类型的大小小于 512 字节。每个缓冲区片段的大小为 512 字节，512 除以元素类型的大小，就可以得到每个缓冲区片段能够存放的元素数量
 
@@ -299,9 +335,9 @@ box.pop_front(); // 1 2 3
 
        deque的迭代器比vector的迭代器复杂得多，`vector<T>`的迭代器实际是对T*的包装，但deque的迭代器实际应该视为对象，数据成员包含四个指针，并且进行了一系列的运算符重载，使得迭代器能够像指针一样被使用
 
-       ![image-20250315161915597](D:\Typora Picture\image-20250315161915597.png)
+       ![image-20250315161915597](..\0.TyporaPicture\image-20250315161915597.png)
 
-       ![image-20250315161952642](D:\Typora Picture\image-20250315161952642.png)
+       ![image-20250315161952642](..\0.TyporaPicture\image-20250315161952642.png)
 
 #### ==1.7 insert操作==
 
@@ -311,7 +347,7 @@ box.pop_front(); // 1 2 3
 
 - 它们都具备以下四种插入的功能
 
-  ![image-20240806144651816](D:\Typora Picture\image-20240806144651816.png)
+  ![image-20240806144651816](..\0.TyporaPicture\image-20240806144651816.png)
 
   ```cpp
   vector<int> box{1,2,3,4,5};
@@ -351,25 +387,25 @@ box.pop_front(); // 1 2 3
 
   1. 双向链表由于其底层结构的原因，插入是非常方便的
 
-     ![image-20241203105613687](D:\Typora Picture\image-20241203105613687.png)
+     ![image-20241203105613687](..\0.TyporaPicture\image-20241203105613687.png)
 
   2. 从参考文档出发可知三种序列式容器都有这样的插入方式，但insert过程中的细节却值得注意
 
-     ![image-20241203112930981](D:\Typora Picture\image-20241203112930981.png)
+     ![image-20241203112930981](..\0.TyporaPicture\image-20241203112930981.png)
 
   3. 如果把list换成deque，情况会有所不同
 
-     ![image-20241203151641204](D:\Typora Picture\image-20241203151641204.png)
+     ![image-20241203151641204](..\0.TyporaPicture\image-20241203151641204.png)
 
   4. 在利用迭代器遍历容器元素并做出处理时，往往需要更新迭代器
 
      <span style=color:red;background:yellow>**虽然insert函数有多种形式，但它们的返回值都是指向第一个被插入元素的迭代器**</span>
 
-     ![image-20241203152546132](D:\Typora Picture\image-20241203152546132.png)
+     ![image-20241203152546132](..\0.TyporaPicture\image-20241203152546132.png)
   
   5. 对于vector，insert操作执行过程中还存在着更大的隐患，可能导致<span style=color:red;background:yellow>**迭代器失效**</span>
   
-     ![image-20241203162022141](D:\Typora Picture\image-20241203162022141.png)
+     ![image-20241203162022141](..\0.TyporaPicture\image-20241203162022141.png)
   
      这是因为当vector使用insert进行插入时，可能会发生动态扩容。比如上述的nums是一个“存满”状态的vector，此时size和capacity的结果是一样的。增加新的元素会进行扩容
   
@@ -377,7 +413,7 @@ box.pop_front(); // 1 2 3
   
      <span style=color:red;background:yellow>**所以，每次在使用迭代器进行insert操作时，更新迭代器（重新置位）**</span>
   
-     ![image-20241203175553874](D:\Typora Picture\image-20241203175553874.png)
+     ![image-20241203175553874](..\0.TyporaPicture\image-20241203175553874.png)
   
      > <span style=color:red;background:yellow>**补充**</span>
      >
@@ -399,7 +435,7 @@ box.pop_front(); // 1 2 3
 
 三种序列式容器都可以进行erase操作，用来删除容器中的单个元素或多个元素
 
-![image-20240806160154610](D:\Typora Picture\image-20240806160154610.png)
+![image-20240806160154610](..\0.TyporaPicture\image-20240806160154610.png)
 
 - **list的erase操作**
 
@@ -407,7 +443,7 @@ box.pop_front(); // 1 2 3
 
   <span style=color:red;background:yellow>**erase函数的返回值为被删除元素后一位元素对应的迭代器**</span>
 
-  ![image-20241202175257615](D:\Typora Picture\image-20241202175257615.png)
+  ![image-20241202175257615](..\0.TyporaPicture\image-20241202175257615.png)
 
 - **deque的erase操作**
 
@@ -421,11 +457,11 @@ box.pop_front(); // 1 2 3
   > - 可以把**被删位置前面的元素整体往后移一位**（覆盖被删元素）
   > - 或者把**被删位置后面的元素整体往前移一位**（覆盖被删元素）
 
-  ![image-20241203093724218](D:\Typora Picture\image-20241203093724218.png)
+  ![image-20241203093724218](..\0.TyporaPicture\image-20241203093724218.png)
 
   如果想要在erase之后继续正常使用it这个迭代器，那么同样建议进行迭代器更新
 
-  ![image-20241203093928234](D:\Typora Picture\image-20241203093928234.png)
+  ![image-20241203093928234](..\0.TyporaPicture\image-20241203093928234.png)
 
 - **vector的erase操作**
 
@@ -439,7 +475,7 @@ box.pop_front(); // 1 2 3
   >
   > - 例如：使用vector时很可能写出这样的代码
   >
-  >   ![image-20241204110148074](D:\Typora Picture\image-20241204110148074.png)
+  >   ![image-20241204110148074](..\0.TyporaPicture\image-20241204110148074.png)
   >
   >   此时通过`it = nums.erase(it)`这样简单更新迭代器并不能解决问题（效果一样）。问题的**根本在于无论是对于该删除的元素还是不该删除的元素，迭代器的偏移采取的是统一的方式**
   >
@@ -451,15 +487,15 @@ box.pop_front(); // 1 2 3
   >
   >   因为list在物理存储上是不连续的，所以erase后仍旧指向已经失效的被删除元素，所以需要更新erase即向后移动一次
   >
-  >   ![image-20241204115650449](D:\Typora Picture\image-20241204115650449.png)
+  >   ![image-20241204115650449](..\0.TyporaPicture\image-20241204115650449.png)
 
 #### 1.9 元素的清空
 
-![image-20240806162826639](D:\Typora Picture\image-20240806162826639.png)
+![image-20240806162826639](..\0.TyporaPicture\image-20240806162826639.png)
 
-![image-20240806162838101](D:\Typora Picture\image-20240806162838101.png)
+![image-20240806162838101](..\0.TyporaPicture\image-20240806162838101.png)
 
-![image-20240806162848551](D:\Typora Picture\image-20240806162848551.png)
+![image-20240806162848551](..\0.TyporaPicture\image-20240806162848551.png)
 
 <span style=color:red;background:yellow>**总结**</span>：
 
@@ -491,15 +527,15 @@ const_reference back() const;
 - `emplace` 与 `insert`对比，前者是直接在指定位置构造对象，后者是将一个已存在的对象复制并插入到容器中指定位置
 - `emplace_back` 与 `push_back`对比， 前者是直接在容器尾部构造对象，后者是将一个已存在的对象复制并插入到容器末尾
 
-![image-20250317095728675](D:\Typora Picture\image-20250317095728675.png)
+![image-20250317095728675](..\0.TyporaPicture\image-20250317095728675.png)
 
 - `emplace_back`的效果
 
-  ![image-20240806164845608](D:\Typora Picture\image-20240806164845608.png)
+  ![image-20240806164845608](..\0.TyporaPicture\image-20240806164845608.png)
 
 - `emplace`的效果
 
-  ![image-20250317104810864](D:\Typora Picture\image-20250317104810864.png)
+  ![image-20250317104810864](..\0.TyporaPicture\image-20250317104810864.png)
 
 > 补充：**STL中的emplace_back和push_back有什么区别？**
 >
@@ -528,73 +564,217 @@ const_reference back() const;
 
 list还具有一些vector与deque没有的**独占成员函数**
 
-#### 2.1 sort
+#### 2.1 sort——排序
+
+> 注意：vector和deque没有此**成员函数**，通过**全局算法函数**`std::sort(vec.begin(),vec.end());`来对容器内的元素进行排序
 
 - **函数原型**
 
   将list中的元素排序
 
-  ![image-20241205154048844](D:\Typora Picture\image-20241205154048844.png)
+  ![image-20241205154048844](..\0.TyporaPicture\image-20241205154048844.png)
 
 - **无参版本的示例**
 
   如果使用**无参版本的sort函数**，则list中的元素**默认以升序排列**
 
-  ![image-20241205154657832](D:\Typora Picture\image-20241205154657832.png)
+  ![image-20241205154657832](..\0.TyporaPicture\image-20241205154657832.png)
 
 - **有参版本**
 
   第二个版本的sort函数有一个参数，参数为Compare类型的对象。关于Compare，第一次见到应该是在set类模板声明中
 
-  ![image-20241206162659730](D:\Typora Picture\image-20241206162659730.png)
+  ![image-20241206162659730](..\0.TyporaPicture\image-20241206162659730.png)
 
   之前在简单使用set时我们知道元素会默认按照升序排序，这里就**是使用了`std::less<key>`的效果**：
 
-  ![image-20241206162926925](D:\Typora Picture\image-20241206162926925.png)
+  ![image-20241206162926925](..\0.TyporaPicture\image-20241206162926925.png)
 
   效果和无参的sort版本是一样的，同样采用升序排序
 
   **这里对std::less的使用与之前unique_ptr的默认删除器的使用是很相似的**
 
-  ![image-20241206163620509](D:\Typora Picture\image-20241206163620509.png)
+  ![image-20241206163620509](..\0.TyporaPicture\image-20241206163620509.png)
 
   - `std::less`类的内部
 
     通过cpp参考文档能够了解到std::less进行了函数调用运算符的重载，在`operator()`函数中接受两个参数，代表两个元素，在函数定义中对两个元素进行了比较
 
-    ![image-20241206164121319](D:\Typora Picture\image-20241206164121319.png)
+    ![image-20241206164121319](..\0.TyporaPicture\image-20241206164121319.png)
 
   - 降序排列
 
     如果想要按照降序排列，对应位置可以换成std::greater
 
-    ![image-20241209102349777](D:\Typora Picture\image-20241209102349777.png)
+    ![image-20241209102349777](..\0.TyporaPicture\image-20241209102349777.png)
 
   - 定制化Compare
 
     当然，针对需要排序的各种元素类型，可能需要更灵活的Compare，那么我们可以像定制化删除器一样定制化Compare
 
-    ![image-20241209105703516](D:\Typora Picture\image-20241209105703516.png)
+    ![image-20241209105703516](..\0.TyporaPicture\image-20241209105703516.png)
 
-    会发现自定义的Compare对象被当成函数调用了很多次，可以简单阅读list的**sort**函数源码，可知**其底层实现实际是一种基于归并排序的做法**
+    会发现自定义的Compare对象被当成函数调用了很多次，可以简单阅读list的**sort**函数源码，发现**其底层实现实际是一种基于归并排序的做法**
 
+    ```cpp
+    // 两个template关键字，是因为这里定义的是类模板的成员函数模板，而且在类外定义。此为C++语法规定的写法
     
+    template <class _Tp, class _Alloc>
+    template <class _StrictWeakOrdering>
+    void list<_Tp, _Alloc>::sort(_StrictWeakOrdering __comp) 
+    {
+        // 如果链表长度 <= 1，则已经有序，直接返回
+        // _M_node 是链表的尾后哨兵节点，_M_node->_M_next 是真正的头节点
+        // 条件: 头节点不是哨兵 (链表非空) 且 头节点的下一个不是哨兵 (长度 >= 2)
+        if (_M_node->_M_next != _M_node && _M_node->_M_next->_M_next != _M_node) 
+        {
+            list<_Tp, _Alloc> __carry;          // 临时存放当前待归并的小段
+            list<_Tp, _Alloc> __counter[64];    // 归并桶数组，counter[i] 最多存 2^i 个元素
+            int __fill = 0;                     // 当前使用到的最大桶索引 + 1
+    
+            // 不断从原链表中剥离第一个元素，放入 __carry 作为长度为 1 的有序段
+            while (!empty()) 
+            {
+                // 将 *this 的第一个元素剪切到 __carry 的头部
+                __carry.splice(__carry.begin(), *this, begin());
+    
+                int __i = 0;
+                // 像二进制加法一样，若当前桶 i 非空，则与 __carry 合并，并进位到下一桶
+                while (__i < __fill && !__counter[__i].empty()) 
+                {
+                    // 将 __carry 合并到 __counter[__i] 中，结果留在 __counter[__i]
+                    __counter[__i].merge(__carry, __comp);
+                    // 交换 __carry 与 __counter[__i]，现在 __carry 持有合并后更大的有序段
+                    __carry.swap(__counter[__i++]);
+                }
+                // 将进位得到的 __carry 放入空桶 __counter[__i]
+                __carry.swap(__counter[__i]);
+                // 如果进位到了更高的空桶，更新 __fill
+                if (__i == __fill) 
+                    ++__fill;
+            }
+    
+            // 此时，所有元素已分布在不同大小的桶中（counter[0] ~ counter[fill-1]）
+            // 需要将所有桶从低到高依次合并，最终结果汇聚在 counter[fill-1]
+            for (int __i = 1; __i < __fill; ++__i)
+                __counter[__i].merge(__counter[__i - 1], __comp);
+    
+            // 将最终结果交换回 *this
+            swap(__counter[__fill - 1]);
+        }
+    }
+    
+    template <class _Tp, class _Alloc>
+    template <class _StrictWeakOrdering>
+    void list<_Tp, _Alloc>::merge(list<_Tp, _Alloc>& __x,
+                                  _StrictWeakOrdering __comp) 
+    {
+        iterator __first1 = begin();    // 当前链表起始位置
+        iterator __last1  = end();      // 当前链表尾后哨兵
+        iterator __first2 = __x.begin();// __x 起始位置
+        iterator __last2  = __x.end(); // __x 尾后哨兵
+    
+        // 两个链表都还有元素时，比较头部元素
+        while (__first1 != __last1 && __first2 != __last2)
+        {
+            // 若 __x 的头元素更小（按严格弱序），将其转移到当前链表的 __first1 之前
+            if (__comp(*__first2, *__first1)) 
+            {
+                iterator __next = __first2;      // 暂存当前节点
+                // transfer: 将 [__first2, ++__next) 即单个元素移动到 __first1 之前
+                transfer(__first1, __first2, ++__next);
+                // 更新 __first2 为下一个节点（transfer 后原 __first2 已移走）
+                __first2 = __next;
+            }
+            else 
+            {
+                // 否则当前链表元素更小（或相等），直接后移 __first1
+                ++__first1;
+            }
+        }
+    
+        // 如果 __x 还有剩余元素，全部粘接到当前链表尾部
+        if (__first2 != __last2)
+            transfer(__last1, __first2, __last2);
+    }
+    ```
 
-#### 2.2 reverse
+#### 2.2 reverse——将list中所有元素顺序反转
 
+![image-20241209114609938](..\0.TyporaPicture\image-20241209114609938.png)
 
+> 注意和vector的reserve函数(预留空间)区分，拼写上非常相似
 
-#### 2.3 unique
+![image-20250317155350549](..\0.TyporaPicture\image-20250317155350549.png)
 
+#### 2.3 unique——去重list中重复的元素
 
+**必须先排序**（无论是从小到大还是从大到小），才能够实现效果
 
-#### 2.4 merge
+![image-20250317154753075](..\0.TyporaPicture\image-20250317154753075.png)
 
+#### 2.4 merge——将一个list合并到当前list中
 
+**合并结果**：lst2中的元素合并到lst1中，**lst2的元素被清空**
 
-#### 2.5 remove & remove_if
+> 注意：如果合并前的list是无序的，合并后的list整体也是无序的
+>
+> 想要合并后的list结果是有序的，需要<span style=color:red;background:yellow>**合并前两个list中的元素先排好序**</span>
 
+![image-20250818212441074](..\0.TyporaPicture\image-20250818212441074.png)
 
+![image-20250818212500682](..\0.TyporaPicture\image-20250818212500682.png)
 
-#### 2.6 splice
+#### 2.5 remove & remove_if——移除元素
 
+- remove函数能够**移除所有等于 value 的元素**
+
+- remove_if函数能够**移除所有符合条件的元素**，==需要传入一个一元谓词（返回值为bool的一元函数）——如果某元素作为函数参数能够返回true，则判定为应该删除的元素==
+
+  ![image-20250808154243844](..\0.TyporaPicture\image-20250808154243844.png)
+
+#### 2.6 splice——移动元素
+
+> `splice` 是**直接修改原数组**的方法，它会从数组中**物理移除**元素，返回的是被移除元素组成的新数组
+
+![image-20240807100112283-1733123638304-4](..\0.TyporaPicture\image-20240807100112283-1733123638304-4.png)
+
+==第一个参数相当于是移动的目的地==
+
+![image-20240807100952020-1733123638304-5](..\0.TyporaPicture\image-20240807100952020-1733123638304-5.png)
+
+![image-20240807101035059-1733123638304-6](..\0.TyporaPicture\image-20240807101035059-1733123638304-6.png)
+
+<span style=color:red;background:yellow>**注意：**</span>如果在同一个链表中进行splice操作
+
+![image-20240807101633898-1733123638304-7](..\0.TyporaPicture\image-20240807101633898-1733123638304-7.png)
+
+**可能会出现问题（取决于范围有没有交叉）**
+
+类似于strcpy，目的字符串与源字符串不要有交叉，同理还有memcpy也是要注意这个问题
+
+> 补充：
+>
+> - splice函数可以帮助我们很方便地实现LRU(Least Recently used)
+>
+>
+> - <span style=color:red;background:yellow>**LRU:最近最少使用算法**</span>
+>
+>   一种常用的页面置换算法，用于在有限的内存空间中管理数据缓存，以提高系统性能
+>
+>   LRU 算法基于一个假设：如果一个数据在最近一段时间内没有被访问，那么在未来它被访问的概率也相对较低。因此，当内存空间不足时，LRU 算法会选择淘汰最近最少使用的数据，为新的数据腾出空间
+>
+>   ```cpp
+>   思想：新元素放在前面，老的元素放在后面
+>   比如现在有 1 2 3 4 四个元素逐一存到容器中，限制容量为4
+>   刚存放完       插入元素3      插入元素5      插入元素4
+>   4 3 2 1 ----> 3 4 2 1 ----> 5 3 4 2  ---> 4 5 3 2
+>   
+>   // 假设现在插入元素2   
+>   int number = tmp.back();
+>   tmp.pop_back();
+>   tmp.push_front(number);
+>   
+>   // 如果明确了是用list存储，可以使用splice函数，
+>   tmp.splice(tmp.begin(), tmp, --tmp.end());
+>   ```
