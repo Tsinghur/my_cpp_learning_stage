@@ -22,7 +22,7 @@ STL的算法库中的函数，都是属于普通函数（并不是哪一个类�
 
 首先查看cpp参考文档的描述
 
-<img src="..\Typora Picture\image-20250110103033784.png" alt="image-20250110103033784" style="zoom:67%;" />
+<img src="..\0.TyporaPicture\image-20250110103033784.png" alt="image-20250110103033784" style="zoom:67%;" />
 
 - 第三个参数需要传一个一元函数（或者仿函数），其函数形参只有一个（不一定要有const或者&）
 
@@ -205,7 +205,7 @@ STL的算法库中的函数，都是属于普通函数（并不是哪一个类�
 
 - lambda表达式的类型与匿名函数的returnType并非是同一件事
 
-  **auto 推导出的不是函数指针，也不是 std::function，而是一个编译器自动生成的、独一无二的「闭包类型（closure type）」**，你写不出它的名字，只能用 auto 或模板参数接住它
+  ==**auto 推导出的不是函数指针，也不是 std::function，而是一个编译器自动生成的、独一无二的「闭包类型（closure type）」**，你写不出它的名字，只能用 auto 或模板参数接住它==
 
 - lambda表达式的类型在C++11中会被看做是一个带operator()的类，即仿函数。按照C++标准，lambda表达式的operator()默认是const的，一个const成员函数是无法修改成员变量值的。mutable选项的作用就在于取消operator()的const属性
 

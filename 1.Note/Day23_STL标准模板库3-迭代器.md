@@ -340,214 +340,444 @@
   > | **`back_insert_iterator`** | **类模板**   | **迭代器适配器本体**，包装容器，实现尾插逻辑       |
   > | **`back_inserter`**        | **函数模板** | 辅助工具，**快速创建** `back_insert_iterator` 对象 |
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250103114847667.png" alt="image-20250103114847667" style="zoom:67%;" />‘
+  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250103114847667.png" alt="image-20250103114847667" style="zoom:67%;" />
 
 - **源码**
 
   ```cpp
-  template <class _Tp, 
+  // 模板参数：
+  // _Tp    ：要从流中读取的数据类型
+  // _CharT ：流使用的字符类型，默认 char
+  // _Traits：字符特性类，默认 char_traits<_CharT>
+  // _Dist  ：迭代器距离类型，通常 ptrdiff_t（这里未使用）
+  template <class _Tp,
             class _CharT = char, class _Traits = char_traits<_CharT>,
-            class _Dist = ptrdiff_t> 
-  class istream_iterator 
+            class _Dist = ptrdiff_t>
+  class istream_iterator
   {
-      //无参构造
-      istream_iterator() 
-      : _M_stream(nullptr)
-      , _M_ok(false) {}  
-      
-      //接收一个输入流对象的构造函数
-      //__s = cin;
-      //_M_stream = &cin;
-      istream_iterator(istream_type& __s) 
-      : _M_stream(&__s) 
+  public:
+      // 为了方便使用，通常会有以下类型别名（原代码略）
+      // typedef _Tp value_type;
+      // typedef _Tp& reference;
+      // typedef basic_istream<_CharT, _Traits> istream_type;
+  
+      //----------------------------------------------
+      // 1. 默认构造函数 —— 创建“结束标记”迭代器
+      //----------------------------------------------
+      istream_iterator()
+          : _M_stream(nullptr),   // 不关联任何输入流
+            _M_ok(false)          // 标记读取失败，这是一个“尾后”迭代器
+      {}
+  
+      //----------------------------------------------
+      // 2. 带流引用的构造函数 —— 创建“开始”迭代器
+      //    __s 通常是 cin 或文件流
+      //----------------------------------------------
+      istream_iterator(istream_type& __s)
+          : _M_stream(&__s)       // 记录流的地址
       {
-          _M_read(); 
+          _M_read();              // 立即尝试读取第一个元素，惰性求值
       }
-      
-      void _M_read() 
+  
+      //----------------------------------------------
+      // 核心读取函数：从流中提取一个数据项到 _M_value，
+      // 并更新状态标记 _M_ok
+      //----------------------------------------------
+      void _M_read()
       {
+          // 如果流指针有效且流本身处于可用状态，才尝试读取
           _M_ok = (_M_stream && *_M_stream) ? true : false;
-          if (_M_ok) 
+  
+          if (_M_ok)
           {
-              *_M_stream >> _M_value;//cin >> _M_value;
-              //输入流的状态为goodbit，则_M_ok = true
+              // 执行输入操作：将流中的数据读入 _M_value
+              *_M_stream >> _M_value;
+  
+              // 读取后再次检查流状态：
+              // 如果读取成功（状态为 goodbit），_M_ok 保持 true；
+              // 若遇到 EOF、类型不匹配等错误，流会变为非 goodbit，_M_ok 变为 false。
               _M_ok = *_M_stream ? true : false;
           }
       }
-      
+  
+      //----------------------------------------------
+      // 判断两个流迭代器是否“相等”
+      // 用于结束条件判断
+      //----------------------------------------------
       bool _M_equal(const istream_iterator& __y) const
-      { 
-          return (_M_ok == __y._M_ok) && (!_M_ok || _M_stream == __y._M_stream); 
-      }
-      
-      istream_iterator operator++(int)  
       {
-          istream_iterator __tmp = *this;
-          _M_read();
-          return __tmp;
+          // 两个迭代器相等当且仅当：
+          // 1. 它们的有效标志位 _M_ok 相同（都为 true 或都为 false）
+          // 2. 并且：
+          //    - 如果 _M_ok 为 false（即双方都是结束迭代器），则认为相等（! _M_ok 为 true）；
+          //    - 如果 _M_ok 为 true，则要求它们关联的是同一个流对象。
+          // 这种设计使得：所有默认构造的迭代器彼此相等，且与任何已“读完”的流迭代器相等。
+          return (_M_ok == __y._M_ok) && (!_M_ok || _M_stream == __y._M_stream);
       }
-      
+  
+      //----------------------------------------------
+      // 后置递增运算符：返回旧值，然后前进（读取下一个元素）
+      //----------------------------------------------
+      istream_iterator operator++(int)
+      {
+          istream_iterator __tmp = *this;  // 保存当前状态（含当前值 _M_value）
+          _M_read();                       // 从流中读取下一个元素
+          return __tmp;                    // 返回未递增前的副本
+      }
+  
+      // 前置递增（通常也需实现，这里略）
+      // istream_iterator& operator++() { _M_read(); return *this; }
+  
+      // 解引用操作符：返回当前缓存的元素
       reference operator*() const { return _M_value; }
+  
   private:
-    istream_type* _M_stream;
-    _Tp _M_value;
-    bool _M_ok;
+      istream_type* _M_stream;  // 指向关联的输入流
+      _Tp           _M_value;   // 缓存最近一次成功读取的值
+      bool          _M_ok;      // 当前读取状态是否有效
   };
   
-  
-  //isi._M_equal(__y);
-  inline bool operator!=(const istream_iterator& __x, const istream_iterator& __y) 
+  //----------------------------------------------
+  // 全局 operator!=：依赖 _M_equal 成员函数
+  //----------------------------------------------
+  inline bool operator!=(const istream_iterator& __x, const istream_iterator& __y)
   {
-    return !__x._M_equal(__y);
+      return !__x._M_equal(__y);
   }
   
+  //==============================================
+  // 使用示例：std::copy(isi, istream_iterator<int>(), std::back_inserter(vec));
+  //==============================================
+  /*
+   * 假如我们有：
+   *   istream_iterator<int> isi(cin);     // 开始迭代器，构造时立刻读取第一个整数
+   *   istream_iterator<int> end;          // 结束标记迭代器
+   *
+   * 调用 std::copy(isi, end, back_inserter(vec)) 实际执行的算法如下：
+   */
   
-  //例子中使用copy函数的语句
-  //std::copy(isi, istream_iterator<int>(), std::back_inserter(vec));
-  
-  
-  // first = isi;
-  //last = istream_iterator<int>()
-  //d_first = std::back_inserter(vec)
+  // first = isi （开始迭代器）
+  // last  = istream_iterator<int>() （结束标记）
+  // d_first = back_inserter(vec)  （输出迭代器，负责向 vec 末尾添加元素）
   OutputIt copy(InputIt first, InputIt last, OutputIt d_first)
   {
-      while (first != last) { //两个输入流迭代器对象进行!=比较，其必然对!=符号进行了重载
-          //*d_first++ = 上一次输入的值
-          //d_first是back_inserter函数返回值，跳转查看back_inserter函数
-          *d_first++ = *first++;   //first每次进行++操作，会进行一次输入，如果输入过程使得流对象状态进入非goodbit状态，就可以影响到_M_ok
+      // 循环条件：first != last
+      // 利用上述 operator!= 进行比较，本质是调用 first._M_equal(last)
+      // 只要流还在有效状态且未遇到结束迭代器，循环就继续
+      while (first != last)
+      {
+          // *d_first++ = *first++;
+          // 分解步骤：
+          // 1. *first   ：取出当前缓存的元素（上一次 _M_read 读到的值）
+          // 2. *d_first++  = 值 ：将该值通过 back_insert_iterator 追加到容器，然后移动输出迭代器
+          // 3. first++  ：后置递增，触发 _M_read()，尝试从流中读取下一个元素。
+          //    若读取失败（EOF/错误），first 的 _M_ok 变为 false，
+          //    导致下一次 while 条件判断时 first != last 变为 false，循环终止。
+          *d_first++ = *first++;
       }
       return d_first;
   }
   
-  
+  // back_inserter 辅助函数：创建 back_insert_iterator 对象
   template <class _Container>
-  inline back_insert_iterator<_Container> back_inserter(_Container& __x) {
-    return back_insert_iterator<_Container>(__x);
+  inline back_insert_iterator<_Container> back_inserter(_Container& __x)
+  {
+      // back_insert_iterator 的 operator= 内部会调用 __x.push_back(value)
+      return back_insert_iterator<_Container>(__x);
   }
   ```
-
+  
   **back_insert_iterator(==迭代器适配器-类模板==)的实现**
-
+  
   ```cpp
   template <class _Container>
   class back_insert_iterator {
   protected:
-    _Container* container;
-      
-      //container = &vec;
-      explicit 
-      back_insert_iterator(_Container& __x) 
-     : container(&__x) 
-     {}
-      
-     back_insert_iterator<_Container>& operator=(const typename _Container::value_type& __value) 
-     { 
-      container->push_back(__value);
-      return *this;
-    }
-      
-      back_insert_iterator<_Container>& operator*() { return *this; }
-    back_insert_iterator<_Container>& operator++() { return *this; }
-    back_insert_iterator<_Container>& operator++(int) { return *this; }
+      _Container* container;  // 指向目标容器的指针
+  
+  public:
+      // 在实际的 C++ 标准库中，还需要提供一些迭代器所需的类型别名，例如：
+      // using iterator_category = output_iterator_tag;
+      // using value_type      = void;
+      // using difference_type = void;
+      // using pointer         = void;
+      // using reference       = void;
+      // 因为它是输出迭代器，这些类型通常不重要，这里略去。
+  
+      //----------------------------------------------
+      // 构造函数：接收容器引用，保存其地址
+      // 例如：back_insert_iterator(vec) 会使 container = &vec
+      // 注意：该构造函数通常声明为 explicit，防止意外的隐式转换
+      //----------------------------------------------
+      explicit back_insert_iterator(_Container& __x)
+          : container(&__x)
+      {}
+  
+      //----------------------------------------------
+      // 赋值运算符：核心操作
+      // 当执行 *it = value 时，实际调用本函数，
+      // 将 value 追加到容器尾部。
+      //----------------------------------------------
+      back_insert_iterator<_Container>&
+      operator=(const typename _Container::value_type& __value)
+      {
+          container->push_back(__value);   // 向关联容器尾部添加元素
+          return *this;
+      }
+  
+      // 移动赋值版本（C++11起），此处省略，原理类似，调用 push_back 的右值版本。
+  
+      //----------------------------------------------
+      // operator* ：解引用操作
+      // 对于纯输出迭代器，此操作通常返回迭代器自身，
+      // 因为真正的工作发生在随后的赋值操作中。
+      //----------------------------------------------
+      back_insert_iterator<_Container>& operator*()
+      {
+          return *this;
+      }
+  
+      //----------------------------------------------
+      // operator++（前置）与 operator++(int)（后置）
+      // 对于输出迭代器，递增操作一般也是空操作，
+      // 返回自身即可，因为迭代器并不真正“移动”到下一个位置。
+      //----------------------------------------------
+      back_insert_iterator<_Container>& operator++()
+      {
+          return *this;
+      }
+  
+      back_insert_iterator<_Container>& operator++(int)
+      {
+          return *this;
+      }
   };
+  
+  // 辅助函数 back_inserter —— 创建 back_insert_iterator 的便捷接口
+  // template <class _Container>
+  // inline back_insert_iterator<_Container> back_inserter(_Container& __x)
+  // {
+  //     return back_insert_iterator<_Container>(__x);
+  // }
   ```
 
 ### 4.迭代器适配器
 
 #### 4.1 三组插入迭代器适配器
 
-<img src="D:\Typora Picture\image-20250103181150482.png" alt="image-20250103181150482" style="zoom:67%;" />
+- **三组插入迭代器适配器**
 
+  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250103181150482.png" alt="image-20250103181150482" style="zoom:67%;" />
 
+  1. back_inserter是**便捷函数**，该函数返回类型是back_insert_iterator，它们的底层会调用容器的push_back
 
-back_inserter是函数，该函数的返回类型是back_insert_iterator，它们的底层会调用容器的push_back。
+  2. front_inserter是函数，该函数的返回类型是front_insert_iterator，它们的底层会调用容器的push_front
+  3. inserter是函数，该函数的返回类型是insert_iterator，它们的底层会调用容器的insert
 
-front_inserter是函数，该函数的返回类型是front_insert_iterator，它们的底层会调用容器的push_front。
+- **简单示例：**
 
-inserter是函数，该函数的返回类型是insert_iterator，它们的底层会调用容器的insert。
+  将list的元素插入到vector尾部
 
+  **除了以往的常规方式（遍历list的元素，再使用vector的push_back函数添加这些元素），还可以使用迭代器**
 
+  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250106111219439.png" alt="image-20250106111219439" style="zoom:67%;" />
 
-看一个简单的例子
+    > **上面两行copy语句是等价的，它们实现的功能一模一样，只是写法上的 “便捷版” 和 “完整版” 区别**
+    >
+    > 1. **`back_inserter(vec)` 是便捷函数**
+    >
+    >    `std::back_inserter` 是 C++ 标准库提供的一个**模板辅助函数**
+    >
+    >    它的作用就是帮你自动推导容器类型，生成对应的 `std::back_insert_iterator` 对象
+    >
+    >    底层实现：
+    >
+    >    ```cpp
+    >    template <class Container>
+    >    std::back_insert_iterator<Container> back_inserter(Container& c) {
+    >        return std::back_insert_iterator<Container>(c);
+    >    }
+    >    ```
+    >
+    > 2. **`back_insert_iterator<vector<int>>(vec)` 是显式构造**
+    >
+    >    这是直接手动构造了一个 `back_insert_iterator` 模板类的对象，明确指定了容器类型为 `vector<int>`，效果和 `back_inserter(vec)` 完全一致
+    >
+    > 作为 `std::copy` 的第三个参数，它们的功能都是：
+    >
+    > - 生成一个**输出迭代器**
+    > - 每次拷贝元素时，自动调用 `vec.push_back(元素)`，将元素追加到 `vec` 的末尾
 
-要将list的元素插入到vector尾部，除了以往的常规方式（遍历list的元素，再使用vector的push_back函数添加这些元素），还可以使用上迭代器。
+    再将vector的元素插入到list头部
 
-<img src="D:\Typora Picture\image-20250106111219439.png" alt="image-20250106111219439" style="zoom:67%;" />
+    <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250106111304333.png" alt="image-20250106111304333" style="zoom:67%;" />
 
+    <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250106144924432.png" alt="image-20250106144924432" style="zoom:67%;" />
 
+    从得到的结果可以想到，执行的过程是从头到尾遍历vector的元素，然后一次次执行了push_front函数
 
-—— 再将vector的元素插入到list头部
+    > **补充**
+    >
+    > 1. 可不可以将list元素插入到vector头部呢？
+    >
+    >    - 可以把 list 的元素插到 vector 头部，但不能用 front_inserter，而且效率很低
+    >
+    >      1. 但是不能使用 front_inserter 往 vector 头插
+    >
+    >        `std::front_inserter` 内部调用的是 `push_front()`。
+    >
+    >        **vector 没有 push_front**，只有 list、deque 才有。
+    >
+    >        所以下面这种写法**编译不通过**：
+    >
+    >        ```cpp
+    >        std::list<int> lst = {1,2,3};
+    >        std::vector<int> vec;
+    >        // 错误：vector 不能用 front_inserter
+    >        std::copy(lst.begin(), lst.end(), std::front_inserter(vec));
+    >        ```
+    >
+    >      2. 应该使用 insert + 反向迭代器
+    >
+    >        想把整个 list 一次性插到 vector 头部，可以用 `vec.insert`，并注意**顺序**：
+    >
+    >        ```cpp
+    >        #include <vector>
+    >        #include <list>
+    >        #include <algorithm>
+    >        
+    >        int main() {
+    >            std::list<int> lst = {1,2,3};
+    >            std::vector<int> vec = {10,20,30};
+    >        
+    >            // 把 list 元素整体插到 vector 头部
+    >            vec.insert(vec.begin(), lst.begin(), lst.end());
+    >            // vec 现在：1,2,3,10,20,30
+    >        }
+    >        ```
+    >
+    >        如果希望**逆序插入**（类似 front_inserter 的效果）：
+    >
+    >        ```cpp
+    >        vec.insert(vec.begin(), lst.rbegin(), lst.rend());
+    >        // vec 变成：3,2,1,10,20,30
+    >        ```
+    >
+    >
+    >    - 效率问题与更好的方案
+    >
+    >      > vector 是**连续数组**，头部插入会让**所有元素后移**
+    >      >
+    >      > 每次 `insert(vec.begin(), ...)` 的复杂度是 **O(n)**
+    >      >
+    >      > 如果循环逐个头插：
+    >      >
+    >      > ```cpp
+    >      > for (auto x : lst) vec.insert(vec.begin(), x);
+    >      > ```
+    >      >
+    >      > 会变成 **O(n²)**，数据量大时很慢
+    >
+    >      1. **对于少量数据**：
+    >
+    >         直接用 `vec.insert(vec.begin(), lst.begin(), lst.end())` 无所谓
+    >
+    >      2. **而对于大量数据**：
+    >
+    >         - 先把 list 拷贝到临时 vector；
+    >
+    >         - 再 `reserve` 扩容；
+    >
+    >         - 最后 `insert` 一次性合并。
+    >
+    >      3. **频繁头插**：**别用 vector**，改用 `std::deque`（支持 O (1) push_front）
+    >
+    > 2. 将list的元素插入到set中
+    >
+    >    ![image-20240809164112172](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240809164112172-1733126659852-96.png)
+    >
+    > <font color=red>**所以：使用上述三种插入迭代器的时候，如果容器本身不具备对应插入函数的话，那么就不能乱用**</font>
 
-<img src="D:\Typora Picture\image-20250106111304333.png" alt="image-20250106111304333" style="zoom:67%;" />
+- **copy、front_inserter、front_insert_iterator的源码：**
 
-<img src="D:\Typora Picture\image-20250106144924432.png" alt="image-20250106144924432" style="zoom:67%;" />
-
-从得到的结果可以想到，执行的过程是从头到尾遍历vector的元素，然后一次次执行了push_front函数。、
-
-那么，可不可以将list元素插入到vector头部呢？
-
-``` c++
-//std::copy(vec.begin(),vec.end(),front_inserter(lst));
-//first = vec.begin()
-//last = vec.end()
-//d_first = front_insert_iterator<_Container>(lst)
-template<class InputIt, class OutputIt>
-OutputIt copy(InputIt first, InputIt last, OutputIt d_first)
-{
-    while (first != last) {
-        *d_first++ = *first++;
+    ```cpp
+    // ==============================================
+    // 1. std::copy 算法的实现
+    // 将 [first, last) 范围内的元素依次复制到 d_first 开始的位置
+    // ==============================================
+    template<class InputIt, class OutputIt>
+    OutputIt copy(InputIt first, InputIt last, OutputIt d_first)
+    {
+        while (first != last) {
+            // 核心循环：
+            // *d_first++ = *first++;
+            // 1. *first  : 获取当前输入位置的元素
+            // 2. first++ : 输入迭代器前进（后置递增，返回原值后移动）
+            // 3. *d_first++ = 值 : 将值赋给输出迭代器的当前位置，然后输出迭代器前进
+            // 
+            // 对于 front_insert_iterator，*d_first 返回迭代器自身，
+            // ++ 也是空操作，真正的插入发生在赋值运算符中（调用 push_front）
+            *d_first++ = *first++;
+        }
+        return d_first;
     }
-    return d_first;
-}
-
-
-template <class _Container>
-inline front_insert_iterator<_Container> front_inserter(_Container& __x) {
-  return front_insert_iterator<_Container>(__x);
-}
-
-
-template <class _Container>
-class front_insert_iterator {
-protected:
-  _Container* container;
-public:
-  typedef _Container          container_type;
-  typedef output_iterator_tag iterator_category;
-  typedef void                value_type;
-  typedef void                difference_type;
-  typedef void                pointer;
-  typedef void                reference;
-
-  explicit front_insert_iterator(_Container& __x) : container(&__x) {}
     
-  front_insert_iterator<_Container>& operator=(const typename _Container::value_type& __value) { 
-    container->push_front(__value);
-    return *this;
-  }
-  front_insert_iterator<_Container>& operator*() { return *this; }
-  front_insert_iterator<_Container>& operator++() { return *this; }
-  front_insert_iterator<_Container>& operator++(int) { return *this; }
-};
-```
-
-
-
-
-
-
-
-—— 将list的元素插入到set中
-
-![image-20240809164112172](D:\Typora Picture\image-20240809164112172-1733126659852-96.png)
-
-
-
-<font color=red>**注意：使用上述三种插入迭代器的时候，如果容器本身不具备对应插入函数的话，那么就不能乱用。**</font>
-
-
-
-
+    // ==============================================
+    // 2. front_inserter 辅助函数
+    // 用于方便地创建 front_insert_iterator 对象
+    // ==============================================
+    template <class _Container>
+    inline front_insert_iterator<_Container> front_inserter(_Container& __x)
+    {
+        // 将容器的引用传递给 front_insert_iterator 的构造函数，
+        // 使其持有指向该容器的指针。
+        return front_insert_iterator<_Container>(__x);
+    }
+    
+    // ==============================================
+    // 3. front_insert_iterator 类模板
+    // 输出迭代器，专用于在容器前端插入元素
+    // ==============================================
+    template <class _Container>
+    class front_insert_iterator {
+    protected:
+        _Container* container;  // 指向目标容器的指针
+    
+    public:
+        // ---- 迭代器特征类型定义 ----
+        typedef _Container          container_type;
+        typedef output_iterator_tag iterator_category; // 标记为输出迭代器
+        typedef void                value_type;
+        typedef void                difference_type;
+        typedef void                pointer;
+        typedef void                reference;
+    
+        // 构造函数：接收容器引用，保存其地址
+        // 使用 explicit 避免隐式转换
+        explicit front_insert_iterator(_Container& __x) : container(&__x) {}
+    
+        // ---- 赋值运算符：核心操作 ----
+        // 当执行 *it = value 时调用此函数
+        front_insert_iterator<_Container>&
+        operator=(const typename _Container::value_type& __value)
+        {
+            // 在容器头部插入元素
+            // 要求容器支持 push_front 操作（如 list, deque, forward_list 等）
+            container->push_front(__value);
+            return *this;
+        }
+    
+        // ---- 以下三个运算符是输出迭代器的接口要求，实现为空操作 ----
+        // operator*：解引用，返回迭代器自身，以便后续赋值
+        front_insert_iterator<_Container>& operator*() { return *this; }
+    
+        // operator++（前置）：前进到下一位置，在此无实际位置概念
+        front_insert_iterator<_Container>& operator++() { return *this; }
+    
+        // operator++(int)（后置）：同样返回自身，维持链式语法兼容性
+        front_insert_iterator<_Container>& operator++(int) { return *this; }
+    };
+    ```
 
 #### 4.2 反向迭代器适配器
 

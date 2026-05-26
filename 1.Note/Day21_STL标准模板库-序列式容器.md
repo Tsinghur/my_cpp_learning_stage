@@ -769,12 +769,12 @@ list还具有一些vector与deque没有的**独占成员函数**
 >   比如现在有 1 2 3 4 四个元素逐一存到容器中，限制容量为4
 >   刚存放完       插入元素3      插入元素5      插入元素4
 >   4 3 2 1 ----> 3 4 2 1 ----> 5 3 4 2  ---> 4 5 3 2
->   
+>     
 >   // 假设现在插入元素2   
 >   int number = tmp.back();
 >   tmp.pop_back();
 >   tmp.push_front(number);
->   
+>     
 >   // 如果明确了是用list存储，可以使用splice函数，
 >   tmp.splice(tmp.begin(), tmp, --tmp.end());
 >   ```
