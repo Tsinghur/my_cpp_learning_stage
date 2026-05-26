@@ -182,7 +182,7 @@
 
    对rRef取地址是可行的，rRef2本身是一个左值。但这并不代表右值引用本身一定是左值
 
-   <span style=color:red;background:yellow>**实际上，右值引用既可以是左值（比如：作为函数的参数、有名字的变量），也可以是右值（函数的返回类型）**</span>
+   <span style=color:red;background:yellow>**实际上，右值引用本身既可以是左值（比如：作为函数的参数、有名字的变量），也可以是右值（函数的返回类型），只不过其只能绑定右值**</span>
 
 4. **移动构造函数**
 
@@ -438,8 +438,7 @@
           
           ![image-20250124104555895](..\0.TyporaPicture\image-20250124104555895.png)
           
-
-      - <font color=red>**如果返回的对象其本身生命周期大于函数生命周期时，执行return语句时还是调用拷贝构造函数**</font>
+- <font color=red>**如果返回的对象其本身生命周期大于函数生命周期时，执行return语句时还是调用拷贝构造函数**</font>
         
           ```cpp
                 String str1("beijing");
@@ -455,8 +454,8 @@
           
           ![image-20250124104716862](..\0.TyporaPicture\image-20250124104716862.png)
           
-
-      **总结：**当类中同时定义移动构造函数和拷贝构造函数，需要对以前的规则进行补充，<span style=color:red;background:yellow>**调用哪个函数还需要取决于返回的对象本体的生命周期**</span>
+      
+**总结：**当类中同时定义移动构造函数和拷贝构造函数，需要对以前的规则进行补充，<span style=color:red;background:yellow>**调用哪个函数还需要取决于返回的对象本体的生命周期**</span>
 
 ## 二、资源管理
 

@@ -210,7 +210,9 @@ STL的算法库中的函数，都是属于普通函数（并不是哪一个类�
 - lambda表达式的类型在C++11中会被看做是一个带operator()的类，即仿函数。按照C++标准，lambda表达式的operator()默认是const的，一个const成员函数是无法修改成员变量值的。mutable选项的作用就在于取消operator()的const属性
 
 
-- 因为lambda表达式在C++中会被看做是一个仿函数，因此可以使用std::function和std::bind来存储和操作lambda表达式（算法适配器的使用），具体演示见 一、6.
+- 因为lambda表达式在C++中会被看做是一个仿函数，因此可以使用std::function和std::bind来存储和操作lambda表达式（算法适配器的使用）
+
+**进一步解释见std::function部分**
 
 > 这里附上一个网站：https://cppinsights.io/，可以通过它查看编译器是如何处理代码的
 
