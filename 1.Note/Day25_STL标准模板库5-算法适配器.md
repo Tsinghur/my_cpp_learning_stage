@@ -747,4 +747,57 @@ lambda表达式的返回值，也可以利用std::function进行相应的表示
      2. 系统：监测事件（定时器到点、按钮点击、数据到达）
      3. 事件发生 → 系统自动调用你的回调函数 → **回调被执行**
 
-2. 
+2. **对于一元函数与二元函数的mem_fn具体使用形式**
+
+   - ==一元函数==
+
+     - **定义示例**
+
+       `void print() const;`
+
+     - **`mem_fn` 返回的可调用对象**
+
+       一元函数，形式为 `void(const T&)` 或 `void(T*)`，只接受一个对象实参。
+
+     - **直接使用**：
+
+       `std::mem_fn(&T::print)` 可直接作为 `for_each` 的第三参数
+
+       ```cpp
+       std::for_each(v.begin(), v.end(), std::mem_fn(&T::print));
+       ```
+
+     对象由算法自动传递，无需额外绑定
+
+   - ==二元函数==
+
+     - **定义示例**
+
+       `void print(const std::string& s) const;`
+
+     - **`mem_fn` 返回的可调用对象**
+
+       二元函数，形式为 `void(const T&, const std::string&)`，需要对象和参数两个实参
+
+     - **无法直接用于 `for_each`**，必须将第二个参数绑定，转化为一元函数：
+
+       1. 使用 `std::bind`：
+
+          ```cpp
+          std::for_each(v.begin(), v.end(),
+              std::bind(std::mem_fn(&T::print), std::placeholders::_1, "Hello"));
+          ```
+
+       2. 使用 lambda：
+
+          ```cpp
+          auto f = std::mem_fn(&T::print);
+          std::for_each(v.begin(), v.end(), [&f](const T& obj) { f(obj, "Hello"); });
+          ```
+
+     需要手写函数对象包装
+
+   - **核心区别**：
+
+     - 一元成员函数 → `mem_fn` 返回一元可调用对象 → 可直接配 `for_each`
+     - 二元成员函数 → `mem_fn` 返回二元可调用对象 → 需绑定多余参数变为一元，才能用于 `for_each`
