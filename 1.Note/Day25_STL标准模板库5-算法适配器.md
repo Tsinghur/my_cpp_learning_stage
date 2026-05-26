@@ -10,9 +10,9 @@
 
   如下模板形式中，两个函数绑定器的第一个参数就是一个函数，第二个参数就是一个数字，如果F是一个二元函数(普通二元函数或者二元谓词)，我们可以绑定F的第一个参数(bind1st)或者第二个参数(bind2nd)，达到我们想要的效果(使用二元谓词的效果)
 
-  ![image-20240812102558858](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240812102558858-1733126757209-110.png)
+  ![image-20240812102558858](..\0.TyporaPicture\image-20240812102558858-1733126757209-110.png)
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250114172229681.png" alt="image-20250114172229681" style="zoom:80%;" />
+  <img src="..\0.TyporaPicture\image-20250114172229681.png" alt="image-20250114172229681" style="zoom:80%;" />
 
 - **代码示例**
 
@@ -94,13 +94,13 @@
 >   result_type           // 返回值类型
 >   ```
 >
-> <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250425102949642.png" alt="image-20250425102949642" style="zoom:67%;" />
+> <img src="..\0.TyporaPicture\image-20250425102949642.png" alt="image-20250425102949642" style="zoom:67%;" />
 
 <span style=color:red;background:yellow>**现在有一个更通用的手段——bind**</span>
 
-<img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240812110817465-1733126757209-116.png" alt="image-20240812110817465" style="zoom:80%;" />
+<img src="..\0.TyporaPicture\image-20240812110817465-1733126757209-116.png" alt="image-20240812110817465" style="zoom:80%;" />
 
-<img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250114180053729.png" alt="image-20250114180053729" style="zoom:67%;" />
+<img src="..\0.TyporaPicture\image-20250114180053729.png" alt="image-20250114180053729" style="zoom:67%;" />
 
 > **注意**
 >
@@ -121,17 +121,17 @@
 
     如下，bind可以绑定N元函数，并用统一的方式进行使用
 
-    <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250114181459086.png" alt="image-20250114181459086" style="zoom:67%;" />
+    <img src="..\0.TyporaPicture\image-20250114181459086.png" alt="image-20250114181459086" style="zoom:67%;" />
 
     根据cpp参考文档的解释，**第一个参数可以是函数对象、函数指针、函数引用(比较少见)、指向成员函数指针或指向数据成员指针**。如上将函数名直接作为参数，相当于是传入函数指针。其他的几种情况也可以试试：
 
 - **绑定函数对象**
 
-    <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250115144417723.png" alt="image-20250115144417723" style="zoom:67%;" />
+    <img src="..\0.TyporaPicture\image-20250115144417723.png" alt="image-20250115144417723" style="zoom:67%;" />
 
 - **绑定==函数引用==**
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250115144332359.png" alt="image-20250115144332359" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250115144332359.png" alt="image-20250115144332359" style="zoom:67%;" />
 
 - **绑定*成员函数指针***
 
@@ -150,11 +150,11 @@
     > auto f = std::bind(&Test::show, obj, std::placeholders::_1); // 传入一个对象，对象拷贝
     > ```
     
-    <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250115144930383.png" alt="image-20250115144930383" style="zoom:67%;" />
+    <img src="..\0.TyporaPicture\image-20250115144930383.png" alt="image-20250115144930383" style="zoom:67%;" />
     
     **指向数据成员的指针**（这种写法比较奇特，仅作了解）
     
-    <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250115145044752.png" alt="image-20250115145044752" style="zoom:67%;" />
+    <img src="..\0.TyporaPicture\image-20250115145044752.png" alt="image-20250115145044752" style="zoom:67%;" />
     
     用**这种方式访问Example类的成员还有一个前提——这些成员都是public权限的**
     
@@ -162,7 +162,7 @@
     >
     > 当bind函数绑定类的成员函数(指针)时，需要传入对象的地址以对应this指针这个参数，除此之外还有另一种写法
     >
-    > ![image-20240812155206272](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240812155206272-1733126757209-121.png)
+    > ![image-20240812155206272](..\0.TyporaPicture\image-20240812155206272-1733126757209-121.png)
     >
     > 即bind绑定成员函数的时候，有两种传递的方式
     >
@@ -186,7 +186,7 @@ bind的声明形式，第一个参数看起来是一个右值引用，为什么�
 
 1. 如下代码修改成模板后是可以正常运行的：
 
-   <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250115152358590.png" alt="image-20250115152358590" style="zoom:67%;" />
+   <img src="..\0.TyporaPicture\image-20250115152358590.png" alt="image-20250115152358590" style="zoom:67%;" />
 
 2. 在调用func时，如果传入的实参是左值，那么T会被推导成左值引用；如果实参是右值，那么T会被推导成右值引用
 
@@ -221,31 +221,31 @@ bind的声明形式，第一个参数看起来是一个右值引用，为什么�
 
 1. 回到bind的基本使用，似乎每次都需要将被绑定的函数的所有参数都一起传入，但除此之外，还有一种**占位符的写法：**
 
-   ![image-20250116152316060](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250116152316060.png)
+   ![image-20250116152316060](..\0.TyporaPicture\image-20250116152316060.png)
 
 2. 除了bind中指定的1，还使用占位符占据了一个函数参数位置，那么这个std::placeholders::_1占据的是add函数的参数x的位置，还是参数y的位置呢？
 
-   <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250330213225163.png" alt="image-20250330213225163" style="zoom:67%;" />
+   <img src="..\0.TyporaPicture\image-20250330213225163.png" alt="image-20250330213225163" style="zoom:67%;" />
 
-   <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250330213443331.png" alt="image-20250330213443331" style="zoom:67%;" />
+   <img src="..\0.TyporaPicture\image-20250330213443331.png" alt="image-20250330213443331" style="zoom:67%;" />
 
    根据上面的结果可以发现，占位符占据的是bind所绑定的函数的参数列表中的哪个参数位置，**取决于==单个占位符在bind参数列表中出现的位置（而其取值则取决于调用时的实参列表）==**
 
 3. 进一步地：
 
-   <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250116165041225.png" alt="image-20250116165041225" style="zoom:67%;" />
+   <img src="..\0.TyporaPicture\image-20250116165041225.png" alt="image-20250116165041225" style="zoom:67%;" />
 
 4. 更多参数的情况：
 
-   <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250116173910192.png" alt="image-20250116173910192" style="zoom:67%;" />
+   <img src="..\0.TyporaPicture\image-20250116173910192.png" alt="image-20250116173910192" style="zoom:67%;" />
 
-   <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250116170139188.png" alt="image-20250116170139188" style="zoom:67%;" />
+   <img src="..\0.TyporaPicture\image-20250116170139188.png" alt="image-20250116170139188" style="zoom:67%;" />
 
 > <span style=color:red;background:yellow>**注意**</span>
 >
 > <font color=red>**如果将占位符改换一下，就会出错**</font>
 >
-> <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250116170903860.png" alt="image-20250116170903860" style="zoom:67%;" />
+> <img src="..\0.TyporaPicture\image-20250116170903860.png" alt="image-20250116170903860" style="zoom:67%;" />
 >
 > - **首先，使用了_4这个占位符，那么在传入实参时==至少要传入4个参数==（f调用时可以传很多个参数，多余的参数被舍弃）**
 >
@@ -258,7 +258,7 @@ bind的声明形式，第一个参数看起来是一个右值引用，为什么�
 
 > **引入**
 >
-> <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250116172739413.png" alt="image-20250116172739413" style="zoom:67%;" />
+> <img src="..\0.TyporaPicture\image-20250116172739413.png" alt="image-20250116172739413" style="zoom:67%;" />
 >
 > 上图**说明了bind的默认传递方式是值传递**，如果在bind中想要使用引用传递，需要用到<font color=red>**引用包装器**</font>
 >
@@ -266,11 +266,11 @@ bind的声明形式，第一个参数看起来是一个右值引用，为什么�
 
 - bind传参时使用<font color=red>**引用包装器std::ref**</font> (reference)
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250116175032813.png" alt="image-20250116175032813" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250116175032813.png" alt="image-20250116175032813" style="zoom:67%;" />
 
 - 如果func函数中原本形参形式为const引用，相应地可以使用<font color=red>**常引用包装器std::cref**</font> (const reference)
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250116175501510.png" alt="image-20250116175501510" style="zoom: 67%;" />
+  <img src="..\0.TyporaPicture\image-20250116175501510.png" alt="image-20250116175501510" style="zoom: 67%;" />
 
 ### 2.5 函数指针不能接收bind返回值
 
@@ -325,7 +325,7 @@ function<int()> f;
 
 ## 3.function
 
-<img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240812145418894-1733126757209-119.png" alt="image-20240812145418894" style="zoom:67%;" />
+<img src="..\0.TyporaPicture\image-20240812145418894-1733126757209-119.png" alt="image-20240812145418894" style="zoom:67%;" />
 
 ![image-20250117103618406](D:\Typora Picture\image-20250117103618406-177978327708439.png)
 
@@ -385,7 +385,7 @@ int main() {
 
 对于函数而言，函数的类型包含了两个信息：**函数返回类型 + 函数参数列表(包含了函数参数的类型、个数、顺序)**
 
-<img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250117100409588.png" alt="image-20250117100409588" style="zoom:67%;" />
+<img src="..\0.TyporaPicture\image-20250117100409588.png" alt="image-20250117100409588" style="zoom:67%;" />
 
 很多时候，逻辑层面上很好理解，但是原生的语法却并不支持这种表达，STL则提供了一种方式可以支持这种表达——即`std::function`
 
@@ -396,17 +396,17 @@ int main() {
   > 1. **函数的调用签名（Signature）**：**返回值类型 + 参数的类型 / 个数**（比如 `int(int, int)`）
   > 2. **函数的逻辑（Logic）**：函数内部具体做什么（加法、乘法、打印、哈希计算、业务判断……）
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250117104001027.png" alt="image-20250117104001027" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250117104001027.png" alt="image-20250117104001027" style="zoom:67%;" />
 
   同理，**==打包之后==的逻辑类型应该为int(int)时**，可以写成：
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250117104615584.png" alt="image-20250117104615584" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250117104615584.png" alt="image-20250117104615584" style="zoom:67%;" />
 
 - **bind绑定成员函数指针**
 
   对于bind绑定成员函数的结果，也是一样的形式，非常简单
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250117105554463.png" alt="image-20250117105554463" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250117105554463.png" alt="image-20250117105554463" style="zoom:67%;" />
 
   **使用function接收bind绑定成员函数的返回值，function对象在初始化与使用时不需要顾及类的信息**
 
@@ -432,13 +432,13 @@ int main() {
 
 lambda表达式的返回值，也可以利用std::function进行相应的表示
 
-![image-20240812151459260](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240812151459260-1733126757209-112.png)
+![image-20240812151459260](..\0.TyporaPicture\image-20240812151459260-1733126757209-112.png)
 
 ### 3.4 function使用的误区
 
 <span style=color:red;background:yellow>**在使用std::function表示lambda表达式时，不要捕获局部变量的引用**</span>
 
-![image-20240812152701250](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240812152701250-1733126757209-109.png)
+![image-20240812152701250](..\0.TyporaPicture\image-20240812152701250-1733126757209-109.png)
 
 ### ==3.5 bind与function的结合使用==
 
@@ -622,14 +622,14 @@ lambda表达式的返回值，也可以利用std::function进行相应的表示
 >      // 两个独立逻辑（无继承）
 >      void logicA() { cout << "A逻辑"; }
 >      void logicB() { cout << "B逻辑"; }
->      
+>        
 >      // 使用
 >      function<void()> func;
->      
+>        
 >      // 第一次注册
 >      func = bind(logicA);
 >      func(); // 执行A
->      
+>        
 >      // 想切换成B？必须手动重新赋值！
 >      func = bind(logicB); // 手动切换
 >      func(); // 执行B
@@ -659,25 +659,25 @@ lambda表达式的返回值，也可以利用std::function进行相应的表示
 
 - **示例**
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250121151937130.png" alt="image-20250121151937130" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250121151937130.png" alt="image-20250121151937130" style="zoom:67%;" />
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250331210156190.png" alt="image-20250331210156190" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250331210156190.png" alt="image-20250331210156190" style="zoom:67%;" />
 
   **使用成员函数适配器mem_fn对成员函数指针进行简单的包装**即可：
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250121152520023.png" alt="image-20250121152520023" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250121152520023.png" alt="image-20250121152520023" style="zoom:67%;" />
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250121152629153.png" alt="image-20250121152629153" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250121152629153.png" alt="image-20250121152629153" style="zoom:67%;" />
 
 - 上述例子中使用for_each遍历vector时，使用了mem_fn为成员函数print做适配。根据以前学过的知识，还有没有什么方法实现同样效果呢？
 
   **for_each的第三个参数要求是一个一元函数**，成员函数print看起来无参，实际上有隐含的this指针作为参数，它的确是一个一元函数
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250121162733638.png" alt="image-20250121162733638" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250121162733638.png" alt="image-20250121162733638" style="zoom:67%;" />
 
   或者我们也可以用**function接收bind绑定成员函数的结果**
 
-  ![image-20250121164540811](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250121164540811.png)
+  ![image-20250121164540811](..\0.TyporaPicture\image-20250121164540811.png)
 
 # 二、适配器
 
@@ -687,7 +687,7 @@ lambda表达式的返回值，也可以利用std::function进行相应的表示
 
 <span style=color:red;background:yellow>**函数对象也称为仿函数**</span>，严格意义上说函数对象仅仅指重载了函数调用运算符的类的对象。
 
-<img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250331201115252.png" alt="image-20250331201115252" style="zoom: 67%;" />
+<img src="..\0.TyporaPicture\image-20250331201115252.png" alt="image-20250331201115252" style="zoom: 67%;" />
 
 <img src="D:\Typora Picture\image-20250331201151276.png" alt="image-20250331201151276" style="zoom:67%;" />
 

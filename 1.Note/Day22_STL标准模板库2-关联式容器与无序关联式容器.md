@@ -19,7 +19,7 @@
 
 ### 1.1 构造
 
-![image-20250317175534262](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250317175534262.png)
+![image-20250317175534262](..\0.TyporaPicture\image-20250317175534262.png)
 
 - **无参构造**
 
@@ -31,45 +31,45 @@
 
 ### 1.2 基本特征
 
-![image-20240807115258806](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240807115258806-1733124502629-22.png)
+![image-20240807115258806](..\0.TyporaPicture\image-20240807115258806-1733124502629-22.png)
 
 ### 1.3 查找
 
-![image-20240807112809259](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240807112809259-1733124502628-19.png)
+![image-20240807112809259](..\0.TyporaPicture\image-20240807112809259-1733124502628-19.png)
 
 ### 1.4 insert操作
 
-![image-20240807113245685](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240807113245685-1733124502629-20.png)
+![image-20240807113245685](..\0.TyporaPicture\image-20240807113245685-1733124502629-20.png)
 
-![image-20240807114212763](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240807114212763-1733124502629-21.png)
+![image-20240807114212763](..\0.TyporaPicture\image-20240807114212763-1733124502629-21.png)
 
 ==**注意：关联式容器都没有头部插入/删除或者尾部插入/删除的函数（因为插入之后是自动排序的，根本不需要关心一开始插入的位置）**==
 
 ### 1.5 erase操作
 
-![image-20240807114416260](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240807114416260-1733124502629-23.png)
+![image-20240807114416260](..\0.TyporaPicture\image-20240807114416260-1733124502629-23.png)
 
 > <span style=color:red;background:yellow>**注意**</span>
 >
 > - **set不支持下标操作，因为没有operator[]函数**
 >
->   ![image-20240807114916461](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240807114916461-1733124502629-25.png)
+>   ![image-20240807114916461](..\0.TyporaPicture\image-20240807114916461-1733124502629-25.png)
 >
 >   所以**访问set的元素只能通过迭代器方式**，但通过迭代器访问到的元素**只能进行读操作**
 >
 > - **set的元素不支持修改**
 >
->   ![image-20240807115114358](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240807115114358-1733124502629-24.png)
+>   ![image-20240807115114358](..\0.TyporaPicture\image-20240807115114358-1733124502629-24.png)
 
 ### ==1.6 针对于自定义类型的写法==
 
-![image-20240808102542239](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240808102542239-1733124502629-26.png)
+![image-20240808102542239](..\0.TyporaPicture\image-20240808102542239-1733124502629-26.png)
 
 对于set而言，因为第二个模板参数Compare默认会采用std::less，但是std::less针对的Key如果不能比较大小即当Key类型是类类型的时候，就需要进行改写
 
 因为直接定义一个存放Point的set，编译一定会报错，根本原因在于默认的std::less针对Point对象并不知道该如何比较大小
 
-<img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250317183935132.png" alt="image-20250317183935132" style="zoom:67%;" />
+<img src="..\0.TyporaPicture\image-20250317183935132.png" alt="image-20250317183935132" style="zoom:67%;" />
 
 改写的方式有三种：<span style=color:red;background:yellow>**模板的特化、运算符的重载、函数对象**</span>
 
@@ -79,13 +79,13 @@
 
   **为std::less准备一个特化版本，这个特化模板类中定义函数调用运算符重载函数，定义一套Point对象的比较规则**
 
-  ![image-20250318150258925](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250318150258925.png)
+  ![image-20250318150258925](..\0.TyporaPicture\image-20250318150258925.png)
 
     > 自定义对象的**比较规则当然也是自定义的**，例如：
     >
     > 先比较到原点的距离（定义getDistance获取点到原点的距离），如果相同再比较横坐标，如果再相同再比较纵坐标。
     >
-    > ![image-20250318150348968](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250318150348968.png)
+    > ![image-20250318150348968](..\0.TyporaPicture\image-20250318150348968.png)
     >
     > <span style=color:red;background:yellow>**注意：**</span>
     >
@@ -93,7 +93,7 @@
     >
     >   1. 在自定义类中中作相应的友元声明；
     >
-    >      <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20241226224935206.png" alt="image-20241226224935206" style="zoom:67%;" />
+    >      <img src="..\0.TyporaPicture\image-20241226224935206.png" alt="image-20241226224935206" style="zoom:67%;" />
     >
     >   2. 给Point提供公有的get系列函数，间接访问Point的私有数据成员
     >
@@ -104,12 +104,12 @@
     >   - 参考std::less的operator()函数
     >
     >
-    >   ![image-20250317193513788](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250317193513788.png)
+    >   ![image-20250317193513788](..\0.TyporaPicture\image-20250317193513788.png)
     >
     >   - 这涉及了set的内部实现的版本演变，不做探究
     >
     >
-    >   <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250317192201592.png" alt="image-20250317192201592" style="zoom:67%;" />
+    >   <img src="..\0.TyporaPicture\image-20250317192201592.png" alt="image-20250317192201592" style="zoom:67%;" />
 
 2. **(对象)运算符重载**
 
@@ -117,7 +117,7 @@
 
    operator< 以友元方式重载：（也可以重载为类的成员函数）
 
-   ![image-20240808102807663](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240808102807663-1733124502629-28.png)
+   ![image-20240808102807663](..\0.TyporaPicture\image-20240808102807663-1733124502629-28.png)
 
    **这个场景下，如果特化模板与运算符重载同时存在，==模板特化优先级高于运算符重载==**
 
@@ -127,7 +127,7 @@
 
    Compare类重载函数调用运算符，set的底层实现中使用Compare类对象作为<span style=color:red;background:yellow>**函数对象**</span>，以此来规定元素的排序
 
-   ![image-20240808102837821](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240808102837821-1733124502629-29.png)
+   ![image-20240808102837821](..\0.TyporaPicture\image-20240808102837821-1733124502629-29.png)
 
 ## 2.multiset的使用
 
@@ -135,7 +135,7 @@
 
 包含于`<set>`头文件
 
-![image-20240808110150953](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240808110150953-1733124502629-30.png)
+![image-20240808110150953](..\0.TyporaPicture\image-20240808110150953-1733124502629-30.png)
 
 ### 2.2 其他功能
 
@@ -147,20 +147,20 @@ multiset**也没有[]下标操作，也同样不支持使用迭代器修改元�
 
 注意：**equal_range返回的范围仍然是前闭后开的范围（返回的是一对数据即一个pair对象，其中包含两个迭代器）**
 
-<img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20241210101903143.png" alt="image-20241210101903143" style="zoom:67%;" />
+<img src="..\0.TyporaPicture\image-20241210101903143.png" alt="image-20241210101903143" style="zoom:67%;" />
 
-<img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250318143726479.png" alt="image-20250318143726479"  />
+<img src="..\0.TyporaPicture\image-20250318143726479.png" alt="image-20250318143726479"  />
 
-<img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250318143624627.png" alt="image-20250318143624627"  />
+<img src="..\0.TyporaPicture\image-20250318143624627.png" alt="image-20250318143624627"  />
 
-<img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250318143647024.png" alt="image-20250318143647024"  />
+<img src="..\0.TyporaPicture\image-20250318143647024.png" alt="image-20250318143647024"  />
 
 > 如下，可以用**两种方式找出multiset中所有等于key的元素**
 >
 > 1. **[it11, it22)**
 > 2. **(std::pair)ret**
 >
-> ![image-20240808111636211](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240808111636211-1733124502630-31.png)
+> ![image-20240808111636211](..\0.TyporaPicture\image-20240808111636211-1733124502630-31.png)
 
 ### 2.4 针对于自定义类型
 
@@ -170,17 +170,17 @@ multiset**针对于自定义类型的用法**与set完全一样，**也有三种
 
 ### 3.1 基本特征
 
-![image-20240808113609526](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240808113609526-1733124502630-32.png)
+![image-20240808113609526](..\0.TyporaPicture\image-20240808113609526-1733124502630-32.png)
 
 ### 3.2 查找
 
-<img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250318145851453.png" alt="image-20250318145851453"  />
+<img src="..\0.TyporaPicture\image-20250318145851453.png" alt="image-20250318145851453"  />
 
-![image-20240808113855833](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240808113855833-1733124502630-33.png)
+![image-20240808113855833](..\0.TyporaPicture\image-20240808113855833-1733124502630-33.png)
 
 ### 3.3 insert操作
 
-![image-20250318145655104](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250318145655104.png)
+![image-20250318145655104](..\0.TyporaPicture\image-20250318145655104.png)
 
 map**也有三种插入的方式：插入一个元素、插入迭代器范围的元素、插入大括号范围的元素**
 
@@ -190,17 +190,17 @@ map**也有三种插入的方式：插入一个元素、插入迭代器范围的
 >
 > ==插入单个元素可能不成功（即这个元素已经存在于map中）==
 >
-> ![image-20240808114453984](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240808114453984-1733124502630-34.png)
+> ![image-20240808114453984](..\0.TyporaPicture\image-20240808114453984-1733124502630-34.png)
 
 ### 3.4 erase操作
 
-![image-20240808114701760](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240808114701760-1733124502630-35.png)
+![image-20240808114701760](..\0.TyporaPicture\image-20240808114701760-1733124502630-35.png)
 
 **map可以删除==迭代器指向的元素==、以及==迭代器范围的元素==**
 
 ### 3.5 下标操作（重要）
 
-![image-20240808121115356](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240808121115356-1733124502630-36.png)
+![image-20240808121115356](..\0.TyporaPicture\image-20240808121115356-1733124502630-36.png)
 
 <span style=color:red;background:yellow>**注意：**</span>
 
@@ -210,17 +210,17 @@ map**也有三种插入的方式：插入一个元素、插入迭代器范围的
 
 ### 3.6 针对于自定义类型
 
-![image-20240808144703570](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240808144703570-1733124502630-37.png)
+![image-20240808144703570](..\0.TyporaPicture\image-20240808144703570-1733124502630-37.png)
 
 - 如果**key本身是可比较类型(即key是内置类型)**或**仅value是自定义类型**，其实不需要额外的操作，map可以正常进行遍历
 
-  ![image-20240808144700093](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240808144700093-1733124502630-38.png)
+  ![image-20240808144700093](..\0.TyporaPicture\image-20240808144700093-1733124502630-38.png)
 
 - 如果Key对应的是自定义类型
 
   1. 之前写的函数模板可以遍历前面五种容器的元素，但是map不行，因为map的元素都是pair，而**pair不能直接用输出流运算符进行输出**
 
-     ![image-20241210115238336](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20241210115238336.png)
+     ![image-20241210115238336](..\0.TyporaPicture\image-20241210115238336.png)
 
      此时有两个display构成**函数模板的重载**，第一个适用于任意的容器类型，**第二个专门用于map类型**
 
@@ -232,13 +232,13 @@ map**也有三种插入的方式：插入一个元素、插入迭代器范围的
 
      - 但如果用的是**函数对象**的方法，**在遍历时还需要一点改动（==即增添一个模板参数==）**
 
-       <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20241210171242405.png" alt="image-20241210171242405" style="zoom:67%;" />
+       <img src="..\0.TyporaPicture\image-20241210171242405.png" alt="image-20241210171242405" style="zoom:67%;" />
 
 ## 4.multimap的使用
 
 ### 4.1 基本特征
 
-![image-20240808145243572](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240808145243572-1733124502630-39.png)
+![image-20240808145243572](..\0.TyporaPicture\image-20240808145243572-1733124502630-39.png)
 
 ### 4.2 其他操作
 
@@ -246,7 +246,7 @@ multimap的**查找功能（count、find）、插入功能（insert）、删除�
 
 ### 4.3 不支持下标
 
-![image-20240808145436542](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240808145436542-1733124502630-40.png)
+![image-20240808145436542](..\0.TyporaPicture\image-20240808145436542-1733124502630-40.png)
 
 ### 4.4 针对于自定义类型
 
@@ -319,148 +319,127 @@ multimap的**查找功能（count、find）、插入功能（insert）、删除�
 
 ### 1.2 如何解决哈希冲突
 
-开放定址法
-<font color=red>**链地址法 **</font>(推荐使用这种，这也是STL中使用的方法)
-再散列法
-建立公共溢出区  
+1. 开放定址法
+2. <font color=red>**链地址法 **</font>(推荐使用这种，这也是STL中使用的方法)
+3. 再散列法
+4. 建立公共溢出区  
 
-
-
-链地址法：
-
-如下，假设有19 1 23 37 68 55 11  14 86这些元素，表长为11
-
-19 mod 11 = 8，挂载在下标8位置
-
-1 mod 11 = 1，挂载在下标1位置；23 mod 11 = 1，用链表的形式挂在元素1的后面
-
-![image-20240808151302071](D:\Typora Picture\image-20240808151302071-1733125193831-63.png)
+> **链地址法：**
+>
+> 如下，假设有19 1 23 37 68 55 11  14 86这些元素，表长为11
+>
+> 1. 19 mod 11 = 8，挂载在下标8位置
+> 2. 1 mod 11 = 1，挂载在下标1位置
+> 3. 23 mod 11 = 1，用链表的形式挂在元素1的后面
+>
+> ![image-20240808151302071](..\0.TyporaPicture\image-20240808151302071-1733125193831-63.png)
+>
 
 ## 2.unordered_set的使用
 
-
-
 unordered_set在使用时除了元素的类型，还需要关注几个模板参数
 
-Hash决定了具体使用怎样的哈希函数，通过Hash类的operator()函数确定，而哈希冲突的解决方式则是由容器内部的实现机制确定的；
+1. Hash决定了具体使用怎样的哈希函数，通过Hash类的operator()函数确定，而哈希冲突的解决方式则是由容器内部的实现机制确定的；
 
-KeyEqual决定了元素的判重方式，同样也是通过operator()函数确定。
+2. KeyEqual决定了元素的判重方式，同样也是通过operator()函数确定。
 
 对于内置类型和指针类型，可以直接使用这一容器，如果是自定义类型对象作为元素，则需要为其准备这些模板参数。
 
-<img src="D:\Typora Picture\image-20241212113324137.png" alt="image-20241212113324137" style="zoom:67%;" />
+<img src="..\0.TyporaPicture\image-20241212113324137.png" alt="image-20241212113324137" style="zoom:67%;" />
 
+### 2.1 基本特征
 
+创建unordered_set的方式和之前的容器没有多大区别
 
+![image-20240808153120111](..\0.TyporaPicture\image-20240808153120111-1733125234824-65.png)
 
+<img src="..\0.TyporaPicture\image-20241212115621977.png" alt="image-20241212115621977" style="zoom:80%;" />
 
-##### 基本特征
+**效果：无序 + 去重**
 
-创建unorder_set的方式和之前的容器没有多大区别。
+### 2.2 其他操作
 
-![image-20240808153120111](D:\Typora Picture\image-20240808153120111-1733125234824-65.png)
+unordered_set的**查找（count、find）、插入（insert）、删除（erase）等常用操作与set完全一样**，**也不支持下标[]**
 
-<img src="D:\Typora Picture\image-20241212115621977.png" alt="image-20241212115621977" style="zoom:80%;" />
+### ==2.3 针对于自定义类型==
 
-无序 + 去重的效果
+![image-20240808155505140](..\0.TyporaPicture\image-20240808155505140-1733125234824-68.png)
 
+针对于自定义类型而言，可能需要改写第二个模板参数Hash与第三个模板参数KeyEqual
 
+- Hash
 
+    Hash的默认采用的是std::hash，所以可以**改写的方案有两种**：**模板的特化**、**函数对象的形式**，==与运算符重载没有什么关系==
 
+    1. **模板特化**
 
-##### 其他操作
+       ![image-20240808163638815](..\0.TyporaPicture\image-20240808163638815-1733125234824-66.png)
 
-unordered_set的查找（count、find）、插入（insert）、删除（erase）等常用操作与set完全一样。也不支持下标。
+       **如图，对横纵坐标分别进行左移再异或，其==本质实际就是任意设计出一套哈希函数==**
 
+    2. **函数对象**
 
+       ![image-20240808163705044](..\0.TyporaPicture\image-20240808163705044-1733125234824-67.png)
 
-##### 针对于自定义类型（重要）
+- KeyEqual
 
-![image-20240808155505140](D:\Typora Picture\image-20240808155505140-1733125234824-68.png)
+    第三个模板参数KeyEqual的传参有**三种方式**：**模板的特化**、**函数对象的形式**、**运算符重载**
 
-针对于自定义类型而言，可能需要改写第二个模板参数Hash与第三个模板参数KeyEqual。
+    <font color=red>**注意：在operator()函数中加上打印语句后，可以观察打印的次数，进而能更直观地分析什么时候才会用上equal_to函数对象**</font>
 
+    1. **模板特化**
 
+       ![image-20240808163825379](..\0.TyporaPicture\image-20240808163825379-1733125234824-70.png)
 
-> Hash的默认采用的是std::hash，所以可以改写的方案有两种：模板的特化、函数对象的形式，与运算符重载没有什么关系。
->
-> ![image-20240808163638815](D:\Typora Picture\image-20240808163638815-1733125234824-66.png)
->
-> **如图，对横纵坐标分别进行左移再异或，其本质实际就是任意设计出一套哈希函数。**
->
-> 
->
-> ![image-20240808163705044](D:\Typora Picture\image-20240808163705044-1733125234824-67.png)
-
-
-
-
-
-> 第三个模板参数KeyEqual的传参有三种方式：模板的特化、函数对象的形式、运算符重载。
->
-> <font color=red>**注意：在operator()函数中加上打印语句后，可以观察打印的次数，进而分析什么时候才会用上equal_to函数对象**</font>
->
-> ![image-20240808163825379](D:\Typora Picture\image-20240808163825379-1733125234824-70.png)
->
-> ![image-20240808163848707](D:\Typora Picture\image-20240808163848707-1733125234824-69.png)
->
-> ![image-20240808163930278](D:\Typora Picture\image-20240808163930278-1733125234824-71.png)
-
-
-
-
-
-
-
-
+    2. **函数对象**
+    
+       ![image-20240808163848707](..\0.TyporaPicture\image-20240808163848707-1733125234824-69.png)
+    
+    3. **运算符重载**
+    
+       ![image-20240808163930278](..\0.TyporaPicture\image-20240808163930278-1733125234824-71.png)
 
 ## 3.unordered_multiset的使用
 
-##### 基本特征
+### 3.1 基本特征
 
-![image-20240808170654309](D:\Typora Picture\image-20240808170654309-1733125234824-72.png)
+![image-20240808170654309](..\0.TyporaPicture\image-20240808170654309-1733125234824-72.png)
 
-##### 其他操作
+### 3.2 其他操作
 
-unordered_multiset的查找（count、find）、插入（insert）、删除（erase）与multiset完全一样。也不支持下标。
+unordered_multiset的**查找（count、find）、插入（insert）、删除（erase）与multiset完全一样**，**也不支持下标[]**
 
-##### 针对于自定义类型
+### 3.3 针对于自定义类型
 
-unordered_multiset针对于自定义类型的写法与unordered_set的用法一样，需要改写第二个参数Hash与第三个参数KeyEqual。
-
-
-
-
+unordered_multiset**针对于自定义类型的写法与unordered_set的用法一样**，需要改写第二个参数Hash与第三个参数KeyEqual
 
 ## 4.unordered_map的使用
 
-##### 基本特征
+### 4.1 基本特征
 
-![image-20240808171339880](D:\Typora Picture\image-20240808171339880-1733125234824-73.png)
+![image-20240808171339880](..\0.TyporaPicture\image-20240808171339880-1733125234824-73.png)
 
-##### 其他操作
+### 4.2 其他操作
 
-unordered_map的查找（count、find）、插入（insert）、删除（erase）与map是完全一样的。
+unordered_map的**查找（count、find）、插入（insert）、删除（erase）与map完全一样**
 
-##### 支持下标（==重要==）
+### ==4.3 支持下标==
 
-![image-20240808171527718](D:\Typora Picture\image-20240808171527718-1733125234824-74.png)
-
-
+![image-20240808171527718](..\0.TyporaPicture\image-20240808171527718-1733125234824-74.png)
 
 ## 5.unordered_multimap的使用
 
-##### 基本特征
+### 5.1 基本特征
 
-![image-20240808172135639](D:\Typora Picture\image-20240808172135639-1733125234825-75.png)
+![image-20240808172135639](..\0.TyporaPicture\image-20240808172135639-1733125234825-75.png)
 
-##### 其他操作
+### 5.2 其他操作
 
-unordered_multimap的查找（count、find）、插入（insert）、删除（erase）与multimap是完全一样的。
+unordered_multimap的**查找（count、find）、插入（insert）、删除（erase）与multimap完全一样**
 
-##### 不支持下标
+### ==5.3 不支持下标==
 
-![image-20240808172248938](D:\Typora Picture\image-20240808172248938-1733125234825-76.png)
+![image-20240808172248938](..\0.TyporaPicture\image-20240808172248938-1733125234825-76.png)
 
 ## 6.总结
 
@@ -468,11 +447,119 @@ unordered_multimap的查找（count、find）、插入（insert）、删除（er
 
 - 底层使用的都是**哈希表**数据结构
 
-- unordered_map是具备下标的，其他三种无序关联式容器没有下标
+- **仅unordered_map具备下标操作**，其他三种无序关联式容器都没有下标[]操作
 
 ## ==三、容器的选择==
 
+1. **元素是不是有顺序的**
 
+   - 如果**元素是有顺序**的，**首选的是关联式容器（因为可以自动维护元素有序）**，不应该选择的是无序关联式容器，**其次可以选择序列式容器**
+
+   > 序列式容器中的元素可以排序
+   >
+   > 例如**list中是有sort函数**的，对于**vector与deque可以借鉴使用算法库中的sort函数**进行排序
+   >
+   > <img src="..\0.TyporaPicture\image-20241213115102389.png" alt="image-20241213115102389"  />
+
+2. **迭代器的类型**
+
+   - 随机访问迭代器：vector、deque
+
+   - 双向迭代器：list、关联式容器
+   - 前向迭代器：无序关联式容器
+
+3. **查找的时间复杂度**
+
+   - 序列式容器：时间复杂度O(N)
+
+   - 关联式容器：时间复杂度O(logN)——树形查找，与树高相关联
+   - 无序关联式容器：时间复杂度O(1)——哈希查找
+
+4. **是否支持下标**
+
+   - 序列式容器：vector、deque
+   - 关联式容器：map
+   - 无序关联式容器：unordered_map
 
 ## 四、容器适配器
 
+**容器适配器**的作用其实可以理解为**是对==序列式容器==进行封装**，*使其表现出特定的行为和接口，以满足不同的应用需求*
+
+<img src="..\0.TyporaPicture\image-20241213152152135.png" alt="image-20241213152152135" style="zoom:67%;" />
+
+### 1.栈(stack)
+
+<img src="..\0.TyporaPicture\image-20241213155815990.png" alt="image-20241213155815990" style="zoom:67%;" />
+
+### 2.队列(queue)
+
+<img src="..\0.TyporaPicture\image-20241213160014049.png" alt="image-20241213160014049" style="zoom: 67%;" />
+
+### 3.优先级队列(priority_queue)
+
+![image-20240809102130717](..\0.TyporaPicture\image-20240809102130717-1733126644616-89.png)
+
+![image-20241213161252492](..\0.TyporaPicture\image-20241213161252492.png)
+
+<img src="..\0.TyporaPicture\image-20241213161347228.png" alt="image-20241213161347228" style="zoom:67%;" />
+
+对于vector或者deque，value_type就是T，即**priority_queue的Compare要提供的是对容器中元素的比较方式**
+
+### 3.1 基本使用方法
+
+- 对优先级队列的元素进行遍历，**以前常用的几种方式都不支持（下标、迭代器、增强for循环）**，应该参考C语言中对栈或者队列中元素遍历的方式
+
+  以下的遍历实际上是清空式的遍历，遍历完后优先级队列实际上没有元素了，如果不想进行清空式的遍历，可以在遍历之前先复制一次priority_queue
+
+  ![image-20240809105418557](..\0.TyporaPicture\image-20240809105418557-1733126644617-91.png)
+
+  <img src="..\0.TyporaPicture\image-20241213172224047.png" alt="image-20241213172224047" style="zoom:67%;" />
+
+
+
+- 默认的compare是std::less，最终呈现的效果为什么是从大到小，而不是从小到大呢？
+
+  稍微修改一下代码，往空的优先级队列添加元素，观察填充过程
+
+  <img src="..\0.TyporaPicture\image-20250323172224604.png" alt="image-20250323172224604" style="zoom:67%;" />
+
+  > `priority_queue`（优先级队列）和 `set` 虽然都能用 `compare` 自定义排序，**共用同样的比较函数（less/greater/ 自定义），但语义、效果、底层逻辑完全相反**
+  >
+  > - 两者**默认比较器都是 `std::less<T>`**，但**排序效果完全相反**
+  >
+  > - `set` 的比较器：决定**全局有序排列规则**
+  >
+  >   `priority_queue` 的比较器：决定**堆的优先级（谁在堆顶）**
+  >
+  > - 这是底层数据结构决定的（红黑树 vs 堆）
+  >
+  > | 容器                | 默认比较器 | 效果                         |
+  > | ------------------- | ---------- | ---------------------------- |
+  > | `set<T>`            | `less<T>`  | **升序排列**（从小到大）     |
+  > | `priority_queue<T>` | `less<T>`  | **大顶堆**（堆顶是最大元素） |
+
+- 优先级队列使用了大根堆，其过程：
+
+  当**有元素插入的时**候，会**将该元素与堆顶进行比较**（细节上实际是一级一级比较）
+
+  1. 如果堆顶比新插入的元素要小，就会满足std::less，会将新插入的元素作为新的堆顶；
+  2. 如果新插入的元素与堆顶进行比较，堆顶比新插入的元素要大，那么就不满足std::less，就不会进行置换，上一次的堆顶仍然是堆顶
+
+### 3.2 使用函数总结
+
+- **判空：**empty
+- **元素的个数：**size
+- **插入：**push
+- **删除：**pop
+- **获取top元素：**top
+- **交换函数：**swap
+
+> **注意**
+>
+> **C++ 标准的三大容器适配器（stack /queue/priority_queue），官方设计上就是「没有迭代器」的**，这不是缺陷，而是刻意为之的核心特性
+>
+> 因为**迭代器 = 自由遍历**，而**容器适配器 = 严格限制访问**
+
+### 3.3 针对于自定义类型
+
+因为**优先级队列的第三个模板参数使用的是Compare，默认值是std::less**，所以**如果自定义类型不能进行比较，就需要进行改写**，**改写的方案与set针对于Compare的改写方式完全一样**，有三种：模板的特化、函数对象的形式、运算符重载

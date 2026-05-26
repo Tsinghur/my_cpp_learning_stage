@@ -28,23 +28,21 @@
 4. 双向迭代器(BidirectionIterator)
 5. 随机访问迭代器(RandomAccessIterator)
 
-<img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250102105616784.png" alt="image-20250102105616784" style="zoom:80%;" />
-
-
+<img src="..\0.TyporaPicture\image-20250102105616784.png" alt="image-20250102105616784" style="zoom:80%;" />
 
 - **五种迭代器之间的关系（逻辑层面上近似于继承关系）**
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240809114205549-1733126659853-98.png" alt="image-20240809114205549" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20240809114205549-1733126659853-98.png" alt="image-20240809114205549" style="zoom:67%;" />
 
   > 举个简单的例子，根据我们对继承关系的了解，我们可以推测出：
   >
-  > ![image-20250102114216223](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250102114216223.png)
+  > ![image-20250102114216223](..\0.TyporaPicture\image-20250102114216223.png)
 
 - **为什么要定义这么多种迭代器**
 
   为了物尽其用，使得具体的操作使用具体类型的迭代器，避免迭代器的功能太大或者太小，导致使用起来不方便。每个容器及其对应的迭代器的类型图表如下：
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250102114702572.png" alt="image-20250102114702572" style="zoom: 67%;" />
+  <img src="..\0.TyporaPicture\image-20250102114702572.png" alt="image-20250102114702572" style="zoom: 67%;" />
 
 - **总结**
 
@@ -91,7 +89,7 @@
 
 - **通过cpp参考文档查看输出流迭代器构造函数的说明：**
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250102152744535.png" alt="image-20250102152744535" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250102152744535.png" alt="image-20250102152744535" style="zoom:67%;" />
 
   > `std::ostream_iterator` 是模板类，定义在 `<iterator>` 头文件中，**有两个公开构造函数**：
   >
@@ -109,13 +107,13 @@
   >
   > 最常用的一种使用方式：使用 `std::copy` 算法通过输入流迭代器从文件中读取数据，然后通过输出流迭代器将数据输出到控制台，就像操作普通容器一样
   >
-  > ![image-20250318195617489](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250318195617489.png)
+  > ![image-20250318195617489](..\0.TyporaPicture\image-20250318195617489.png)
   >
-  > <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250102153042767.png" alt="image-20250102153042767" style="zoom:67%;" />
+  > <img src="..\0.TyporaPicture\image-20250102153042767.png" alt="image-20250102153042767" style="zoom:67%;" />
   >
   > 
   >
-  > <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250102152333957.png" alt="image-20250102152333957" style="zoom:67%;" />
+  > <img src="..\0.TyporaPicture\image-20250102152333957.png" alt="image-20250102152333957" style="zoom:67%;" />
   >
   > 其实结果很容易推测出来。**至此，我们发现又多了一种遍历容器元素的方式**，那么这个输出的效果是怎么实现的呢？
 
@@ -227,17 +225,17 @@
 
 - **构造函数**
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250103091012302.png" alt="image-20250103091012302" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250103091012302.png" alt="image-20250103091012302" style="zoom:67%;" />
 
 - **使用示例**
 
   可以利用一个通用输入流对象初始化istream_iterator
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250103090859551.png" alt="image-20250103090859551" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250103090859551.png" alt="image-20250103090859551" style="zoom:67%;" />
 
   可能出现的段错误
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250103114516852.png" alt="image-20250103114516852" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250103114516852.png" alt="image-20250103114516852" style="zoom:67%;" />
 
   > **解析**
   >
@@ -340,7 +338,7 @@
   > | **`back_insert_iterator`** | **类模板**   | **迭代器适配器本体**，包装容器，实现尾插逻辑       |
   > | **`back_inserter`**        | **函数模板** | 辅助工具，**快速创建** `back_insert_iterator` 对象 |
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250103114847667.png" alt="image-20250103114847667" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250103114847667.png" alt="image-20250103114847667" style="zoom:67%;" />
 
 - **源码**
 
@@ -567,7 +565,7 @@
 
 - **三组插入迭代器适配器**
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250103181150482.png" alt="image-20250103181150482" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250103181150482.png" alt="image-20250103181150482" style="zoom:67%;" />
 
   1. back_inserter是**便捷函数**，该函数返回类型是back_insert_iterator，它们的底层会调用容器的push_back
 
@@ -580,7 +578,7 @@
 
   **除了以往的常规方式（遍历list的元素，再使用vector的push_back函数添加这些元素），还可以使用迭代器**
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250106111219439.png" alt="image-20250106111219439" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250106111219439.png" alt="image-20250106111219439" style="zoom:67%;" />
 
     > **上面两行copy语句是等价的，它们实现的功能一模一样，只是写法上的 “便捷版” 和 “完整版” 区别**
     >
@@ -610,9 +608,9 @@
 
     再将vector的元素插入到list头部
 
-    <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250106111304333.png" alt="image-20250106111304333" style="zoom:67%;" />
+    <img src="..\0.TyporaPicture\image-20250106111304333.png" alt="image-20250106111304333" style="zoom:67%;" />
 
-    <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20250106144924432.png" alt="image-20250106144924432" style="zoom:67%;" />
+    <img src="..\0.TyporaPicture\image-20250106144924432.png" alt="image-20250106144924432" style="zoom:67%;" />
 
     从得到的结果可以想到，执行的过程是从头到尾遍历vector的元素，然后一次次执行了push_front函数
 
@@ -645,11 +643,11 @@
     >        #include <vector>
     >        #include <list>
     >        #include <algorithm>
-    >        
+    >                  
     >        int main() {
     >            std::list<int> lst = {1,2,3};
     >            std::vector<int> vec = {10,20,30};
-    >        
+    >                  
     >            // 把 list 元素整体插到 vector 头部
     >            vec.insert(vec.begin(), lst.begin(), lst.end());
     >            // vec 现在：1,2,3,10,20,30
@@ -694,7 +692,7 @@
     >
     > 2. 将list的元素插入到set中
     >
-    >    ![image-20240809164112172](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240809164112172-1733126659852-96.png)
+    >    ![image-20240809164112172](..\0.TyporaPicture\image-20240809164112172-1733126659852-96.png)
     >
     > <font color=red>**所以：使用上述三种插入迭代器的时候，如果容器本身不具备对应插入函数的话，那么就不能乱用**</font>
 
@@ -781,9 +779,9 @@
 
 #### 4.2 反向迭代器适配器
 
-![image-20240809170644459](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240809170644459-1733126659852-95.png)
+![image-20240809170644459](..\0.TyporaPicture\image-20240809170644459-1733126659852-95.png)
 
 **注意遍历时偏移的方式，仍然是自增（只不过这里的自增对应的是向左移动）**
 
-![image-20240809171255460](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20240809171255460-1733126659853-99.png)
+![image-20240809171255460](..\0.TyporaPicture\image-20240809171255460-1733126659853-99.png)
 

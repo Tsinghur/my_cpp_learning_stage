@@ -415,7 +415,7 @@ void test0() {
 
 - **函数原型**
 
-  ![image-20260525201412483](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20260525201412483.png)
+  ![image-20260525201412483](..\0.TyporaPicture\image-20260525201412483.png)
 
 - **源码**
 
@@ -448,7 +448,7 @@ void test0() {
 
 - **函数原型**
 
-  ![image-20260525201554174](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\0.TyporaPicture\image-20260525201554174.png)
+  ![image-20260525201554174](..\0.TyporaPicture\image-20260525201554174.png)
 
 - **示例**
 
@@ -511,18 +511,215 @@ void test0() {
 
 - **非修改式的序列算法：`count`、`find`**
 
+  ![image-20260526195414859](..\0.TyporaPicture\image-20260526195414859.png)
+
+  ![image-20260526195434166](..\0.TyporaPicture\image-20260526195434166.png)
+
+  ```cpp
+  vector<int> vec = {1, 2, 3, 2, 2, 4};    
+  // 统计数字 2 出现的次数
+  int res = count(vec.begin(), vec.end(), 2); 
+  cout << "2出现的次数：" << res; // 输出：3
   
+  vector<int> vec = {10, 20, 30, 40};  
+  // 查找数字 30
+  auto it = find(vec.begin(), vec.end(), 30); 
+  if (it != vec.end()) {
+      cout << "找到元素：" << *it; // 输出：30
+  } else {
+      cout << "未找到";
+  }
+  ```
 
 - **修改式的序列算法：`replace`、`fill`**
 
+  ![image-20260526195814371](..\0.TyporaPicture\image-20260526195814371.png)
+
+  ![image-20260526195826853](..\0.TyporaPicture\image-20260526195826853.png)
+
+  ```cpp
+  // 将区间 [first, last) 内所有等于 old_value 的元素替换为 new_value
+  std::vector<int> v = {1, 2, 3, 2, 4, 2};
+  std::replace(v.begin(), v.end(), 2, 99); // v 变成 {1, 99, 3, 99, 4, 99}
   
+  // 将区间 [first, last) 内的所有元素一律赋值为 value，原来的内容会被完全覆盖
+  std::vector<int> v(5);           	// {0,0,0,0,0}
+  std::fill(v.begin(), v.end(), 7); 	// {7,7,7,7,7}
+  ```
 
 - **二分搜索的算法：`lower_bound`、`upper_bound`、`equal_range`**
 
+  ![image-20260526200035316](..\0.TyporaPicture\image-20260526200035316.png)
+
+  ![image-20260526200041641](..\0.TyporaPicture\image-20260526200041641.png)
+
+  ![image-20260526200050275](..\0.TyporaPicture\image-20260526200050275.png)
+
+  ```cpp
+  // 返回第一个不小于(即大于或等于) value 的元素位置，即第一个 *it >= value 的位置
+  std::vector<int> v = {1, 2, 4, 4, 5, 7}; // 有序
+  auto it = std::lower_bound(v.begin(), v.end(), 4); // it 指向第一个 4 的位置（索引 2）
+  it = std::lower_bound(v.begin(), v.end(), 3); // 没有3，指向第一个不小于3的元素，即4的位置（索引2）
   
-
-- **取最值：`max`、`min`**
-
+  // 返回第一个大于 value 的元素位置，即第一个 *it > value 的位置
+  std::vector<int> v = {1, 2, 4, 4, 5, 7};
+  auto it = std::upper_bound(v.begin(), v.end(), 4); // it 指向第一个大于4的元素，即值为5的位置（索引 4）
   
+  // 一次性返回等于 value 的元素的左闭右开区间，结果是一个 std::pair，包含 lower_bound 和 upper_bound 的结果
+  std::vector<int> v = {1, 2, 4, 4, 5, 7};
+  auto range = std::equal_range(v.begin(), v.end(), 4);
+  // range.first 指向第一个4（索引2）
+  // range.second 指向5（索引4）
+  auto range2 = std::equal_range(v.begin(), v.end(), 3);
+  // range2.first == range2.second，都指向可以插入3的位置（索引2，即当前第一个4的位置）
+  ```
 
-- 
+  ```cpp
+  // lower_bound 与 upper_bound 的结合使用
+  std::vector<int> v = {1, 2, 4, 4, 5, 7};
+  auto low = std::lower_bound(v.begin(), v.end(), 4);
+  auto up  = std::upper_bound(v.begin(), v.end(), 4);
+  // 此时的 [low, up) 就是所有等于4的元素的范围
+  for (auto i = low; i != up; ++i) std::cout << *i << ' '; // 4 4
+  ```
+
+  > **补充**
+  >
+  > 若是使用另一个版本的函数原型：
+  >
+  > ```cpp
+  > // 以lower_bound为例
+  > template< class ForwardIt, class T, class Compare >
+  > ForwardIt lower_bound( ForwardIt first, ForwardIt last, const T& value, Compare comp );
+  > // 要做的事情的本质是：
+  > // 找第一个 `comp(element, value)` 为 false 的位置，即第一个不满足比较器的元素
+  > ```
+  >
+  > ==**二分搜索算法与 `Compare` 的关系：**==
+  >
+  > **前提**：区间 `[first, last)` 已按 `comp` 排序（默认 `<`）
+  >
+  > | 算法          | 内部判断             | 返回值与含义                                                 |
+  > | :------------ | :------------------- | :----------------------------------------------------------- |
+  > | `lower_bound` | `comp(*it, value)`   | **第一个使 `comp(*it, value) == false` 的位置** 即 `*it >= value`（不小于 `value`） |
+  > | `upper_bound` | `comp(value, *it)`   | **第一个使 `comp(value, *it) == true` 的位置** 即 `*it > value`（严格大于 `value`） |
+  > | `equal_range` | 同时使用上述两种判断 | **`std::pair<It, It>`** `first` = `lower_bound` 的结果 `second` = `upper_bound` 的结果 表示等于 `value` 的元素范围 `[first, second)` |
+
+- **取最值：`max`、`min`、`minmax(C++11)`**
+
+  1. **两个值的比较（基础版本）**
+
+     ![image-20260526202139764](D:\Typora Picture\image-20260526202139764-177979822600998.png)
+
+     ![image-20260526202148451](..\0.TyporaPicture\image-20260526202148451.png)
+
+  2. **带自定义比较器的版本**
+
+     ```cpp
+     template< class T, class Compare >
+     const T& max( const T& a, const T& b, Compare comp );
+     
+     template< class T, class Compare >
+     const T& min( const T& a, const T& b, Compare comp );
+     
+     // min返回 comp(a, b) == true
+     // max返回 comp(a, b) == false
+     ```
+
+     ```cpp
+     auto cmp = [](int a, int b) { return std::abs(a) < std::abs(b); };
+     int a = -10, b = 5;
+     int min_abs = std::min(a, b, cmp); //  5
+     int max_abs = std::max(a, b, cmp); // -10，因为 |-10| > |5|
+     ```
+
+  3. **初始化列表版本（C++11 起）**
+
+     ```cpp
+     template< class T >
+     T max( std::initializer_list<T> ilist );
+     
+     template< class T >
+     T min( std::initializer_list<T> ilist );
+     ```
+
+     ```cpp
+     int worst = std::min({3, 1, 4, 1, 5, 9}); // 1
+     int best = std::max({3, 1, 4, 1, 5, 9});  // 9
+     ```
+
+  4. **一次性获取最小和最大：`std::minmax`**
+
+     ```cpp
+     template< class T >
+     std::pair<const T&, const T&> minmax( const T& a, const T& b );
+     
+     template< class T >
+     std::pair<T, T> minmax( std::initializer_list<T> ilist );
+     ```
+
+     ```cpp
+     int a = 10; int b = 20;
+     auto result = std::minmax(a, b);
+     std::cout << "min: " << result.first << '\n';	// 10
+     std::cout << "max: " << result.second << '\n';	// 20
+     // 结构化绑定用法（C++17起支持）
+     int x = 5, y = 12;
+     auto [lo, hi] = std::minmax(x, y);
+     // 引用绑定版本：auto& [lo_ref, hi_ref] = std::minmax(x, y); lo_ref 是 const int&，绑定到原来的较小者（x），但 x 之后修改，lo_ref 也会变
+     
+     auto [lo, hi] = std::minmax({3, 1, 4, 2}); // lo = 1, hi = 4
+     //传统写法
+     std::pair<int, int> result = std::minmax({3, 1, 4, 2});
+     int lo = result.first;
+     int hi = result.second;
+     ```
+
+- **集合操作：`set_intersection`(取交集)、`set_union `(取并集)**
+
+  ![image-20260526203506775](D:\Typora Picture\image-20260526203506775.png)
+
+  ![image-20260526203546363](D:\Typora Picture\image-20260526203546363.png)
+
+  ```cpp
+  std::vector<int> v1 = {1, 2, 3, 3, 4, 5, 5, 7};
+  std::vector<int> v2 = {3, 3, 5, 6, 7, 7, 8};
+  // 取交集
+  std::vector<int> intersection;
+  std::set_intersection(v1.begin(), v1.end(),
+                            v2.begin(), v2.end(),
+                            std::back_inserter(intersection));
+  for (int x : intersection) std::cout << x << ' '; // 结果：{3, 3, 5, 7}
+  // 取并集
+  std::vector<int> union_result;
+  std::set_union(v1.begin(), v1.end(),
+                     v2.begin(), v2.end(),
+                     std::back_inserter(union_result));
+  for (int x : union_result) std::cout << x << ' '; // 输出：1 2 3 3 4 5 5 6 7 7 8
+  ```
+
+  > **补充：使用自定义比较器**
+  >
+  > ```cpp
+  > template< class InputIt1, class InputIt2, class OutputIt, class Compare >
+  > OutputIt set_intersection( InputIt1 first1, InputIt1 last1,
+  >                            InputIt2 first2, InputIt2 last2,
+  >                            OutputIt d_first, Compare comp );
+  > ```
+  >
+  > ```cpp
+  > // 默认为降序排列
+  > std::vector<int> a = {9, 7, 5, 3, 1};
+  > std::vector<int> b = {8, 7, 7, 4, 3, 2};
+  > std::vector<int> result;
+  > std::set_intersection(a.begin(), a.end(),
+  >                       b.begin(), b.end(),
+  >                       std::back_inserter(result),
+  >                       std::greater<int>()); // 同样的比较器
+  > // result: {7, 3}
+  > ```
+  >
+  > **与默认比较器相比**
+  >
+  > - 如果自定义比较器和默认 `<` 定义了**相同的等价关系**（比如只是把升序改成降序），那么结果的多重集（元素及出现次数）不变，但**顺序会变**
+  > - 如果自定义比较器改变了等价关系（比如不区分大小写、按某个成员比较等），那么**哪些元素被视为相同就会不同**，最终结果的内容就会不同
