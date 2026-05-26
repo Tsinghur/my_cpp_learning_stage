@@ -71,6 +71,8 @@
 
 ## ==2.bind==
 
+**[bind原理图释链接](https://www.cnblogs.com/xusd-null/p/3698969.html)**
+
 > **引入**
 >
 > bind1st、bind2nd实际属于比较过时的方法，因为它们对其绑定的函数对象要求过于严格
@@ -622,14 +624,14 @@ lambda表达式的返回值，也可以利用std::function进行相应的表示
 >      // 两个独立逻辑（无继承）
 >      void logicA() { cout << "A逻辑"; }
 >      void logicB() { cout << "B逻辑"; }
->        
+>          
 >      // 使用
 >      function<void()> func;
->        
+>          
 >      // 第一次注册
 >      func = bind(logicA);
 >      func(); // 执行A
->        
+>          
 >      // 想切换成B？必须手动重新赋值！
 >      func = bind(logicB); // 手动切换
 >      func(); // 执行B
