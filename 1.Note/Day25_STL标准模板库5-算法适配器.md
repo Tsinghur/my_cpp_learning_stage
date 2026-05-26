@@ -764,8 +764,20 @@ lambda表达式的返回值，也可以利用std::function进行相应的表示
        `std::mem_fn(&T::print)` 可直接作为 `for_each` 的第三参数
 
        ```cpp
-       std::for_each(v.begin(), v.end(), std::mem_fn(&T::print));
+       for_each(v.begin(), v.end(), mem_fn(&T::print));
        ```
+
+       > ==**补充：显示写出占位符**==
+       >
+       > ```cpp
+       > for_each(v.begin(), v.end(), bind(mem_fn(&T::print), std::placeholders::_1));
+       > ```
+       >
+       > 正确，但多余
+       >
+       > - `mem_fn(&T::print)` 本身就是一个一元函数对象，只需传对象即可
+       > - `bind` 加 `_1` 只是做了一层“转发”，没有改变参数个数，还是接收一个对象，调用 `obj.print()`
+       > - 所以功能完全正常，只是代码更啰嗦
 
      对象由算法自动传递，无需额外绑定
 
@@ -784,8 +796,7 @@ lambda表达式的返回值，也可以利用std::function进行相应的表示
        1. 使用 `std::bind`：
 
           ```cpp
-          std::for_each(v.begin(), v.end(),
-              std::bind(std::mem_fn(&T::print), std::placeholders::_1, "Hello"));
+          for_each(v.begin(), v.end(), bind(mem_fn(&T::print), std::placeholders::_1, "Hello"));
           ```
 
        2. 使用 lambda：
