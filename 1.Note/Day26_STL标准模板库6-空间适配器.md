@@ -27,7 +27,7 @@ std::allocator是**可以感知类型的空间分配器**，将**空间的申请
   void construct( pointer p, const_reference val );
   
   // 执行析构
-  void destroy( pointer p ); // p->~T()
+  void destroy( pointer p ); // p->~T()，即destroy会使指针指向的对象执行析构函数
   
   // 释放空间
   void deallocate( T* p, std::size_t n );
@@ -73,33 +73,33 @@ std::allocator是**可以感知类型的空间分配器**，将**空间的申请
      template <class T>
      void MyVector<T>::reallocate() {
          // 1.申请两倍的新的空间
-         int oldCapacity = size();
-         int newCapacity = oldCapacity > 0 ? 2 * oldCapacity : 1;
+         int oldCapacity = size(); // 此时的size就是等于capacity的
+         int newCapacity = oldCapacity > 0 ? 2 * oldCapacity : 1; // 若是为空容器则先扩容为1
      
-         T * ptmp = _alloc.allocate(newCapacity);
+         T* ptmp = _alloc.allocate(newCapacity);
      
-         if(_start) {
+         if (_start) {
              // 2.使用算法库的函数将老的空间上的元素拷贝到新的空间
-             std::uninitialized_copy(_start,_finish,ptmp);
+             std::uninitialized_copy(_start, _finish, ptmp); // 在裸内存上创建新对象，目标内存为原始未初始化内存（只有空间，无对象）
+             // 而std::copy：拷贝已存在的对象，目标内存必须已初始化（已有合法对象）
      
-             // 3.老的空间上的元素需要销毁，
-             // 同时老的空间也要回收
+             // 3.老的空间上的元素需要销毁，同时老的空间也要回收
              while (_start != _finish) {
                  /* _alloc.destroy(_start++); */
                  // 注意一下边界问题，这样写是完善的
-                 _alloc.destroy(--_finish);
+                 _alloc.destroy(--_finish); // 从后往前销毁元素比较方便，_start指针不动
              }
      
              // 参数为指针(T*)和偏移量(size_t)
              // 如果从_finish开始，偏移量为负数，而size_t不好表达
              // 如果从_start开始,偏移量为正数，更方便
              // 所以选择_start固定，移动_finish;
-             _alloc.deallocate(_start,oldCapacity);
+             _alloc.deallocate(_start, oldCapacity);
          }
      
          // 4.三个指针与新的空间之间产生联系
          _start = ptmp;
-         _finish = ptmp + oldCapacity;
+         _finish = ptmp + oldCapacity; // 尾后指针
          _end_of_storage = ptmp + newCapacity;
      }
      
