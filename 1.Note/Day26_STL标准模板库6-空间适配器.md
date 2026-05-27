@@ -17,7 +17,7 @@ std::allocator是**可以感知类型的空间分配器**，将**空间的申请
 
 - **std::allocator最重要的成员函数：**
 
-  <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\1.Note\image-20250124102502538.png" alt="image-20250124102502538" style="zoom:67%;" />
+  <img src="..\0.TyporaPicture\image-20250124102502538.png" alt="image-20250124102502538" style="zoom:67%;" />
 
   ```cpp
   // 申请空间
@@ -61,11 +61,11 @@ std::allocator是**可以感知类型的空间分配器**，将**空间的申请
 
   1. 先完成比较简单的
 
-     <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\1.Note\image-20250124103233188.png" alt="image-20250124103233188" style="zoom:67%;" />
+     <img src="..\0.TyporaPicture\image-20250124103233188.png" alt="image-20250124103233188" style="zoom:67%;" />
 
   2. 尾部插入元素、删除元素，模拟vector的核心问题就是动态扩容
 
-     <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\1.Note\image-20250124103731526.png" alt="image-20250124103731526" style="zoom:67%;" />
+     <img src="..\0.TyporaPicture\image-20250124103731526.png" alt="image-20250124103731526" style="zoom:67%;" />
 
   3. 完成动态扩容的功能
 
@@ -107,23 +107,23 @@ std::allocator是**可以感知类型的空间分配器**，将**空间的申请
 
   4. 析构函数的逻辑类似，也是销毁元素、回收空间
 
-     <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\1.Note\image-20250124104636381.png" alt="image-20250124104636381" style="zoom:67%;" />
+     <img src="..\0.TyporaPicture\image-20250124104636381.png" alt="image-20250124104636381" style="zoom:67%;" />
 
   5. 测试效果并发现不足
 
-     <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\1.Note\image-20250124105021706.png" alt="image-20250124105021706" style="zoom:67%;" />
+     <img src="..\0.TyporaPicture\image-20250124105021706.png" alt="image-20250124105021706" style="zoom:67%;" />
 
      如果想遍历容器中的元素，首先想到的肯定是增强for循环方式（没有实现取下标，也没有实现迭代器相关的函数），但会出现错误，说明增强for循环的底层实际上也是通过迭代器实现的
 
-     ![image-20250124105645274](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\1.Note\image-20250124105645274.png)
+     ![image-20250124105645274](..\0.TyporaPicture\image-20250124105645274.png)
 
   6. 完成迭代器相关函数
 
-     <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\1.Note\image-20250124110222143.png" alt="image-20250124110222143" style="zoom:67%;" />
+     <img src="..\0.TyporaPicture\image-20250124110222143.png" alt="image-20250124110222143" style="zoom:67%;" />
 
   7. 最终测试
 
-     <img src="D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\1.Note\image-20250124110309969.png" alt="image-20250124110309969" style="zoom:67%;" />
+     <img src="..\0.TyporaPicture\image-20250124110309969.png" alt="image-20250124110309969" style="zoom:67%;" />
 
   完成了简单的模拟后，其实还有很多可以完善的地方，比如取下标、比如insert，可以自行完善，本章主要借此展示了alloctor空间配置器的基本使用
 
@@ -163,7 +163,7 @@ std::allocator是**可以感知类型的空间分配器**，将**空间的申请
 
   第一次申请空间时比较麻烦，后续再此申请同等大小的空间可以以O(1)的时间复杂度完成申请。
 
-  ![image-20240813115402461](D:\训练营\0.Git本地仓库\个人仓库\my_cpp_learning_stage\1.Note\image-20240813115402461-1733127460324-147.png)
+  ![image-20240813115402461](..\0.TyporaPicture\image-20240813115402461-1733127460324-147.png)
 
 - **内存池+自由链表的意义**
 
