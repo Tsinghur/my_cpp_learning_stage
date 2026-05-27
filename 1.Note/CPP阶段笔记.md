@@ -1,4 +1,35 @@
-# CPP阶段笔记# Day02_C++与C
+# CPP阶段笔记
+
+# Day01_Google C++风格规范
+
+1. **头文件声明顺序**
+
+   ```cpp
+   // foo.cpp
+   // 1. 【第一行】当前文件对应的同名头文件（必须放最前面）
+   #include "foo.h"
+   
+   // 2. C++ 标准库
+   #include <iostream>
+   #include <vector>
+   #include <string>
+   
+   // 3. C 标准库（C++ 推荐用 c 开头，不要用 .h 版本）
+   #include <cstdio>
+   #include <cstring>
+   
+   // 4. 第三方库
+   #include <boost/format.hpp>
+   #include <opencv2/opencv.hpp>
+   
+   // 5. 项目其他自定义头文件
+   #include "utils.h"
+   #include "config.h"
+   ```
+
+2. 
+
+# Day02_C++与C
 
 ## 一、命名空间namespace
 
@@ -438,8 +469,10 @@
      }
      ```
 
+## 二、==引用&——定义时必须初始化==
 
-## 二、==引用&==
+- 从 **语言语义** 上说，引用==**既不是指针，也不是值**==，它==是对象的**别名**==
+- 从 **底层实现** 上说，引用**通常被实现为指针**（存储对象的地址），所以它底层像指针；但它使用起来像值（别名），没有解引用操作
 
 1. **引用的本质**
 
@@ -670,7 +703,7 @@ C++引进了4个新的类型转换操作符:
 
    - nm Overload.o
 
-   ![image-20241014164716694](../0.TyporaPicture\image-20241014164716694.png)
+   ![image-20241014164716694](D:\Typora Picture\image-20241014164716694.png)
 
 4. **extern "C"**
 
@@ -819,7 +852,13 @@ extern "C"
 
 ## 七、补充
 
-1. **const关键字**
+1. **std**
+
+   - **`std` 是 C++ 标准规定的、全局唯一的「标准命名空间」**，全称 `standard`，所有 C++ 标准库的组件（`ios`/`fstream`/`string`/`cin`/`cout`等），都被定义在这个命名空间里
+
+   - **绝对不是每个头文件都有一个独立的`std`**，所有标准头文件，都是往**同一个全局`std`命名空间**里追加内容，而非每个头文件单独创建
+
+2. **const关键字**
 
    const修饰的变量称为const常量，之后不能修改其值(本质还是变量，使用时也是当成变量使用，只是被赋予只读属性)
 
@@ -839,7 +878,7 @@ extern "C"
    return 0;
    ```
 
-2. <span style=color:red;background:yellow>**const常量和宏定义常量的区别(面试常考)**</span>
+3. <span style=color:red;background:yellow>**const常量和宏定义常量的区别(面试常考)**</span>
 
    1. <font color=red>**发生的时机不同**</font>：
 
@@ -853,7 +892,7 @@ extern "C"
 
       **const常量有具体的类型**，在**编译期会执行类型检查**；在使用中，应尽量以const替换宏定义常量，可以减小犯错误的概率
 
-3. **指向常量的指针**和**常量指针**
+4. **指向常量的指针**和**常量指针**
 
    1. 指向常量的指针：pointer to const 
       - const int *p **或** int const *p
@@ -862,7 +901,7 @@ extern "C"
       - int * const p
       - const在*右边，即为常量指针，不能改变这个指针的指向，但是可以通过指针改变其指向的值
 
-4. **数组指针**和**指针数组**
+5. **数组指针**和**指针数组**
 
    1. **数组指针**
       - 指向数组的指针 pointer to array , 本质是指针, 指向数组首地址的指针
@@ -871,7 +910,7 @@ extern "C"
       - 元素都是指针类型的数组 array of pointers , 本质是数组,其元素是指针
       - int *p[3]
 
-5. **函数指针**和**指针函数**
+6. **函数指针**和**指针函数**
 
    1. **函数指针**
       - 指向函数的指针 pointer to function ,本质是指针
@@ -881,7 +920,7 @@ extern "C"
       - 返回值为指针类型的函数 function return a pointer , 本质为函数
       - 定义方式 return_type* function_name(parameter_list) { }
 
-6. **==new/delete==与==malloc/free==的区别(面试常考)**=
+7. **==new/delete==与==malloc/free==的区别(面试常考)**=
 
    1. malloc/free是库函数
       new/delete是运算符，后两者使用时不是函数的写法
@@ -892,7 +931,7 @@ extern "C"
    4. malloc的参数是字节数
       new表达式不需要传递字节数，会根据相应类型自动获取空间大小
 
-7. **程序模拟**
+8. **程序模拟**
 
    **27(√)，81(×)**
 
@@ -905,7 +944,8 @@ extern "C"
    }
    
    cout << foo(3,5) << endl;
-   ```# Day03_类与对象
+
+# Day03_类与对象
 
 ## 一、异常处理
 
@@ -976,7 +1016,7 @@ extern "C"
 
 5. 程序代码区：只读段，存放函数体的二进制代码
 
-   ![image-20241015175642417](..\0.TyporaPicture\image-20241015175642417.png)
+   ![image-20241015175642417](D:\Typora Picture\image-20241015175642417.png)
 
 6. **注意：**
 
@@ -1005,7 +1045,7 @@ extern "C"
 
    类的定义分为两个部分：
 
-   - 数据，相当于现实世界中的属性，称为<font color=red>**成员变量**</font>
+   - 数据，相当于现实世界中的属性，称为<font color=red>**数据成员/成员变量**</font>
 
    - 对数据的操作，相当于现实世界中的行为，称为<font color=red>**成员函数**</font>
 
@@ -1040,7 +1080,7 @@ extern "C"
 
    3. <span style=color:red;background:yellow>**private：**</span>私有的访问权限，在本类之外不能访问，比较敏感的数据设为private，类定义中可以访问
 
-      ![image-20241212155514035](..\0.TyporaPicture\image-20241212155514035.png)
+      ![image-20241212155514035](D:\Typora Picture\image-20241212155514035.png)
 
       **注意：**
 
@@ -1074,13 +1114,13 @@ extern "C"
         
         ```
 
-3. **struct 与 class的对比**
+3. ==**struct 与 class的对比**==
 
    - C中的struct只能是一些变量的集合体，可以封装数据但不能隐藏数据，而且成员不能是函数
 
-   - C++中的struct对C中的struct做了拓展，可以定义函数，基本等同于class，默认访问权限是public
+   - **C++中**的struct对C中的**struct做了拓展，可以定义函数，基本等同于class**，唯一区别是**默认访问权限是public**
 
-   - class默认访问权限是private
+   - **class默认访问权限是private**
 
 4. **成员函数的定义**
 
@@ -1192,10 +1232,9 @@ extern "C"
         }
         ```
 
-## 五、对象
 # Day04_对象的创建与销毁
 
-## 一、对象的创建
+## 一、对象的创建——构造函数
 
 通过自定义的公共成员函数 setBrand 和 setPrice 实现了对数据成员的初始化（严格意义上是**赋值**）
 
@@ -1373,9 +1412,9 @@ C++ 为类提供了一种<span style=color:red;background:yellow>**特殊的成�
 
      ```cpp
        规则						说明	
-     成员对齐		每个成员的偏移量必须是其自身大小的整数倍	
+     成员对齐		 每个成员的偏移量必须是其自身大小的整数倍	
      结构体对齐		结构体总大小必须是其最大成员大小的整数倍	
-     补齐填充		不满足上述条件时，插入填充字节
+     补齐填充		 不满足上述条件时，插入填充字节
      ```
 
    - **特殊情况**
@@ -1418,7 +1457,7 @@ C++ 为类提供了一种<span style=color:red;background:yellow>**特殊的成�
 
    若是想要进行妥善的内存回收——则需要交给**析构函数**来完成↓↓↓
 
-## 二、对象的销毁
+## 二、对象的销毁——析构函数
 
 1. **析构函数**
 
@@ -1526,7 +1565,9 @@ C++ 为类提供了一种<span style=color:red;background:yellow>**特殊的成�
    3. **局部 static 静态对象**
    4. **全局对象**（全场最晚析构）
 
-   > 局部静态对象是在程序结束时析构，且先于全局对象# Day05
+   > 局部静态对象是在程序结束时析构，且先于全局对象
+
+# Day05_对象的复制&特殊数据成员
 
 ## 一、同类型对象的复制——拷贝构造函数
 
@@ -2176,49 +2217,48 @@ pt1 = pt2;//赋值操作
    静态成员规则：
 
    - 在private中声明的静态成员无法在类之外直接访问（显然）
-
    - <span style=color:red;background:yellow>**对于静态数据成员的初始化，必须放在类外**</span>（一般紧接着类的定义，这是规则1的特殊情况）
-
    - 静态数据成员**初始化**时**不**能在数据类型前面**加static**，在**数据成员名前面**要**加上类名+作用域限定符（<类名>: :<数据成员名>）**
-
    - 如果有多条静态数据成员，那么它们的**初始化顺序需要与声明顺序一致**（规范）
-
-   - 静态成员在访问时**可以**通过对象访问，**也可以**直接通过**类名::成员名**的形式（更常用）
-
-     ```cpp
-     // 定义一个学生类, 创建3个不同的学生, 张三, 李四, 王五. 他们是同一个班级的同学
-     class Student
-     {
-     public:
-         Student(int id, const char* name)
-         : m_id(id)
-         , m_name(new char[strlen(name)+ 1]{})
-         {
-             strcpy(m_name, name);
-         }
-         ~Student()
-         {
-             if(m_name){
-                 delete [] m_name;
-                 m_name = nullptr;
-             }
-         }
-         void print()
-         {
-             cout << m_id << "," << m_name << endl;
-         }
-     
-         // 静态成员作为班级ID
-         static int ms_classID; // 静态的成员必须在类的外部进行初始化
-     private:
-         int m_id;
-         char *m_name;
-     };
-     
-     // 类外部 静态成员的初始化
-     // 需要指明是在哪个类中定义的静态成员 类名::
-     int Student::ms_classID = 2;
-     ```
+   - 静态成员在访问时**可以**通过对象访问，==**也可以**直接通过**类名::成员名**的形式（更常用）==
+   - **补充：**
+     - ==在类的成员函数（包括静态成员函数）内部访问本类的静态成员时，**因为它们处在同一个类作用域中**，所以可以直接使用成员名，而不需要添加 `类名::` 前缀==
+     - ==只有写在**类外部**的定义中，且脱离了类作用域时（例如初始化静态成员，或是在类外定义成员函数且函数签名前没有类名限定的情况），才必须使用 `Computer::ms_pInstance` 来指明它属于哪个类==
+   
+   ```cpp
+   // 定义一个学生类, 创建3个不同的学生, 张三, 李四, 王五. 他们是同一个班级的同学
+   class Student
+   {
+   public:
+       Student(int id, const char* name)
+       : m_id(id)
+       , m_name(new char[strlen(name)+ 1]{})
+       {
+           strcpy(m_name, name);
+       }
+       ~Student()
+       {
+           if(m_name){
+               delete [] m_name;
+               m_name = nullptr;
+           }
+       }
+       void print()
+       {
+           cout << m_id << "," << m_name << endl;
+       }
+   
+       // 静态成员作为班级ID
+       static int ms_classID; // 静态的成员必须在类的外部进行初始化
+   private:
+       int m_id;
+       char *m_name;
+   };
+   
+   // 类外部 静态成员的初始化
+   // 需要指明是在哪个类中定义的静态成员 类名::
+   int Student::ms_classID = 2;
+   ```
 
 ## 四、补充
 
@@ -2543,6 +2583,7 @@ pt1 = pt2;//赋值操作
    ~Student num 1
    */
    ```
+
 # Day06_特殊成员函数&对象的组织&单例模式
 
 ## 一、特殊的成员函数
@@ -2628,7 +2669,7 @@ C++ 类中还有两种特殊的成员函数：**静态成员函数**和 **const 
    Point pt(1, 2);
    Point * p1 = nullptr;
    Point * p2 = &pt;
-   Point * p3 = new Point(3, 4); // 记得delete
+   Point * p3 = new Point(3, 4); // 还要delete
    ```
 
    利用指针去调用Point类的成员函数print：
@@ -2649,61 +2690,60 @@ C++ 类中还有两种特殊的成员函数：**静态成员函数**和 **const 
 
    -  对象数组的初始化
 
-      ```cpp
-          // 1.通过左值对象构建数组
-          Point pt1{ 1, 1 };
-          Point pt2{ 2, 2 };
-          Point pt3{ 3, 3 };
-          // 左值对象作为数组元素时 会调用copy
-          Point pts[3] = { pt1, pt2, pt3 };
-          /* pts[0].m_x = 10; */
-          pts[0].print();
-      
-          // 2.通过右值对象构建数组
-          Point pts[] = {
-              Point{ 1, 1 },
-              Point{ 2, 2 },
-              Point{ 3, 3 }
-          };
-          pts[0].print();
-      
-          // 3.通过初始化列表简写构建数组
-          // 使用初始化列表进行简写
-          Point pts[] = {
-              { 1, 1 },
-              { 2, 2 },
-              { 3, 3 }
-          };
-          pts[0].print();
-      ```
-
+     ```cpp
+     // 1.通过左值对象构建数组
+     Point pt1{ 1, 1 };
+     Point pt2{ 2, 2 };
+     Point pt3{ 3, 3 };
+     // 左值对象作为数组元素时 会调用copy
+     Point pts[3] = { pt1, pt2, pt3 };
+     /* pts[0].m_x = 10; */
+     pts[0].print();
+     
+     // 2.通过右值对象构建数组
+     Point pts[] = {
+         Point{ 1, 1 },
+         Point{ 2, 2 },
+         Point{ 3, 3 }
+     };
+     pts[0].print();
+     
+     // 3.通过初始化列表简写构建数组
+     // 使用初始化列表进行简写
+     Point pts[] = {
+         { 1, 1 },
+         { 2, 2 },
+         { 3, 3 }
+     };
+     pts[0].print();
+     ```
+     
    -  对象数组的遍历
 
-      ```cpp
-          // foreach遍历 增强for循环(迭代循环)
-          for(Point pt : pts){
-              pt.print();
-          }
-          cout << "----->" << endl;
-          // 使用关键字auto进行类型的自动推导
-          for(auto pt : pts){
-              pt.print();
-          }
-      	// 省去拷贝操作
-          cout << "----->" << endl;
-          // Point & pt 
-          for(auto & pt : pts){
-              pt.print();
-          }
-      ```
+     ```cpp
+     // foreach遍历 增强for循环(迭代循环)
+     for(Point pt : pts){
+         pt.print();
+     }
+     cout << "----->" << endl;
+     // 使用关键字auto进行类型的自动推导
+     for(auto pt : pts){
+         pt.print();
+     }
+     // 省去拷贝操作
+     cout << "----->" << endl;
+     // Point & pt 
+     for(auto & pt : pts){
+         pt.print();
+     }
+     ```
 
 4. **堆对象**
 
    和把一个简单变量创建在动态存储区一样，可以用 new 和 delete 表达式为对象分配动态存储区
 
    ```cpp
-   void test()
-   {
+   void test() {
    	Point * pt1 = new Point(11, 12);
    	pt1->print();
    	delete pt1;
@@ -2733,7 +2773,7 @@ new/delete和malloc/free最本质区别 —— new/delete是表达式，而mallo
 
 > 注意：不能说new 与 delete 的本质是 malloc 与 free 
 >
-> `new/delete` 是**C++ 的关键字 / 运算符**，**==底层会调用== malloc/free 分配内存**，==但==**额外做了大量 C++ 专属工作**
+> `new/delete` 是**C++ 的关键字 / 运算符**，**==底层==会调用 ==malloc/free== 分配内存**，==但==**额外做了大量 C++ 专属工作**
 
 1. **new表达式的工作步骤**
 
@@ -2756,6 +2796,7 @@ new/delete和malloc/free最本质区别 —— new/delete是表达式，而mallo
    1. 调用析构函数,回收数据成员申请的资源(堆空间)
 
    2. 调用operator delete库函数回收本对象所在的空间
+
 
    ```cpp
    //默认的operator new
@@ -2804,9 +2845,9 @@ new/delete和malloc/free最本质区别 —— new/delete是表达式，而mallo
    };
    ```
 
-   ![image-20241104093024931](..\0.TyporaPicture\image-20241104093024931.png)
+   ![image-20241104093024931](D:\Typora Picture\image-20241104093024931.png)
 
-   ![image-20241104093038278](..\0.TyporaPicture\image-20241104093038278.png)
+   ![image-20241104093038278](D:\Typora Picture\image-20241104093038278.png)
 
 3. **创建对象的探究**
 
@@ -2852,7 +2893,7 @@ new/delete和malloc/free最本质区别 —— new/delete是表达式，而mallo
 
    - ==只能生成堆对象 ，不能生成栈对象==
 
-     可以将析构函数设为私有
+     可以将析构函数设为私有（再提供一个public的静态函数用于回收空间）
 
      > 因为编译器自动调用构造函数与析构函数
 
@@ -2968,9 +3009,9 @@ new/delete和malloc/free最本质区别 —— new/delete是表达式，而mallo
    2. **析构函数**的访问权限一般比构造函数更严格，**也设置为私有**
    3. 为了确保只有一个对象（严格避免复制），C++11后可以将拷贝构造和赋值运算符函数从类中删除( [声明] = delete; )
 
-   ![image-20241104144008414](..\0.TyporaPicture\image-20241104144008414.png)
+   ![image-20241104144008414](D:\Typora Picture\image-20241104144008414.png)
 
-   ![image-20241104144204481](..\0.TyporaPicture\image-20241104144204481.png)
+   ![image-20241104144204481](D:\Typora Picture\image-20241104144204481.png)
 
 3. **单例对象的数据成员申请堆空间**
 
@@ -3037,9 +3078,20 @@ new/delete和malloc/free最本质区别 —— new/delete是表达式，而mallo
    }
    ```
 
-   ![image-20241128143035002](..\0.TyporaPicture\image-20241128143035002-17778971206723.png)
+   ![image-20241128143035002](D:\Typora Picture\image-20241128143035002-17778971206723.png)
 
-   ![image-20241128143050644](..\0.TyporaPicture\image-20241128143050644.png)# Day07_字符串&vector&CPP输入输出流
+   ![image-20241128143050644](D:\Typora Picture\image-20241128143050644.png)
+
+4. **单例模式的应用场景**
+
+   - 有频繁实例化然后销毁的情况，也就是频繁的 new 对象，可以考虑单例模式
+   - 创建对象时耗时过多或者耗资源过多，但又经常用到的对象
+   - 当某个资源需要在整个程序中只有一个实例时，可以使用单例模式进行管理（全局资源管理）。例如数据库连接池、日志记录器等
+   - 当需要读取和管理程序配置文件时，可以使用单例模式确保只有一个实例来管理配置文件的读取和写入操作（配置文件管理）
+   - 在多线程编程中，线程池是一种常见的设计模式。使用单例模式可以确保只有一个线程池实例，方便管理和控制线程的创建和销毁
+   - GUI应用程序中的全局状态管理：在GUI应用程序中，可能需要管理一些全局状态，例如用户信息、应用程序配置等。使用单例模式可以确保全局状态的唯一性和一致性。
+
+# Day07_字符串&vector&标准输入输出流
 
 ## 一、C++字符串
 
@@ -3219,7 +3271,7 @@ C++ 提供了 std::string （后面简写为 string ）类用于字符串的处�
 
       <font color=red>**end函数返回尾后迭代器（指向最后一个元素的后一位的指针）**</font>
 
-      ![image-20241203114859778](..\0.TyporaPicture\image-20241203114859778.png)
+      ![image-20241203114859778](D:\Typora Picture\image-20241203114859778-17780507023371.png)
 
 ## 二、C++动态数组——vector
 
@@ -3342,7 +3394,7 @@ C++中，**std::vector**（向量）是一个**动态数组容器**，能存放�
 
    （4）**回收原空间**
 
-   ![image-20250225092256556](..\0.TyporaPicture\image-20250225092256556.png)
+   ![image-20250225092256556](D:\Typora Picture\image-20250225092256556-17780507023382.png)
 
 5. ==**vector的底层实现**==
 
@@ -3418,7 +3470,7 @@ C++中，**std::vector**（向量）是一个**动态数组容器**，能存放�
   | **ostringstream** | **字符串输出流** | **sstream**  |
   | stringstream      | 字符串输入输出流 | sstream      |
 
-  ![image-20241105111010178](..\0.TyporaPicture\image-20241105111010178.png)
+  ![image-20241105111010178](D:\Typora Picture\image-20241105111010178-17780507023383.png)
 
 ## ==四、流的四种状态==
 
@@ -3429,7 +3481,7 @@ IO 操作与生俱来的一个问题是可能会发生错误，一些错误是�
 
 3. <span style=color:red;background:yellow>**eofbit**</span>表示**到达流结尾位置**， 流在正常输入输出的情况下结束，会被置为eofbit状态
 
-4. <span style=color:red;background:yellow>**goodbit **</span>表示流处于**有效状态**。流在有效状态下，才能正常使用。如果 badbit 、 failbit 和 eofbit 任何一个被置位，则流无法正常使用
+4. <span style=color:red;background:yellow>**goodbit **</span>表示流处于**有效状态**。流在有效状态下，才能正常使用。**如果 badbit 、 failbit 和 eofbit 任何一个被置位，则流无法正常使用**
 
 这四种状态都定义在类 ios_base 中，作为其数据成员存在。在 GNU GCC7.4 的源码中，流状态的实现如下：
 
@@ -3444,7 +3496,7 @@ bool fail() const	// 流是failbit状态，返回true，否则返回false
 bool eof() const	// 流是eofbit状态，返回true，否则返回false
 ```
 
-## 五、标准输入输出流
+## 五、标准输入输出流——包含在头文件`<iostream>`中
 
 对系统指定的标准设备的输入和输出。即从键盘输入数据，输出到显示器屏幕。这种输入输出称为标准输入输出，简称**标准** I/O
 
@@ -3688,7 +3740,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
       > vim ostream
       > ```
       >
-      > ![image-20241107104337240](..\0.TyporaPicture\image-20241107104337240.png)
+      > ![image-20241107104337240](D:\Typora Picture\image-20241107104337240-17780507023384.png)
       >
       > 如果在使用cout时，没有使用endl函数，键盘输入的内容会存在输出流对象的缓冲区中，当缓冲区满或遇到换行符时，将缓冲区刷新，内容传输到终端显示。可使用sleep函数查看缓冲的效果，如果不用sleep函数，即使没有endl或换行符，所有内容依然是直接输出——因为**程序执行完时也会刷新缓冲区**
 
@@ -3704,7 +3756,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
 
 # Day08_文件输出流
 
-## ==一、文件输入输出流==——==包含在头文件<fstream>中==
+## ==一、文件输入输出流==——==包含在头文件`<fstream>`中==
 
 所谓“**文件**”，一般指存储**在外部介质上数据的集合**。一批*数据是以文件的形式存放在外部介质上的*。**操作系统以文件为单位对数据进行管理**。要向外部介质上存储数据也必须先建立一个**文件（以文件名标识）**，才能向它输出数据。外存文件包括磁盘文件、光盘文件和U盘文件。目前使用最广泛的是磁盘文件
 
@@ -3716,9 +3768,9 @@ C++标准库定义了三个预定义的标准输入输出流对象:
 
    -  ifstream（文件输入流）
 
-   -  ofstream（文件输出流）
+   - ofstream（文件输出流）
 
-   -  fstream （文件输入输出流）
+   - fstream （文件输入输出流）
 
    他们的构造函数形式都很类似：
 
@@ -3742,7 +3794,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
 
    - <font color=red>**in **</font>
 
-     以读取模式打开文件（默认用于 `ifstream`）；如果文件不存在，打开失败
+      以读取模式打开文件（默认用于 `ifstream`）；如果文件不存在，打开失败
 
    - <font color=red>**out**</font> 
 
@@ -3764,7 +3816,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
 
      二进制，读取或写入文件的数据为二进制形式
 
-   ![image-20241108093024482](..\0.TyporaPicture\image-20241108093024482.png)
+   ![image-20241108093024482](D:\Typora Picture\image-20241108093024482.png)
 
    > 补充：
    >
@@ -3833,7 +3885,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
       ```
 
    2. 逐词读取
-
+   
       ```cpp
       // 使用 输入流运算符>>，默认以换行符、空格作为间隔符，一次读取一个字符串
       string word;
@@ -3849,11 +3901,11 @@ C++标准库定义了三个预定义的标准输入输出流对象:
       >
       > 1. **链式输入**：可以连写 `ifs >> a >> b >> c;`，因为每次 `>>` 都返回流的引用，下一个 `>>` 就能接着调用
       > 2. **条件判断**：在 `while(ifs >> word)` 中，`ifs >> word` 返回流引用后，`while` 需要一个布尔条件，于是编译器自动调用流的 **布尔转换运算符**（C++11 起是 `explicit operator bool()`，之前是 `operator void*()`）。该转换会检查流状态标志（`failbit`、`badbit`），如果流处于正常状态则返回 `true`，否则返回 `false`
-
+   
    3. 按行读取
-
+   
       - 法一：使用`ifstream`类中的成员函数`getline`，这种方式是兼容C的写法
-
+   
         ```cpp
         #include <string.h>
         ifstream ifs("test.cc");
@@ -3865,7 +3917,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
             memset(buff,0,sizeof(buff));
         }
         ```
-
+   
         > ==补充：==
         >
         > | std::basic_istream<CharT,Traits>::getline                    |
@@ -3878,11 +3930,11 @@ C++标准库定义了三个预定义的标准输入输出流对象:
         > - **`delim`**：**分隔符**，即指定一个字符作为“行”的结束标志。当从流中读取到此字符时停止读取（该分隔符会被读取并丢弃，**不会存入** `s` 中）。如果调用的是只有两个参数的重载版本，则分隔符默认为 **`'\n'`**（换行符）
         >
         > **简单来说**：从流中往 `s` 里读，最多读 `count-1` 个字符，遇到 `delim` 就停，分隔符不写入 `s`
-
+   
       - 法二：使用`<string>`提供的`getline`方法，**工作中更常用**
-
+   
         **将一行的内容交给一个string对象去存储，不用再关心字符数**
-
+        
         ```cpp
         // 传入输入流对象、string(、分隔符（默认换行符为分隔符, 也可以自己指定）)
         // 更方便，使用更多
@@ -3891,62 +3943,62 @@ C++标准库定义了三个预定义的标准输入输出流对象:
             cout << line << endl;
         }
         ```
-
+        
         > ==补充：==
         >
-        > ![image-20241108094729774](..\0.TyporaPicture\image-20241108094729774.png)
+        > ![image-20241108094729774](D:\Typora Picture\image-20241108094729774.png)
         >
         > ```cpp
         > void test4()
         > {
-        > using std::string; // 使用string中的getline
-        >  ifstream ifs("aa.txt");
-        >  string line;
-        >  while(std::getline(ifs,line)){ // eof状态结束循环
-        >      cout << line << endl;
-        >  }
-        > 
-        > ifs.close(); // 关闭流
-        > }
+        >  using std::string; // 使用string中的getline
+        >     ifstream ifs("aa.txt");
+        >     string line;
+        >     while(std::getline(ifs,line)){ // eof状态结束循环
+        >         cout << line << endl;
+        >     }
+        >    
+        >  ifs.close(); // 关闭流
+        >    }
         > ```
-
+   
    4. 按字节读取
-
+   
       - read函数
-
+   
         通过文件输入流对象读取到的内容交给字符数组，同时需要传入要读取的字符数
-
-        ![image-20241108110205841](..\0.TyporaPicture\image-20241108110205841.png)
-
+   
+        ![image-20241108110205841](D:\Typora Picture\image-20241108110205841.png)
+   
       - tellg函数
-
+   
         要知道字符数就需要用上tellg函数了，可以这样理解，从文件中读取内容时存在一个文件游标，读取是从文件游标的位置开始读取的。tellg就是用来获取游标位置的，而seekg则是用来设置游标位置的。
-
-        ![image-20241108110135500](..\0.TyporaPicture\image-20241108110135500.png)
-
+   
+        ![image-20241108110135500](D:\Typora Picture\image-20241108110135500.png)
+   
       - seekg函数
-
+   
         调用seekg时有两种方式:
-
+   
         1. 绝对位置
-
+   
            比如将游标设为流的开始位置，可以直接传参数0
-
+   
         2. 相对位置
-
+   
            传入偏移量和基准点
-
+   
            第一个参数：相对基准点需要向前偏移则传入负数，不偏移则传入0，需要向后偏移则传入正数。
            第二个参数：格式为<span style=color:red;background:yellow>**std::ios::beg**</span>(以流的开始位置为例)
-
-        ![image-20241108110343811](..\0.TyporaPicture\image-20241108110343811.png)
-
-        ![image-20241108110410536](..\0.TyporaPicture\image-20241108110410536.png)
-
+   
+        ![image-20241108110343811](D:\Typora Picture\image-20241108110343811.png)
+   
+        ![image-20241108110410536](D:\Typora Picture\image-20241108110410536.png)
+   
       - 示例：读取一个文件的全部内容
-
+   
         > 还可以在创建输入流对象时指定ate模式，省去第一步将游标置于流末尾处的操作
-
+   
         ```cpp
         void test0(){
             string filename = "test.cc";
@@ -3981,6 +4033,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
             ifs.close();
         }
         ```
+   
 
 ## 三、补充——类与对象简答
 
@@ -3997,98 +4050,95 @@ C++标准库定义了三个预定义的标准输入输出流对象:
 
 2. **什么是析构函数？它有哪些特点？请说明何时需要自定义析构函数。**
 
-   - **定义**：一种特殊的成员函数，函数名为`~类名`，没有参数和返回值。
-   - **特点**：
-     - 在对象销毁时自动调用；
-     - 不能重载，每个类只有一个析构函数；
-     - 如果没有显式定义，编译器会自动生成一个默认析构函数（但不会释放动态分配的资源）。
-   - **何时需要自定义析构函数**：当类中有指针成员且申请了堆空间（如`new`分配的内存），或者有其他需要清理的资源（如文件句柄、网络连接）时，需要自定义析构函数来释放这些资源，防止内存泄漏。
+    - **定义**：一种特殊的成员函数，函数名为`~类名`，没有参数和返回值。
+    - **特点**：
+      - 在对象销毁时自动调用；
+      - 不能重载，每个类只有一个析构函数；
+      - 如果没有显式定义，编译器会自动生成一个默认析构函数（但不会释放动态分配的资源）。
+    - **何时需要自定义析构函数**：当类中有指针成员且申请了堆空间（如`new`分配的内存），或者有其他需要清理的资源（如文件句柄、网络连接）时，需要自定义析构函数来释放这些资源，防止内存泄漏。
 
 3. **简述浅拷贝与深拷贝的区别，并说明在什么情况下需要手动实现深拷贝。**
 
-   - **浅拷贝**：
-     - 只复制指针的值（地址），
-     - 新旧对象指向同一片内存。（**不是两个对象本身占用同一片内存，这是对浅拷贝最常见的误区。两个完全独立的对象，各自占用独立的内存空间；==但它们内部的指针成员，指向了同一片堆内存==（对象管理的外部资源）。**）
-     - 可能导致同一内存被多次释放（double free）或修改一方影响另一方。
+      - **浅拷贝**：
+        - 只复制指针的值（地址），
+        - 新旧对象指向同一片内存。（**不是两个对象本身占用同一片内存，这是对浅拷贝最常见的误区。两个完全独立的对象，各自占用独立的内存空间；==但它们内部的指针成员，指向了同一片堆内存==（对象管理的外部资源）。**）
+        - 可能导致同一内存被多次释放（double free）或修改一方影响另一方。
 
-   - **深拷贝**：
-     - 复制指针指向的实际数据，
-     - 为新对象分配独立的内存。
-     - 新旧对象互不影响，可以安全释放。
-   - **需要手动实现深拷贝的情况**：当类中有指针成员且指向动态分配的内存时，默认的拷贝构造函数和赋值运算符函数进行浅拷贝，会导致问题，因此需要手动实现深拷贝。
+      - **深拷贝**：
+           - 复制指针指向的实际数据，
+           - 为新对象分配独立的内存。
+           - 新旧对象互不影响，可以安全释放。
+      - **需要手动实现深拷贝的情况**：当类中有指针成员且指向动态分配的内存时，默认的拷贝构造函数和赋值运算符函数进行浅拷贝，会导致问题，因此需要手动实现深拷贝。
 
 4. **简述拷贝构造函数和赋值运算符函数的区别（从调用时机、形式、实现等方面）。**
 
-   | 特性           | 拷贝构造函数                   | 赋值运算符函数                                   |
-   | :------------- | :----------------------------- | :----------------------------------------------- |
-   | 调用时机       | 用一个已存在对象初始化新对象时 | 两个对象都已存在，将一个对象的值赋给另一个对象时 |
-   | 形式           | `类名(const 类名&)`            | `类名& operator=(const 类名&)`                   |
-   | 是否创建新对象 | 是                             | 否                                               |
-   | 返回值         | 无                             | 通常返回`*this`的引用                            |
-   | 处理自赋值     | 不涉及（新对象还不存在）       | 需要处理自赋值情况                               |
+    | 特性 | 拷贝构造函数 | 赋值运算符函数 |
+    | :------------- | :----------------------------- | :----------------------------------------------- |
+    | 调用时机 | 用一个已存在对象初始化新对象时 | 两个对象都已存在，将一个对象的值赋给另一个对象时 |
+    | 形式 | `类名(const 类名&)` | `类名& operator=(const 类名&)` |
+    | 是否创建新对象 | 是 | 否 |
+    | 返回值 | 无 | 通常返回`*this`的引用 |
+    | 处理自赋值 | 不涉及（新对象还不存在） | 需要处理自赋值情况 |
 
 5. **简述this指针的作用，并说明它在const成员函数和非const成员函数中的类型有何不同。**
 
-   - **作用**：指向调用成员函数的对象本身，在成员函数中通过`this`可以访问本对象的成员。
+    - **作用**：指向调用成员函数的对象本身，在成员函数中通过`this`可以访问本对象的成员。
 
-   - 在非const成员函数中，this指针的类型是`类名 * const`（常量指针，指向非常量）；
+    - 在非const成员函数中，this指针的类型是`类名 * const`（常量指针，指向非常量）；
 
-   - 在const成员函数中，this指针的类型是`const 类名 * const`（常量指针，指向常量），因此不能通过this修改对象的数据成员。
+    - 在const成员函数中，this指针的类型是`const 类名 * const`（常量指针，指向常量），因此不能通过this修改对象的数据成员。
 
 6. **简述静态数据成员和静态成员函数的特点，并说明为什么静态成员函数中不能直接访问非静态成员。**
 
-   - **静态数据成员**：
-     - 被所有对象共享，
-     - 存储在全局/静态区，不占用对象空间，
-     - 必须在类外初始化。
-   - **静态成员函数**：
-     - 不依赖于具体对象，
-     - 没有this指针，
-     - 只能访问静态成员（静态数据成员或其他静态成员函数），不能直接访问非静态成员（因为没有this指针，不知道访问哪个对象的成员）。
+    - **静态数据成员**：
+      - 被所有对象共享，
+      - 存储在全局/静态区，不占用对象空间，
+      - 必须在类外初始化。
+    - **静态成员函数**：
+      - 不依赖于具体对象，
+      - 没有this指针，
+      - 只能访问静态成员（静态数据成员或其他静态成员函数），不能直接访问非静态成员（因为没有this指针，不知道访问哪个对象的成员）。
 
 7. **简述单例模式的作用和实现要点，并说明将单例对象创建在静态区和堆区各自的优缺点。**
 
-   - **作用**：确保一个类只有一个实例，并提供一个全局访问点。
-   - **实现要点**：
-     1. 构造函数私有化；（**不强制要求必须把析构函数设为私有**，它不是单例的语法必需项）
-     2. 提供静态的`getInstance`方法返回唯一实例；
-     3. 将拷贝构造和赋值运算符删除（或设为私有）；
-     4. 静态成员指针保存唯一实例（堆区实现），或返回静态局部对象（静态区实现）。
-   - **优缺点**：
-     - **静态区实现**：
-       - 简单，
-       - 线程安全（C++11后局部静态变量初始化是线程安全的），
-       - 但对象生命周期与程序相同，可能因占用静态区造成内存压力。
-     - **堆区实现**：
-       - 可以手动控制对象销毁，
-       - 适合大对象，
-       - 但需要处理线程安全和手动释放。
+    - **作用**：确保一个类只有一个实例，并提供一个全局访问点。
+    - **实现要点**：
+      1. 构造函数私有化；（**不强制要求必须把析构函数设为私有**，它不是单例的语法必需项）
+      2. 提供静态的`getInstance`方法返回唯一实例；
+      3. 将拷贝构造和赋值运算符删除（或设为私有）；
+      4. 静态成员指针保存唯一实例（堆区实现），或返回静态局部对象（静态区实现）。
+    - **优缺点**：
+      - **静态区实现**：
+        - 简单，
+        - 线程安全（C++11后局部静态变量初始化是线程安全的），
+        - 但对象生命周期与程序相同，可能因占用静态区造成内存压力。
+      - **堆区实现**：
+        - 可以手动控制对象销毁，
+        - 适合大对象，
+        - 但需要处理线程安全和手动释放。
 
 8. **简述C风格字符串与C++ `std::string`的区别，并说明为什么在C++中更推荐使用`std::string`。**
+    - **C风格字符串**：
+      - 字符数组，以'\0'结尾，
+      - 需要手动管理内存，
+      - 使用库函数（如`strcpy`、`strcat`）操作，容易出错（缓冲区溢出、忘记结尾空字符等）。
 
-   - **C风格字符串**：
-     - 字符数组，以'\0'结尾，
-     - 需要手动管理内存，
-     - 使用库函数（如`strcpy`、`strcat`）操作，容易出错（缓冲区溢出、忘记结尾空字符等）。
-
-   - **C++ `std::string`**：
-     - 类类型，
-     - 自动管理内存，
-     - 提供丰富的成员函数，支持直接赋值、拼接、比较等操作，更安全、更方便。
+    - **C++ `std::string`**：
+      - 类类型，
+      - 自动管理内存，
+      - 提供丰富的成员函数，支持直接赋值、拼接、比较等操作，更安全、更方便。
 
 **推荐使用`std::string`**：因为它封装了内存管理，避免了许多C风格字符串的常见错误，提高了代码的安全性和可读性。
 
 9. **简述`std::vector`的动态扩容机制，并说明`size()`和`capacity()`的区别。**
-
-   1. 当`size() == capacity()`时，再添加元素会触发扩容。
-   2. **扩容步骤**：
-      1. 开辟一块更大的新空间（通常为原容量的2倍或1.5倍，取决于编译器）；
-      2. 将原空间的所有元素复制（或移动）到新空间；
-      3. 添加新元素；
-      4. 释放原空间。
-
-   - `size()`：当前实际存储的元素个数。
-   - `capacity()`：当前已分配内存可以存储的元素个数（即容量），`capacity() >= size()`。
+    1. 当`size() == capacity()`时，再添加元素会触发扩容。
+    2. **扩容步骤**：
+       1. 开辟一块更大的新空间（通常为原容量的2倍或1.5倍，取决于编译器）；
+       2. 将原空间的所有元素复制（或移动）到新空间；
+       3. 添加新元素；
+       4. 释放原空间。
+    - `size()`：当前实际存储的元素个数。
+    - `capacity()`：当前已分配内存可以存储的元素个数（即容量），`capacity() >= size()`。
 
 10. 分析下列程序，写出输出结果（假设构造函数和析构函数都有输出提示）。 c++
 
@@ -4135,7 +4185,9 @@ C++标准库定义了三个预定义的标准输入输出流对象:
       - 先执行 `B` 的析构函数体，输出 `~B()`；
       - 再销毁成员 `a`，调用 `A` 的析构函数，输出 `~A()`。
 
-      因此==**整体遵循“先构造的后析构”原则**==# Day09_文件输出流&字符串输入输出流&日志系统
+      因此==**整体遵循“先构造的后析构”原则**==
+
+# Day09_文件输出流&字符串输入输出流&日志系统
 
 ## 一、文件输出流
 
@@ -4150,7 +4202,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
 
 1. **文件输出流对象的创建**
 
-   ![image-20241108114843218](..\0.TyporaPicture\image-20241108114843218.png)
+   ![image-20241108114843218](D:\Typora Picture\image-20241108114843218.png)
 
    ofstream对象的创建与ifstream对象的创建类似
 
@@ -4199,7 +4251,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
 
       除了使用输出流运算符<< 将内容传输给文件输出流对象（传给`ofstream`对象就是将内容传到其绑定的文件中），还可以使用write函数进行传输
 
-      ![image-20241108142946333](..\0.TyporaPicture\image-20241108142946333.png)
+      ![image-20241108142946333](D:\Typora Picture\image-20241108142946333.png)
 
 3. <span style=color:red;background:yellow>**动态查看指令**</span>
 
@@ -4210,39 +4262,39 @@ C++标准库定义了三个预定义的标准输入输出流对象:
    ctrl + c        //退出查看
    ```
 
-## 二、字符串输入输出流——==包含在头文件<sstream>中==
+## 二、字符串输入输出流——==包含在头文件`<sstream>`中==
 
 1.  **字符串输入输出流**
 
-   字符串I/O是内存中的**字符串对象**与**字符串输入输出流对象**之间做内容传输的数据流，通常用来做格式转换
+    字符串I/O是内存中的**字符串对象**与**字符串输入输出流对象**之间做内容传输的数据流，通常用来做格式转换
 
-   C++ 对字符串进行操作的流类型有三个: 
+    C++ 对字符串进行操作的流类型有三个: 
 
-   - istringstream （字符串输入流）
-   - ostringstream （字符串输出流）
-   - stringstream （字符串输入输出流）
+    - istringstream （字符串输入流）
+    - ostringstream （字符串输出流）
+    - stringstream （字符串输入输出流）
 
-   它们的构造函数形式都很类似:
+    它们的构造函数形式都很类似:
 
-   ```cpp
-   istringstream()
-       : istringstream(ios_base::in) 
-       { }
-   explicit istringstream(openmode mode = ios_base::in);
-   explicit istringstream(const string& str, openmode mode = ios_base::in);
-   
-   ostringstream()
-       : ostringstream(ios_base::out) 
-       { }
-   explicit ostringstream(openmode mode = ios_base::out);
-   explicit ostringstream(const string& str, openmode mode = ios_base::out);
-   
-   stringstream()
-       : stringstream(in|out) 
-       { }
-   explicit stringstream(openmode mode = ios_base::in|ios_base::out);
-   explicit stringstream(const string& str, openmode mode = ios_base::in|ios_base::out);
-   ```
+    ```cpp
+    istringstream()
+        : istringstream(ios_base::in) 
+        { }
+    explicit istringstream(openmode mode = ios_base::in);
+    explicit istringstream(const string& str, openmode mode = ios_base::in);
+    
+    ostringstream()
+        : ostringstream(ios_base::out) 
+        { }
+    explicit ostringstream(openmode mode = ios_base::out);
+    explicit ostringstream(const string& str, openmode mode = ios_base::out);
+    
+    stringstream()
+        : stringstream(in|out) 
+        { }
+    explicit stringstream(openmode mode = ios_base::in|ios_base::out);
+    explicit stringstream(const string& str, openmode mode = ios_base::in|ios_base::out);
+    ```
 
 2. **字符串输入流**
 
@@ -4267,7 +4319,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
      }
      ```
 
-     因为**输入流运算符会默认以空格符作为分隔符**，所以编译器会以int型数据来理解缓冲区释出的内容，将num和num2赋值为123和456
+     ==因为==**输入流运算符会默认以空格符作为分隔符**，==所以==**编译器会以int型数据来理解缓冲区释出的内容**，将num和num2赋值为123和456
 
    - ==**字符串输入流通常用来处理字符串内容，比如读取配置文件**==
 
@@ -4378,7 +4430,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
 
 ## 四、log4cpp
 
-> **安装**
+> **0.安装**
 >
 > 下载地址：https://sourceforge.net/projects/log4cpp/files/
 >
@@ -4390,7 +4442,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
 >   $ ./configure  //进行自动化构建，自动生成makefile
 >   $ make
 >   $ sudo make install //安装  把头文件和库文件拷贝到系统路径下
->       
+>
 >   # 安装完后：
 >   # 默认头文件路径：/usr/local/include/log4cpp
 >   # 默认lib库路径：/usr/local/lib
@@ -4409,9 +4461,9 @@ C++标准库定义了三个预定义的标准输入输出流对象:
 >
 > - 报错：找不到动态库
 >
->   ![image-20231124114253211](..\0.TyporaPicture\image-20231124114253211.png)
+>   ![image-20231124114253211](D:\Typora Picture\image-20231124114253211.png)
 >
->   ![image-20260507195511572](..\0.TyporaPicture\image-20260507195511572.png)
+>   ![image-20260507195511572](D:\Typora Picture\image-20260507195511572.png)
 >
 >   ```shell
 >   cd  /etc
@@ -4427,7 +4479,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
 
       通过log4cpp官网查看常用类的信息
 
-      ![image-20231124150134123](..\0.TyporaPicture\image-20231124150134123.png)
+      ![image-20231124150134123](D:\Typora Picture\image-20231124150134123.png)
 
       主要关注三个目的地**类**，点开查看构造函数
 
@@ -4437,7 +4489,7 @@ C++标准库定义了三个预定义的标准输入输出流对象:
       | FileAppender        | 写到**本地文件**中             |
       | RollingFileAppender | 写到**回卷文件**中             |
 
-      ![image-20231124150108405](..\0.TyporaPicture\image-20231124150108405.png)
+      ![image-20231124150108405](D:\Typora Picture\image-20231124150108405.png)
 
       - **OstreamAppender**
 
@@ -4464,39 +4516,39 @@ C++标准库定义了三个预定义的标准输入输出流对象:
 
       - 实际使用时可以用<span style=color:red;background:yellow>**PatrrenLayout**</span>类对象来定制化格式，类似于printf的格式化输出
 
-        ![image-20231124164249912](..\0.TyporaPicture\image-20231124164249912.png)
+        ![image-20231124164249912](D:\Typora Picture\image-20231124164249912.png)
 
           ```cpp
-          PatternLayout * ptn1 = new PatternLayout();
-          ptn1->setConversionPattern("%d %c [%p] %m%n"); 
+        PatternLayout * ptn1 = new PatternLayout();
+        ptn1->setConversionPattern("%d %c [%p] %m%n"); 
           ```
 
       - setConversionPattern函数接收一个string作为参数，格式化字符的意义如下：
-   
+
         ```cpp
          %d   %c   [%p]   %m     %n
         时间 模块名 优先级 消息本身 换行符
         ```
-   
+
         > `%c` 就是在日志内容里**打印出这条日志来自哪个 Category**
         >
         > 根Category（`Category::getRoot()`）的名称固定为 `root`
         >
         > 自定义Category 的名称就是你 `getInstance()` 时传入的字符串
         > 比如`log4cpp::Category::getInstance("MyApp.UserModule")`
-   
+
       - <span style=color:red;background:yellow>**注意（极易出错）：**</span>
-   
+
         当日志系统有多个日志目的地时，每一个目的地Appender都需要设置一个布局Layout（一对一关系）
-   
+
    3. **日志记录器（Category）—— 记录器(处理器)**
-   
+
       **创建Category对象**
-   
+
       - 方式一：
-   
+
         可以用getRoot先创建root模块对象，对root模块对象设置优先级和目的地；再用getInstance创建叶模块对象，叶模块对象会继承root模块对象的优先级和目的地，**也可以**再去修改优先级、目的地
-   
+
         ```cpp
         // 官网示例代码——Category对象的创建：
         // 先创建根对象
@@ -4507,17 +4559,17 @@ C++标准库定义了三个预定义的标准输入输出流对象:
         log4cpp::Category& sub1 = log4cpp::Category::getInstance(std::string("sub1")); // 传入的字符串sub1就会是日志中记录的日志来源即%c
         sub1.addAppender(appender2); // 添加输出器2到子记录器
         ```
-   
+
       - 方式二：
-   
+
         也可以一行语句创建叶对象
-   
+
         ```cpp
         log4cpp::Category& sub1 = log4cpp::Category::getRoot().getInstance("salesDepart"); // 记录的日志来源会是salesDepart
         sub1.setPriority(log4cpp::Priority::WARN); // 设置优先级——即过滤器
         sub1.addAppender(appender1); // 添加输出器1到子记录器
         ```
-   
+
         > 这里需要注意的是，例子中:
         >
         > sub1本质上是绑定**Category对象的引用**，在代码中利用sub1去进行设置优先级、添加目的地、记录日志等操作；
@@ -4525,29 +4577,29 @@ C++标准库定义了三个预定义的标准输入输出流对象:
         > getInstance的参数salesDepart表示的是日志信息中记录的Category名称，也就是日志来源 —— **对应了布局中的%c**
         >
         > 所以一般在使用时这两者的名称取同一个名称，统一起来，能够更清楚地知道该条日志是来源于salesDepart这个模块 —— **即应该把引用名改为salesDepart与记录来源名相同**
-   
+
       > 补充：如果没有创建根对象，直接使用getInstance创建叶对象，会先隐式地创建一个Root对象
       >
       > **子Category可以继承父Category的信息：优先级、目的地**
       >
-      > ![image-20231124171810154](..\0.TyporaPicture\image-20231124171810154.png)
-   
+      > ![image-20231124171810154](D:\Typora Picture\image-20231124171810154.png)
+
    4. **日志优先级（Priority）—— 过滤器**
-   
+
       对于 log4cpp 而言，有两个优先级需要注意：
-   
+
       - 一个是日志记录器的优先级：
-   
+
         Category对象就是日志记录器，在使用时须设置好其优先级
-   
+
       - 另一个就是某一条日志的优先级：
-   
+
         某一行日志的优先级，就是Category对象在调用某一个日志记录函数时指定的级别，如 logger.debug("this is a debug message") ，这一条日志的优先级就是DEBUG级别的
-   
+
         简言之：
         **日志系统(记录器)有一个优先级A，日志信息有一个优先级B**
         **只有B高于或等于A(>=)的时候，这条日志才会被输出（或保存），当B低于A的时候，这条日志会被过滤**
-   
+
         ```cpp
         // 枚举类型属于类，不属于对象，所以可直接使用
         // 使用方式：log4cpp::Priority::INFO(或其他)
@@ -4568,9 +4620,291 @@ C++标准库定义了三个预定义的标准输入输出流对象:
         	// ......
         }; // 数值越小，优先级越高；数值越大，优先级越低
         ```
+
+## 五、补充
+
+1. **流的状态返回值是否应该作为判断条件**
+
+   ```cpp
+   #include <iostream>
+   #include <string>
+   #include <fstream>
    
-        
-# Day10——友元&运算符重载
+   using namespace std;
+   
+   // 按单词读取
+   void test1(ifstream& ifs1) { // C++ 标准库中，所有流对象（ifstream、ofstream、fstream 等）的拷贝构造函数都是被删除的
+                                // 所以，只要需要传递流对象，必须使用引用（或指针），永远不要尝试按值传递
+       string word;
+       /* while ((ifs1 >> word).good()) { */
+       while (ifs1 >> word) { // 判断条件直接使用流对象本身(什么状态都不用)才是最佳做法
+                              // 用到了流对象中定义的一个隐式类型转换运算符operator bool,直接把流对象当成一个布尔值来判断
+           cout << word << endl;
+       }
+   }
+   
+   // 按行读取
+   void test2(ifstream& ifs2) {
+       // 若是继续读取test1读取之后的文件流，则不会读取到数据
+       // 因为此时已经到达流末尾了，所以要重新打开一个流 或 重置偏移
+       ifs2.clear(); // 因为上次读取最终进入到错误状态(eof)，所以先重置流的状态
+       ifs2.seekg(0, std::ios::beg);
+       string line;
+       while (std::getline(ifs2, line)) { // <string>的全局函数，不是ifstream类的成员函数getline
+           cout << line << endl;
+       }
+   }
+   
+   int main() {
+       ifstream ifs("test.txt", std::ios::in);
+       test1(ifs);
+       cout << "--------------" << endl;;
+       /* ifstream ifs2("test.txt", std::ios::in); */
+       test2(ifs);
+   
+       ifs.close();
+       return 0;
+   }
+   ```
+
+2. **C风格字符数组的大小即[]中的参数只能为int型 & vim创建文件末尾默认存在换行符**
+
+   > Vim 有一个关键配置：**`fixeol` (fix end-of-line)**
+   >
+   > **默认是开启的**：无论你输入内容时最后一行有没有按回车，Vim 保存文件时，**自动强制在文件末尾添加一个换行符**（遵循 Unix/POSIX 标准）
+
+   ```cpp
+   #include <iostream>
+   #include <string>
+   #include <fstream>
+   
+   using namespace std;
+   
+   int main() {
+       ifstream ifs("test.txt");
+       ifs.seekg(0, std::ios::end);
+       int size = ifs.tellg(); // 不能使用auto，因为真正返回值为std::streampos类
+       ifs.seekg(0, std::ios::beg);
+       char buf[size + 1] = {}; // 数组大小要求为整型int，std::streampos不可作为数组大小
+       /* ifs.read(buf, size); */
+       ifs.read(buf, size - 1); //这样可不读取换行
+       cout << buf << endl; // 文件末尾存在隐式换行,若是也读取进来则结果末尾打印2个换行
+   
+       ifs.close();
+       return 0;
+   }
+   ```
+
+3. **注意结构体中不存在构造函数，应使用花括号{}来创建临时值**
+
+   ```cpp
+   #include <iostream>
+   #include <string>
+   #include <vector>
+   #include <fstream>
+   
+   using std::cout;
+   using std::endl;
+   using std::string;
+   using std::vector;
+   
+   struct Record {
+       string _word;
+       int _frequency;
+   };
+   
+   class Dictionary {
+   public:
+       void read(const string& filename) {
+           std::ifstream ifs(filename);
+           string word;
+           while (ifs >> word) {
+               word = cleanWord(word);
+               if (word.empty())
+                   continue;   // 跳过纯标点与非字母单词
+               bool found = false;
+               /* if (_dict.empty()) { */
+               /*     _dict.push_back({word, 1}); */
+               /*     continue; */
+               /* } */
+               for (auto& dict : _dict) {
+                   if (dict._word == word) {
+                       found = true;
+                       dict._frequency++;
+                       break;
+                   }
+               }
+               if (found == false) {
+                   /* _dict.emplace_back(word, 1); // 注意：Record没有构造函数,不能用圆括号初始化 */
+                   _dict.push_back({word, 1});
+                   // push_back({...}) 可以，是因为函数参数类型已知，直接用花括号初始化临时对象
+                   // 而 emplace_back({...}) 要求先推导参数类型，花括号列表"无类型"导致推导失败
+               }
+           }
+   
+           ifs.close();
+       }
+       void store(const string& filename) {
+           std::ofstream ofs(filename);
+           for (auto& elem : _dict) {
+               ofs << elem._word << " " << elem._frequency << endl;
+           }
+   
+           ofs.close();
+       }
+       string cleanWord(const string& raw) {
+           string result;
+           for (char c : raw) {
+               if (std::isalpha(c))        // 只保留字母
+                   result += std::tolower(c); // 全转小写
+           }
+           return result;
+       }
+   private:
+       vector<Record> _dict;
+   };
+   
+   int main() {
+       Dictionary dictionary;
+       dictionary.read("/home/gzh/The_Holy_Bible.txt");
+       /* for (auto& elem : dictionary._dict) { */
+       /*     cout << elem._word << " " << elem._frequency << endl; */
+       /* } */
+       dictionary.store("dict2.txt");
+   
+       return 0;
+   }
+   ```
+
+4. **使用log4cpp将日志信息输出到：1.控制台 2.文件 2.回卷文件**
+
+   ```cpp
+   #include <iostream>
+   #include <log4cpp/OstreamAppender.hh>
+   #include <log4cpp/FileAppender.hh>
+   #include <log4cpp/RollingFileAppender.hh>
+   #include <log4cpp/Priority.hh>
+   #include <log4cpp/PatternLayout.hh>
+   #include <log4cpp/Category.hh>
+   
+   using std::cout;
+   using std::endl;
+   using namespace log4cpp;
+   
+   // 将日志信息输出到控制台
+   void test1() {
+       // 创建输出器对象
+       OstreamAppender* appender1 = new OstreamAppender("console", &cout);
+       // 给输出器绑定格式化对象
+       PatternLayout* layout1 = new PatternLayout();
+       layout1->setConversionPattern("%d [%p] %c : %m%n"); // 设置输出格式
+       appender1->setLayout(layout1); // 绑定
+   
+       // 获取根记录器
+       Category& root = Category::getRoot();
+       // 给记录器设置优先级
+       root.setPriority(Priority::INFO);
+       // 给记录器添加输出器
+       root.addAppender(appender1);
+   
+       // 产生日志信息
+       root.debug("debug msg...");
+       root.info("info msg...");
+       root.notice("notice msg...");
+       root.warn("warn msg...");
+   
+       // 释放资源
+       Category::shutdown();
+   }
+   
+   // 输出到文件
+   void test2() {
+       // 创建输出器对象
+       FileAppender* appender1 = new FileAppender("file", "log.txt");
+       // 给输出器绑定格式化对象
+       PatternLayout* layout1 = new PatternLayout();
+       layout1->setConversionPattern("%d [%p] %c : %m%n"); // 设置输出格式
+       appender1->setLayout(layout1); // 绑定
+   
+       // 获取根记录器
+       Category& root = Category::getRoot();
+       // 给记录器设置优先级
+       root.setPriority(Priority::INFO);
+       // 给记录器添加输出器
+       root.addAppender(appender1);
+   
+       // 产生日志信息
+       root.debug("debug msg...");
+       root.info("info msg...");
+       root.notice("notice msg...");
+       root.warn("warn msg...");
+   
+       // 释放资源
+       Category::shutdown();
+   }
+   
+   // 输出到回卷文件
+   void test3() {
+       // 创建输出器对象
+       // 第三、四个参数分别为：单个日志文件达到此大小后触发滚动(单位字节)、日志"备份文件"数量(总数量为n+1)
+       // 这里是：留5个备份，最多共6个日志文件，触发滚动的阈值为100字节
+       RollingFileAppender* appender1 = new RollingFileAppender("roll", "rolling_file_log.txt", 100, 5);
+       // 给输出器绑定格式化对象
+       PatternLayout* layout1 = new PatternLayout();
+       layout1->setConversionPattern("%d [%p] %c : %m%n"); // 设置输出格式
+       appender1->setLayout(layout1); // 绑定
+   
+       // 获取根记录器
+       Category& root = Category::getRoot();
+       // 给记录器设置优先级
+       root.setPriority(Priority::INFO);
+       // 给记录器添加输出器
+       root.addAppender(appender1);
+   
+       // 产生日志信息
+       root.debug("debug msg...");
+       root.info("info msg...");
+       root.notice("notice msg...");
+       root.warn("warn msg...");
+   
+       // 释放资源
+       Category::shutdown();
+   }
+   
+   int main() {
+       /* test1(); */
+       /* test2(); */
+       test3();
+   
+       return 0;
+   }
+   ```
+
+5. **表达式返回的为“临时变量”！—— 问题来源于4.中宏函数的定义**
+
+   - string("1");的两层结构
+
+     1. 里面的 `"1"`—— **字符串字面量**
+        - 放在**只读常量区**
+        - 程序运行全程都在，**不会随代码行销毁**
+        - 不是普通临时变量
+     2. 整体 `string("1")`—— **临时 std::string 对象**
+        - 属于 C++ 临时变量
+        - **这行代码(即string("1")所在的语句)执行完，立刻销毁、析构**
+
+   - string()是构造函数吗，返回值是什么
+
+     1. `string(...)` 就是 `std::string` 的构造函数——通过C风格字符串初始化对象的版本
+
+     2. **构造函数没有返回值**，语法上连 `void` 都不能写
+
+        > 普通函数：有返回值，调用后带回一个值
+        >
+        > 构造函数：只负责**造出一个对象**，无返回
+
+     3. `string("1")` 整体不是 “函数返回值”，而是**直接构造出一个临时 `std::string` 对象**
+
+# Day10_友元&运算符重载
 
 ## 一、友元
 
@@ -4917,33 +5251,33 @@ C++标准库定义了三个预定义的标准输入输出流对象:
 2. **输入流运算符 >>**
 
    - 基本形式
-   
+
      ```cpp
      std::istream& operator>>(std::istream& is, MyClass& obj);
      ```
-   
+
    - 参数
-   
+
      - `std::istream& is`：输入流对象（如 `std::cin`）
      - `MyClass& obj`：要将流中的数据存储到的对象,，要修改对象中数据成员，所以不能加const限定
-   
+
    - 返回值
-   
+
      返回输入流对象 `std::istream&`，这样可以**支持链式调用**
-   
+
    - 示例
-   
+
      - 需求
-   
+
        对于Complex对象，希望像内置类型数据一样，使用输入流运算符可以对其进行输入
-   
+
      - 分析
-   
+
        - 如果不想分开输出实部和虚部，也可以直接连续输入，空格符、换行符都能作为分隔符
        - 使用输入流时需要判断是否是合法输入，可以封装一个函数判断接收到的是合法的int数据，在>>运算符重载函数中调用
-   
+
      - 源代码
-   
+
        ```cpp
        class Complex {
        public:
@@ -5199,7 +5533,6 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
    - 具体实现
 
      > 后置++中参数列表中的 `int` 并不需要一个具体的变量名，它只是用来区分前置和后置运算符的。这个 `int` 参数的存在是为了符合运算符重载的语法要求，而它实际上并不被使用,这个参数的实际作用是作为一个占位符，告诉编译器这是后置版本的自增
-     >
 
      ```cpp
      void test0() {
@@ -5496,7 +5829,52 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
    }
    ```
 
-   # Day11_函数对象
+4. **必须要使用成员函数形式重载的四个运算符**
+
+   > **语法形式 + 左操作数必须是本类对象 + 语义绑定**，C++ 标准直接锁死，不能用友元 / 全局函数，编译器会直接报错
+
+   ```cpp
+   operator[]
+   operator=
+   operator()
+   operator->
+   ```
+
+5. **使用友元函数形式重载的运算符**
+
+   - 强制使用——只有两个
+
+     ```cpp
+     operator<<
+     operator>>
+     ```
+
+   - 建议使用——但不是强制的：双目运算符
+
+     为什么建议友元：支持**交换顺序**
+
+     ```cpp
+     +
+     -
+     *
+     /
+     ==
+     !=
+     <
+     >
+     <=
+     >=
+     ```
+
+   > 成员 / 友元都可以**（推荐友元）**
+   >
+   > 算术、关系运算符：`+ - * / % == != < >` 等
+   >
+   > **绝对不能重载**
+   >
+   > `.` `.*` `::` `?:` `sizeof`
+
+# Day11_可调用实体&函数对象
 
 ## 一、可调用实体
 
@@ -5507,9 +5885,9 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
 1. **什么是函数对象**
 
-   将重载了函数调用运算符（即以operator()**作为成员函数名**的）类创建的对象称为函数对象
+   将重载了函数调用运算符（即以operator()**作为成员函数名**的）的类创建的对象称为**函数对象**
 
-   一个行为类似于函数的对象, 它的作用是在代码中能够像函数一样调用，但是它其实是一个类的实例
+   一个行为类似于函数的对象，它的作用是在代码中能够像函数一样调用，但是它其实是一个类的实例
 
    ```cpp
    class FunctionObject {
@@ -5558,7 +5936,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
    - 形式
 
-     <span style=color:red;background:yellow>**重载了函数调用运算符的类的对象称为函数对象**</span>，由于参数列表可以随意扩展 ，**所以可以有很多重载形式**（对应了普通函数的多种重载形式）
+     <span style=color:red;background:yellow>**重载了函数调用运算符的类对象称为函数对象**</span>，由于参数列表可以随意扩展 ，**所以可以有很多重载形式**（对应了普通函数的多种重载形式）
 
      ```cpp
      class FunctionObject {
@@ -5619,9 +5997,157 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
    }
    ```
 
-   
+## 三、补充
 
-# Day12——函数/成员函数指针&类型转换函数&嵌套类&单例对象自动释放
+1. **自定义一个String类保存字符串内容**
+
+   ```cpp
+   #include <iostream>
+   #include <cstring>
+   
+   class String {
+   public:
+       String()
+       : _pstr(new char[1]{'\0'})
+       {}
+   
+       String(const char *str)
+       : _pstr(new char[std::strlen(str) + 1])
+       {
+           std::strcpy(_pstr, str);
+       }
+   
+       String(const String &str)
+       : _pstr(new char[std::strlen(str._pstr) + 1])
+       {
+           std::strcpy(_pstr, str._pstr);
+       }
+   
+       ~String() {
+           delete[] _pstr;
+       }
+   
+       String &operator=(const String &str) {
+           if (this != &str) {
+               char *tmp = new char[std::strlen(str._pstr) + 1];
+               std::strcpy(tmp, str._pstr);
+               delete[] _pstr;
+               _pstr = tmp;
+           }
+           return *this;
+       }
+   
+       String &operator=(const char *str) {
+           char *tmp = new char[std::strlen(str) + 1];
+           std::strcpy(tmp, str);
+           delete[] _pstr;
+           _pstr = tmp;
+           return *this;
+       }
+   
+       String &operator+=(const String &str) {
+           size_t newLen = std::strlen(_pstr) + std::strlen(str._pstr);
+           char *tmp = new char[newLen + 1];
+           std::strcpy(tmp, _pstr);
+           std::strcat(tmp, str._pstr);
+           delete[] _pstr;
+           _pstr = tmp;
+           return *this;
+       }
+   
+       String &operator+=(const char *str) {
+           size_t newLen = std::strlen(_pstr) + std::strlen(str);
+           char *tmp = new char[newLen + 1];
+           std::strcpy(tmp, _pstr);
+           std::strcat(tmp, str);
+           delete[] _pstr;
+           _pstr = tmp;
+           return *this;
+       }
+   
+       char &operator[](std::size_t index) {
+           return _pstr[index];
+       }
+   
+       const char &operator[](std::size_t index) const { // 常量对象只能调用这个版本
+           return _pstr[index];
+       }
+   
+       std::size_t size() const {
+           return std::strlen(_pstr);
+       }
+   
+       const char* c_str() const {
+           return _pstr;
+       }
+   
+       friend bool operator==(const String &lhs, const String &rhs) {
+           return std::strcmp(lhs._pstr, rhs._pstr) == 0;
+       }
+   
+       friend bool operator!=(const String &lhs, const String &rhs) {
+           return std::strcmp(lhs._pstr, rhs._pstr) != 0;
+       }
+   
+       friend bool operator<(const String &lhs, const String &rhs) {
+           return std::strcmp(lhs._pstr, rhs._pstr) < 0;
+       }
+   
+       friend bool operator>(const String &lhs, const String &rhs) {
+           return std::strcmp(lhs._pstr, rhs._pstr) > 0;
+       }
+   
+       friend bool operator<=(const String &lhs, const String &rhs) {
+           return std::strcmp(lhs._pstr, rhs._pstr) <= 0;
+       }
+   
+       friend bool operator>=(const String &lhs, const String &rhs) {
+           return std::strcmp(lhs._pstr, rhs._pstr) >= 0;
+       }
+   
+       friend std::ostream &operator<<(std::ostream &os, const String &s) {
+           os << s._pstr;
+           return os;
+       }
+   
+       friend std::istream &operator>>(std::istream &is, String &s) {
+           char buf[1024];
+           if (is >> buf) {
+               s = buf; // 使用operator=(const char*)
+           }
+           return is;
+       }
+   
+   private:
+       char *_pstr;
+   };
+   
+   // 标准做法：+ 通过 += 来实现
+   String operator+(const String &lhs, const String &rhs) {
+       String tmp(lhs);
+       tmp += rhs;
+       return tmp;
+   }
+   
+   String operator+(const String &lhs, const char *rhs) {
+       String tmp(lhs);
+       tmp += rhs;
+       return tmp;
+   }
+   
+   String operator+(const char *lhs, const String &rhs) {
+       String tmp(lhs);
+       tmp += rhs;
+       return tmp;
+   }
+   
+   int main() {
+   
+       return 0;
+   }
+   ```
+
+# Day12_函数/成员函数指针&类型转换函数&嵌套类&单例对象自动释放
 
 ## 一、可调用实体-函数指针与成员函数指针
 
@@ -5699,12 +6225,12 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
      > ```cpp
      > class FFF {
      > public:
-     >     void print(int x) {
-     >         cout << "FFF::print:" << x << endl;
-     >     }
-     >     void display(int x) {
-     >         cout << "FFF::display:" << x << endl;
-     >     }
+     > void print(int x) {
+     >   cout << "FFF::print:" << x << endl;
+     > }
+     > void display(int x) {
+     >   cout << "FFF::display:" << x << endl;
+     > }
      > };
      > ```
 
@@ -5828,7 +6354,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
      **对于不涉及数据成员的成员函数，不需要实际的对象上下文**，因此就算是空指针也可以调用成功。对于涉及数据成员的成员函数，空指针无法提供有效的对象上下文，因此导致错误
 
-     ![image-20241120112331410](..\0.TyporaPicture\image-20241120112331410.png)
+     ![image-20241120112331410](D:\Typora Picture\image-20241120112331410.png)
 
 4. **总结**
 
@@ -5922,62 +6448,62 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
      - ==使用类型转换函数==——<span style=color:red;background:yellow>**需要注意将类型转换函数设为谁的成员函数**</span>
 
-         ```cpp
-         Point pt(1,2);
-         Complex cx(3,4);
-         pt = cx;
-         cx.print();
-         ```
-         
-         如上，想要**让Complex对象转换成Point对象**，并对pt赋值，**应该在Complex类中添加目标类型的类型转换函数**
-         
-         ```cpp
-         class Complex {
-         // ...
-         operator Point() {
-           cout << "operator Complex()" << endl;
-           return Point(m_real,m_image);
-         }
-         };
-         
-         pt = cx;
-         ```
-         
+       ```cpp
+       Point pt(1,2);
+       Complex cx(3,4);
+       pt = cx;
+       cx.print();
+       ```
+
+       如上，想要**让Complex对象转换成Point对象**，并对pt赋值，**应该在Complex类中添加目标类型的类型转换函数**
+
+       ```cpp
+       class Complex {
+       // ...
+       operator Point() {
+         cout << "operator Complex()" << endl;
+         return Point(m_real,m_image);
+       }
+       };
+       
+       pt = cx;
+       ```
+
      - 使用隐式转换（即特定形式的构造函数）
-  
-         ```cpp
-         Point::Point(const Complex& rhs)
-         : m_x(rhs.m_real)
-         , m_y(rhs.m_image)
-         {
-             cout << "Point的特殊构造函数" << endl;
-         }
-         ```
-  
+
+       ```cpp
+       Point::Point(const Complex& rhs)
+       : m_x(rhs.m_real)
+       , m_y(rhs.m_image)
+       {
+           cout << "Point的特殊构造函数" << endl;
+       }
+       ```
+
      - 赋值运算符函数
-  
-         ```cpp
-         Point& Point::operator=(const Complex& rhs) {
-             m_x = rhs.m_real;
-             m_y = rhs.m_image;
-             cout << "Point& operator=(const Complex&)" << endl;
-             return *this;
-         }
-         ```
-  
+
+       ```cpp
+       Point& Point::operator=(const Complex& rhs) {
+           m_x = rhs.m_real;
+           m_y = rhs.m_image;
+           cout << "Point& operator=(const Complex&)" << endl;
+           return *this;
+       }
+       ```
+
      **总结**
-  
+
      三种方式同时存在时，会**优先调用赋值运算符函数**（**赋值操作本身就支持**），其次**类型转换**的优先级高于**隐式转换**
-  
+
      ```cpp
      operator=(const Complex&) > oprator Point() > Point(const Complex&)
      ```
 
 ## 三、C++运算符优先级排序与结合性
 
-![image-20231128114539734](..\0.TyporaPicture\image-20231128114539734.png)
+![image-20231128114539734](D:\Typora Picture\image-20231128114539734.png)
 
-<img src="..\0.TyporaPicture\image-20250225095240219.png" alt="image-20250225095240219" style="zoom: 58%;" />
+<img src="D:\Typora Picture\image-20250225095240219.png" alt="image-20250225095240219" style="zoom: 58%;" />
 
 ## 四、嵌套类
 
@@ -5985,41 +6511,41 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
    1. **类作用域（Class Scope）**
 
-       类作用域是指在类定义内部的范围。在这个作用域内定义的成员（包括变量、函数、类型别名等）可以被该类的所有成员函数访问。类作用域开始于类定义的左花括号，结束于类定义的右花括号。**在类作用域内，成员可以相互访问，==无论它们在类定义中的声明顺序如何==**
+      类作用域是指在类定义内部的范围。在这个作用域内定义的成员（包括变量、函数、类型别名等）可以被该类的所有成员函数访问。类作用域开始于类定义的左花括号，结束于类定义的右花括号。**在类作用域内，成员可以相互访问，==无论它们在类定义中的声明顺序如何==**
 
-       ```cpp
-       class A {
-           // 类作用域
-       }
-       ```
+      ```cpp
+      class A {
+          // 类作用域
+      }
+      ```
 
    1. **类名作用域（Class Name Scope）**
 
-       类名作用域指的是**可以通过类名**访问的作用域
+      类名作用域指的是**可以通过类名**访问的作用域
 
-       这主要用于访问类的**静态成员**、**嵌套类型**。**==类名==必须用于访问静态成员或嵌套类型**，除非在类的成员函数内部，因为**它们不依赖于类的任何特定对象**
+      这主要用于访问类的**静态成员**、**嵌套类型**。**==类名==必须用于访问静态成员或嵌套类型**，除非在类的成员函数内部，因为**它们不依赖于类的任何特定对象**
 
-       以静态成员为例：
+      以静态成员为例：
 
-       ```cpp
-       class MyClass {
-       public:
-           void func() {
-               m_b = 100; // 类的成员函数内访问_b
-           }
-           static int m_a;
-           int m_b;
-       };
-       int MyClass::m_a = 0;
-       
-       void test0() {
-           MyClass::m_a = 200; // 类外部访问_a
-       }
-       ```
+      ```cpp
+      class MyClass {
+      public:
+          void func() {
+              m_b = 100; // 类的成员函数内访问_b
+          }
+          static int m_a;
+          int m_b;
+      };
+      int MyClass::m_a = 0;
+      
+      void test0() {
+          MyClass::m_a = 200; // 类外部访问_a
+      }
+      ```
 
    1. **全局类**
 
-       在函数和其他类定义的外部定义的类称为**全局类(即定义在全局作用域中的类)**，绝大多数的 C++ 类都是全局类。我们在前面定义的所有类都在全局作用域中，全局类具有全局作用域
+      在函数和其他类定义的外部定义的类称为**全局类(即定义在全局作用域中的类)**，绝大多数的 C++ 类都是全局类。我们在前面定义的所有类都在全局作用域中，全局类具有全局作用域
 
 2. **嵌套类定义**
 
@@ -6106,15 +6632,36 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
 4. **嵌套类结构的访问权限**
 
+   > 1. 在外部类的外部访问内部类的成员
+   >
+   >    public的内部类, 可以创建对象 ；private的内部类,不能直接创建对象，因为没有权限, 除非使用友元
+   >
+   >    然后再通过对象.方式进行访问，public的成员可以访问，private不行，除非再使用友元
+   >
+   > 2. 在外部类的内部访问内部类的成员
+   >
+   >    创建内部类的对象Inner inner，修饰内部类的权限是public或者是private已经无意义了
+   >
+   >    通过对象.方式可以访问内部类的public成员，非要访问私有的可以使用友元
+   >
+   > 3. 在内部类的内部访问外部类的成员
+   >
+   >    可以直接创建外部类的对象Outer outer
+   >
+   >    通过对象.方式可以访问外部类的所有成员，不受外部类成员权限的影响
+
    - 外部类对内部类的成员进行访问
 
+     **外部类 ≠ 自动拥有内部类的私有访问权**
+   
+     `Outer` 和 `Outer::Inner` 是**两个独立的类**，只是作用域嵌套
+   
    - 内部类对外部类的成员进行访问
+   
+     **==内部类相当于是==定义在外部类中的==外部类的友元类==**   类A定义在类B中，那么类A访问类B的成员时，就相当于默认的是类B的友元类
 
 
-   ![image-20250226094255903](..\0.TyporaPicture\image-20250226094255903.png)
-
-   **内部类相当于是定义在外部类中的外部类的友元类**
-   类A定义在类B中，那么类A访问类B的成员时，就相当于默认的是类B的友元类
+![image-20250226094255903](D:\Typora Picture\image-20250226094255903.png)
 
 5. **Pimpl模式**
 
@@ -6232,7 +6779,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
      - 内存结构
 
-       ![image-20250225093601534](..\0.TyporaPicture\image-20250225093601534.png)
+       ![image-20250225093601534](D:\Typora Picture\image-20250225093601534.png)
 
        pimpl模式是一种减少代码依赖和编译时间的C++编程技巧，其基本思想是将一个**外部可见类的实现细节**（一般是**通过私有**的非虚成员）放在一个单独的实现(**私有**)类中，**在可见类中通过一个==私有==指针来间接访问该类型**
 
@@ -6253,48 +6800,48 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
 **四种方式**
 
-1. **利用另一个对象的声明周期管理资源**
+1. **利用另一个对象的生命周期管理资源**
 
    - 原理
 
-       ![image-20250225100753372](..\0.TyporaPicture\image-20250225100753372.png)
+     ![image-20250225100753372](D:\Typora Picture\image-20250225100753372.png)
 
-       利用对象的生命周期管理资源——析构函数（在析构函数中会执行delete m_p），当**对象被销毁时会自动调用**
+     利用对象的生命周期管理资源——析构函数（在析构函数中会执行delete m_p），当**对象被销毁时会自动调用**
 
    - 注意
 
-       1. 如果还手动调用了Singleton类的destroy函数，会导致double free问题，所以**可以删掉destroy函数**，将**回收**堆上的单例对象的**工作完全交给AutoRelease对象**
-       2. 不能用多个AutoRelease对象托管同一个堆上的单例对象
-       3. 需要将控制类AutoRelease设置为所托管的单例类的友元类, 这样可以调用单例类中的private权限的析构函数——==**因为删除一个对象一定会触发它的析构函数**==
+     1. 如果还手动调用了Singleton类的destroy函数，会导致double free问题，所以**可以删掉destroy函数**，将**回收**堆上的单例对象的**工作完全交给AutoRelease对象**
+     2. 不能用多个AutoRelease对象托管同一个堆上的单例对象
+     3. 需要将控制类AutoRelease设置为所托管的单例类的友元类, 这样可以调用单例类中的private权限的析构函数——==**因为删除一个对象一定会触发它的析构函数**==
 
    - 源代码
 
-       ```cpp
-       // 管理者类
-       class AutoRelease {
-       public:
-           AutoRelease(Singleton* p)
-           : m_p(p)
-           {
-               cout << "AutoRelease(Singleton*)" << endl;
-           }
-           ~AutoRelease() {
-               if (m_p) {
-                   delete m_p; // 需要在Singleton类中将AutoReleas类声明友元类，因为Singleton类中析构函数是私有成员
-                   m_p = nullptr;
-               }
-               cout << "~AutoRelease()" << endl;
-           }
-       private:
-           Singleton* m_p;
-       };
-       ```
+     ```cpp
+     // 管理者类
+     class AutoRelease {
+     public:
+         AutoRelease(Singleton* p)
+         : m_p(p)
+         {
+             cout << "AutoRelease(Singleton*)" << endl;
+         }
+         ~AutoRelease() {
+             if (m_p) {
+                 delete m_p; // 需要在Singleton类中将AutoReleas类声明友元类，因为Singleton类中析构函数是私有成员
+                 m_p = nullptr;
+             }
+             cout << "~AutoRelease()" << endl;
+         }
+     private:
+         Singleton* m_p;
+     };
+     ```
 
 2. ==**嵌套类 + 静态对象**==
 
    - 原理
 
-     ![image-20250225101010421](..\0.TyporaPicture\image-20250225101010421.png)
+     ![image-20250225101010421](D:\Typora Picture\image-20250225101010421.png)
 
      AutoRelease类对象m_ar是Singleton类的对象成员，创建Singleton对象，就会自动创建一个AutoRelease对象（静态区），**它的成员函数可以直接访问 ms_pInstance** 或者通过类名作用域访问
 
@@ -6353,7 +6900,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
      - **注册函数的调用顺序:** 如果注册了多个函数，先注册的后执行
 
-       ![image-20241129171136336](..\0.TyporaPicture\image-20241129171136336.png)
+       ![image-20241129171136336](D:\Typora Picture\image-20241129171136336.png)
 
      - atexit注册了destroy函数，相当于有了一次必然会进行的destroy（程序结束时)，即使手动调用了destroy，因为安全回收的机制，也不会有问题
 
@@ -6414,27 +6961,28 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 4. **`atexit + pthread_once + destroy`**
 
    Linux平台可以使用的方法（能够保证创建单例对象时的多线程安全）
-   
+
    - 原理
-   
+
      - pthread_once函数可以确保初始化代码只会执行一次, 无论在多少个线程中调用它
-   
-       ![image-20241129171227277](..\0.TyporaPicture\image-20241129171227277.png)
-   
+
+       ![image-20241129171227277](D:\Typora Picture\image-20241129171227277.png)
+
      - 传给pthread_once函数的参数：
+
        1. 第一个参数比较特殊，形式固定
        2. 第二个参数需要是一个`静态函数指针`，pthread_once可以确保这个函数只会执行一次
-   
+
    - 注意
-   
+
      - 如果手动调用initRoutine创建对象，没有通过getInstance创建对象，实际上绕开了pthread_once的控制，必然造成内存泄露 —— <span style=color:red;background:yellow>**需要将initRoutine私有**</span>
-   
+
      - 如果手动调用了destroy函数，之后再使用getInstance来尝试创建对象，因为pthread_once的控制效果，不会再执行init函数，所以无法再创建出单例对象。所以不能允许手动调用destroy函数
-   
+
        同时因为会使用atexit注册destroy函数实现资源回收，所以也不能将destroy删掉，应该<span style=color:red;background:yellow>**将destroy私有**</span>，避免在类外手动调用
-   
+
    - 源代码
-   
+
      ```cpp
      class Singleton {
      public:
@@ -6903,8 +7451,6 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
    }
    ```
 
-
-
 # Day13_std::string的底层实现
 
 ## 一、std::string的底层实现-写时复制原理探究
@@ -6941,7 +7487,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
         -  当字符串对象被销毁时，引用计数-1；
         -  只有当引用计数减为0时，才真正回收堆空间上字符串   
 
-        ![image-20241204155449617](..\0.TyporaPicture\image-20241204155449617.png)
+        ![image-20241204155449617](D:\Typora Picture\image-20241204155449617-17785937420641.png)
 
         补充：如果是如下创建对象，不能共用空间
 
@@ -6961,17 +7507,17 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
           需要改变str1的数据成员
 
-          ![image-20250225093746344](..\0.TyporaPicture\image-20250225093746344.png)
+          ![image-20250225093746344](D:\Typora Picture\image-20250225093746344-17785937420652.png)
 
         - 方案2——不合理
 
           静态数据成员被该类所有对象共享，但此时str1和str2的引用计数应该都是2，但是str3的引用计数应该是1
 
-          ![image-20250225093837965](..\0.TyporaPicture\image-20250225093837965.png)
+          ![image-20250225093837965](D:\Typora Picture\image-20250225093837965-17785937420653.png)
 
         - 方案3——可行，还可以继续优化
 
-          ![image-20250225093942262](..\0.TyporaPicture\image-20250225093942262.png)
+          ![image-20250225093942262](D:\Typora Picture\image-20250225093942262-17785937420654.png)
 
           按常规的思路，需要使用两次new表达式（字符串、引用计数）；可以优化成只用一次new表达式，因为申请堆空间的行为一定会涉及系统调用，程序员要尽量少使用系统调用，提高程序的执行效率
 
@@ -6979,7 +7525,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
           **把引用计数和字符串内容保存到一起**，<font color=red>**引用计数保存到字符串内容的前面，方便访问**</font>
 
-          ![image-20241204094210678](..\0.TyporaPicture\image-20241204094210678.png)
+          ![image-20241204094210678](D:\Typora Picture\image-20241204094210678-17785937420655.png)
 
 ## 二、std::string的底层实现-写时复制方式实现
 
@@ -7023,7 +7569,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
    - 无参构造函数
 
-     ![image-20241204195737724](..\0.TyporaPicture\image-20241204195737724.png)
+     ![image-20241204195737724](D:\Typora Picture\image-20241204195737724-17785937420656.png)
 
      1. 构造函数初始化列表中对字符数组指针进行初始化，4字节存储引用计数, 1**字节存**字符串结束字符**‘\0’**
      2. 并将字符数组**指针移动到**实际的**字符**数据位置
@@ -7031,7 +7577,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
    - C风格字符串构造
 
-     ![image-20241204151347589](..\0.TyporaPicture\image-20241204151347589.png)
+     ![image-20241204151347589](D:\Typora Picture\image-20241204151347589-17785937420657.png)
 
      1. 构造函数初始化列表中对字符数组指针进行初始化，4字节存储引用计数，1字节存储字符串结束字符，C风格字符串的长度个字节存储有效字符数组
      2. 通过强转与解引用,将引用计数初始化为1
@@ -7098,7 +7644,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
 4. **对象复制**
 
-   ![image-20241204151938136](..\0.TyporaPicture\image-20241204151938136.png)
+   ![image-20241204151938136](D:\Typora Picture\image-20241204151938136-17785937420658.png)
 
    1. 调用拷贝构造函数, 在初始化列表中进行浅拷贝, 共享字符数组
    2. 引用计数+1
@@ -7116,7 +7662,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
 5. **对象销毁**
 
-   ![image-20241204153922228](..\0.TyporaPicture\image-20241204153922228.png)
+   ![image-20241204153922228](D:\Typora Picture\image-20241204153922228-17785937420659.png)
 
    1. 调用析构函数 
    2. 引用计数-1
@@ -7156,7 +7702,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
    但相比复制操作，**还需要考虑**string对象**原**本用来保存字符串的**堆空间是否需要回收**
 
-   ![image-20241204190631758](..\0.TyporaPicture\image-20241204190631758.png)
+   ![image-20241204190631758](D:\Typora Picture\image-20241204190631758-177859374206510.png)
 
    1. 原本空间的引用计数-1，引用计数减到0，才真正回收堆空间
    2. 让自己的指针指向新的空间，并将新空间的引用计数+1
@@ -7211,80 +7757,80 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
       // 因为s1,s2共享底层字符数据, 此时s1,s2中的内容都变成了Abc
       ```
 
-      ![image-20241205094223084](..\0.TyporaPicture\image-20241205094223084.png)
+      ![image-20241205094223084](D:\Typora Picture\image-20241205094223084-177859374206511.png)
 
    2. **第一次改进——深拷贝**
 
       - 改进
 
-          如果多个对象共享了同一片空间，**一个对象通过下标访问运算符修改了字符串中的某个字符**，不应该影响到其他使用这片空间的string对象，所以**应当进行深拷贝操作，在新分配的空间中进行修改而不影响其他对象**
+        如果多个对象共享了同一片空间，**一个对象通过下标访问运算符修改了字符串中的某个字符**，不应该影响到其他使用这片空间的string对象，所以**应当进行深拷贝操作，在新分配的空间中进行修改而不影响其他对象**
 
-          所以，**多个对象共享空间，某个对象通过下标修改字符时：**
+        所以，**多个对象共享空间，某个对象通过下标修改字符时：**
 
-          1. 判断引用计数是否大于1，**大于1说明共享**
-          2. 原空间的引用计数-1
-          3. **深拷贝**
-          4. 修改指针指向新空间
-          5. 初始化新空间的引用计数
+        1. 判断引用计数是否大于1，**大于1说明共享**
+        2. 原空间的引用计数-1
+        3. **深拷贝**
+        4. 修改指针指向新空间
+        5. 初始化新空间的引用计数
 
-          ```cpp
-          char& CowString::operator[](size_t index) {
-           // 判断index
-              if (index >= size()) {
-                  cout << "index is illegal!" <<endl;
-                  static char nullChar = '\0'; // 静态局部变量只初始化一次，后续每次调用都是同一个实例
-                  return nullChar;
-              } else {
-                  // 判断引用计数是否大于1
-                  if (getRefCount() > 1) {
-                      // 说明共享了 需要开辟新空间
-                      // 原来的引用计数-1
-                      decrementRefCount();
-                      char* temp = new char[4 + strlen(m_pStr)+1]() + 4;
-                      // 复制
-                      strcpy(temp, m_pStr);
-                      // 更改指向
-                      m_pStr = temp;
-                      // 初始化新空间引用计数
-                      initRefCount();
-                  }
-                  // 返回下标对应字符
-                  return m_pStr[index];
-              }
-          }
-          ```
+        ```cpp
+        char& CowString::operator[](size_t index) {
+         // 判断index
+            if (index >= size()) {
+                cout << "index is illegal!" <<endl;
+                static char nullChar = '\0'; // 静态局部变量只初始化一次，后续每次调用都是同一个实例
+                return nullChar;
+            } else {
+                // 判断引用计数是否大于1
+                if (getRefCount() > 1) {
+                    // 说明共享了 需要开辟新空间
+                    // 原来的引用计数-1
+                    decrementRefCount();
+                    char* temp = new char[4 + strlen(m_pStr)+1]() + 4;
+                    // 复制
+                    strcpy(temp, m_pStr);
+                    // 更改指向
+                    m_pStr = temp;
+                    // 初始化新空间引用计数
+                    initRefCount();
+                }
+                // 返回下标对应字符
+                return m_pStr[index];
+            }
+        }
+        ```
 
       - 又引入一个<span style=color:red;background:yellow>**新的问题：**</span>
 
-          经过对下标访问运算符operator[]的修改，当多个对象共享同一空间，某个对象通过下标修改字符时，不会影响到其他对象了，但是产生了一个新的问题，**下标访问进行读操作会产生影响**
+        经过对下标访问运算符operator[]的修改，当多个对象共享同一空间，某个对象通过下标修改字符时，不会影响到其他对象了，但是产生了一个新的问题，**下标访问进行读操作会产生影响**
 
-          ```cpp
-          CowString s1{"abc"};
-          CowString s2 = s1;
-          CowString s3 = s1;
-          //下标访问
-          cout << "========" << endl;
-          cout << "s2[0]: " << s2[0] << endl;
-          cout << "s1 cout: " << s1.getRefCount() << endl; // 2
-          cout << "s2 cout: " << s2.getRefCount() << endl; // 1
-          cout << "s3 cout: " << s3.getRefCount() << endl; // 2
-          printf("s1 address: %p\n", s1.c_str()); // s1 address: 0x58a0d31aeeb4
-          printf("s2 address: %p\n", s2.c_str()); // s2 address: 0x58a0d31af2e4
-          printf("s3 address: %p\n", s3.c_str()); // s3 address: 0x58a0d31aeeb4
-          
-          // 1.引用计数发生了修改
-          // 2.地址发生了改变
-          ```
+        ```cpp
+        CowString s1{"abc"};
+        CowString s2 = s1;
+        CowString s3 = s1;
+        //下标访问
+        cout << "========" << endl;
+        cout << "s2[0]: " << s2[0] << endl;
+        cout << "s1 cout: " << s1.getRefCount() << endl; // 2
+        cout << "s2 cout: " << s2.getRefCount() << endl; // 1
+        cout << "s3 cout: " << s3.getRefCount() << endl; // 2
+        printf("s1 address: %p\n", s1.c_str()); // s1 address: 0x58a0d31aeeb4
+        printf("s2 address: %p\n", s2.c_str()); // s2 address: 0x58a0d31af2e4
+        printf("s3 address: %p\n", s3.c_str()); // s3 address: 0x58a0d31aeeb4
+        
+        // 1.引用计数发生了修改
+        // 2.地址发生了改变
+        ```
 
-          即虽然**s2的内容没有变化，但是引用计数与地址都发生了变化**，然而：
+        即虽然**s2的内容没有变化，但是引用计数与地址都发生了变化**，然而：
 
-          - **下标访问**
+        - **下标访问**
 
-            **读操作** `cout << str1[0] << endl;` `cout << char字符`，只返回相应下标位置的字符即可，**不需要复制**，不修改引用计数
+          **读操作** `cout << str1[0] << endl;` `cout << char字符`，只返回相应下标位置的字符即可，**不需要复制**，不修改引用计数
 
-          - **下标修改**
+        - **下标修改**
 
-            **写操作** `str1[0] = 'A';` `char字符 = char字符`，**需要进行申请新空间进行深拷贝**，修改引用计数，修改字符
+          **写操作** `str1[0] = 'A';` `char字符 = char字符`，**需要进行申请新空间进行深拷贝**，修改引用计数，修改字符
 
       - 问题分析
 
@@ -7301,7 +7847,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
         2. 让CowString的operator[]函数返回是这个新类型的对象
         3. 然后在这个新类型中对 << 和 = 进行重载，让这两个运算符能够处理新类型对象，从而分开了处理逻辑，区分读写操作
 
-        ![image-20241205102923993](..\0.TyporaPicture\image-20241205102923993.png)
+        ![image-20241205102923993](D:\Typora Picture\image-20241205102923993-177859374206512.png)
 
       - **CowString中operator[]重载——服务于operator[]结果的operator<< 与 operator=，==即[]是[]结果的<<与=的前提==**
 
@@ -7435,7 +7981,6 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
         - 先看看这个自定义类型中有没有类型转换函数，转换成一个该运算符可以直接处理的类型的数据
         - 如果没有类型转换函数，会再看看有没有隐式转换的途径（一般，大多数情况谨慎使用隐式转换）
 
-
 ## 三、std::string的底层实现-短字符串优化与最佳策略
 
 1. **短字符串优化（SSO）**
@@ -7445,7 +7990,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
    这样做的好处是：**当字符串较小时，直接拷贝字符串，放在 string内部，不用获取堆空间，开销小**
 
-   ![image-20241206102314843](..\0.TyporaPicture\image-20241206102314843.png)
+   ![image-20241206102314843](D:\Typora Picture\image-20241206102314843-177859374206513.png)
 
    ```cpp
    // union表示共用体，允许在同一内存空间中存储不同类型的数据
@@ -7465,10 +8010,6 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
    Facebook提出的最佳策略，将三者进行结合，因为以上三种方式，都不能解决所有可能遇到的字符串的情况，各有所长，又各有缺陷。综合考虑所有情况之后，facebook开源的folly库中，实现了一个fbstring，它根据字符串的不同长度使用不同的拷贝策略，**最终每个fbstring对象占据的空间大小都是24字节**
 
-
-
-
-
 # Day14_关联式容器-set&map
 
 ## 一、关联式容器-set——底层为红黑树
@@ -7487,7 +8028,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
    包含在头文件< set >，打开C++参考文档，主要关注这样的几个构造函数
 
-   ![image-20241206105537432](..\0.TyporaPicture\image-20241206105537432.png)
+   ![image-20241206105537432](D:\Typora Picture\image-20241206105537432-17787205933772.png)
 
    ```cpp
    // set容器的构造
@@ -7516,7 +8057,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
    1. count成员函数
 
-      ![image-20241206115827359](..\0.TyporaPicture\image-20241206115827359.png)
+      ![image-20241206115827359](D:\Typora Picture\image-20241206115827359-17787205933761.png)
 
       **参数key**：要查找的数据元素
 
@@ -7524,7 +8065,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
    2. find成员函数
 
-      ![image-20241206115853634](..\0.TyporaPicture\image-20241206115853634.png)
+      ![image-20241206115853634](D:\Typora Picture\image-20241206115853634-17787205933773.png)
 
       **参数key**：要查找的数据元素
 
@@ -7534,22 +8075,22 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
    - pair
 
-       pair定义在头文件<utility>中，类似于结构体，可以存储两种不同类型的变量
+     pair定义在头文件<utility>中，类似于结构体，可以存储两种不同类型的变量
 
-       当然，C++中结构体已经演变为了类，所以可以认为一个特定的pair是一个类，包含两个对象成员(它们的类型在定义pair时给出)
+     当然，C++中结构体已经演变为了类，所以可以认为一个特定的pair是一个类，包含两个对象成员(它们的类型在定义pair时给出)
 
-       ==**pair的对象成员如何访问**==
+     ==**pair的对象成员如何访问**==
 
-       ```cpp
-       // pair：存储一对数据，first、second
-       std::pair<string, int> p{"age", 20};
-       cout << p.first << endl;
-       cout << p.second << endl;
-       ```
-       
+     ```cpp
+     // pair：存储一对数据，first、second
+     std::pair<string, int> p{"age", 20};
+     cout << p.first << endl;
+     cout << p.second << endl;
+     ```
+
    - 插入单个元素
 
-     ![image-20231031163352909](..\0.TyporaPicture\image-20231031163352909.png)
+     ![image-20231031163352909](D:\Typora Picture\image-20231031163352909-17787205933774.png)
 
      insert函数的第一种形式中：
      **参数：key**
@@ -7557,7 +8098,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
      插入成功：返回<span style=color:red;background:yellow>**插入元素对应迭代器  **</span> 和 <font color=red>**true**</font>
      插入失败：返回<span style=color:red;background:yellow>**阻止插入的元素(原本就有的这个元素)对应迭代器**</span> 和 <font color=red>**false**</font>
-     
+
      ```cpp
      std::set<Student> box;
      box.insert(Student{2, "zs", 18});
@@ -7573,10 +8114,10 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
          cout << "insert failed" << endl;
      }
      ```
-     
+
    - 插入多个元素
 
-     ![image-20241206152508731](..\0.TyporaPicture\image-20241206152508731.png)
+     ![image-20241206152508731](D:\Typora Picture\image-20241206152508731-17787205933775.png)
 
      1. 传入大括号列表，尝试插入列表中的元素
      2. 传入两个迭代器(首迭代器和尾后迭代器)，尝试插入这两个迭代器范围中的元素；**[ , )左闭右开区间**
@@ -7596,17 +8137,18 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 6. **set的删除操作**
 
   ```cpp
-  // set容器的数据删除：erase成员函数
-  std::set<int> box{1, 2, 3, 4, 5};
-  auto it = box.begin();
-  it++;
-  it++;
-  box.erase(it); // 3被删除
+// set容器的数据删除：erase成员函数
+std::set<int> box{1, 2, 3, 4, 5};
+auto it = box.begin();
+it++;
+it++;
+box.erase(it); // 3被删除
   ```
 
 ## 二、关联式容器-map——底层为红黑树
 
 1. **特点**
+
    - **有序容器**：`std::map` 会按照键的大小顺序对元素进行排序，==**默认按键(key)升序排序**==。如果需要降序排序，可以使用自定义比较函数
    - **唯一的键**：`std::map` 中的==**每个键(key)必须是唯一的(value无所谓)**==。如果你尝试插入一个已有键的元素，插入操作将不会成功
    - **键和值**：**每个键都会关联一个值，类型为 `pair<const Key, T>`**，其中 `Key` 是键的类型，`T` 是值的类型——即**存的是pair对象(一对数据)**
@@ -7686,7 +8228,7 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
 5. **map的插入操作**
 
-   ![image-20241206175902177](..\0.TyporaPicture\image-20241206175902177.png)
+   ![image-20241206175902177](D:\Typora Picture\image-20241206175902177-17787205933776.png)
 
    - 插入单个元素
 
@@ -7741,10 +8283,10 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 > ```cpp
 > // key:char  value:string
 > map<char,string> container2{
->     {'a',"abc"},
->     {'c',"bcd"},
->     {'d',"eee"},                                          
->     {'b',"fff"}
+>  {'a',"abc"},
+>  {'c',"bcd"},
+>  {'d',"eee"},                                          
+>  {'b',"fff"}
 > };
 > // 根据key访问对应value
 > cout << container2['a'] << endl;
@@ -7758,7 +8300,9 @@ C++ 中，`[]` 运算符重载通常用于实现类似数组访问的功能，�
 
 1. **关于[]下标访问**
    - map 是「查字典」（拼音→汉字），所以需要下标 `[]`
-   - set 是「花名册」（只有名字），下标没用，所以不支持# Day15_继承
+   - set 是「花名册」（只有名字），下标没用，所以不支持
+
+# Day15_继承
 
 ## 一、继承的基本概念
 
@@ -7796,7 +8340,7 @@ C++ 中模拟这种结构发展的方式就是**继承**，它也是**代码重�
 
    如上述代码所示，有三种继承方式，其“继承效果”如图：
 
-   ![image-20241209095350419](..\0.TyporaPicture\image-20241209095350419.png)
+   ![image-20241209095350419](D:\Typora Picture\image-20241209095350419-17789032351241.png)
 
 3. **定义一个派生类的过程**
 
@@ -7831,7 +8375,7 @@ C++ 中模拟这种结构发展的方式就是**继承**，它也是**代码重�
 
 4. **三种继承方式的访问权限**
 
-   ![image-20241209152750803](..\0.TyporaPicture\image-20241209152750803.png)
+   ![image-20241209152750803](D:/Typora Picture/image-20241209152750803.png)
 
    - 总结
 
@@ -7905,7 +8449,7 @@ C++ 中模拟这种结构发展的方式就是**继承**，它也是**代码重�
 
    - **可以得到派生类对象的内存结构：**
 
-     ![image-20241209152903966](..\0.TyporaPicture\image-20241209152903966.png)
+     ![image-20241209152903966](D:\Typora Picture\image-20241209152903966-17789032351254.png)
 
 2. <span style=color:red;background:yellow>**派生类对象的创建**</span>
 
@@ -7984,58 +8528,58 @@ C++ 中模拟这种结构发展的方式就是**继承**，它也是**代码重�
 
      - 派生类中声明了和基类的数据成员同名的数据成员，就会对基类的这个数据成员**形成隐藏**，无法通过派生类对象**直接**访问基类的这个数据成员
 
-         ```cpp
-         class Base {
-         public:
-             Base(long x)
-             : m_base(x)
-             {
-                 cout << "Base()" << endl; 
-             }
-         
-             long m_data = 100;
-         private:
-             long m_base;
-         };
-         
-         class Derived : public Base {
-         public:
-             Derived(long base,long derived)
-             : Base(base)//创建基类子对象
-             , m_derived(derived)
-             {
-                 cout << "Derived()" << endl;
-             }
-         
-             long m_data = 19;
-         private:
-             long m_derived;
-         
-         };
-         
-         void test0() {
-             Derived dd(1,2);
-             cout << dd.m_data << endl; // 直接访问
-             // 使用基类类名+作用域限定符进行访问
-             cout << dd.Base::m_data << endl; // 间接访问
-         }
-         ```
+       ```cpp
+       class Base {
+       public:
+           Base(long x)
+           : m_base(x)
+           {
+               cout << "Base()" << endl; 
+           }
+       
+           long m_data = 100;
+       private:
+           long m_base;
+       };
+       
+       class Derived : public Base {
+       public:
+           Derived(long base,long derived)
+           : Base(base)//创建基类子对象
+           , m_derived(derived)
+           {
+               cout << "Derived()" << endl;
+           }
+       
+           long m_data = 19;
+       private:
+           long m_derived;
+       
+       };
+       
+       void test0() {
+           Derived dd(1,2);
+           cout << dd.m_data << endl; // 直接访问
+           // 使用基类类名+作用域限定符进行访问
+           cout << dd.Base::m_data << endl; // 间接访问
+       }
+       ```
 
      - <span style=color:red;background:yellow>**隐藏不代表改变了基类的这个数据成员**</span>
 
-         从内存的角度上也能验证：
+       从内存的角度上也能验证：
 
-         ![image-20241209170336940](..\0.TyporaPicture\image-20241209170336940.png)
-   
-         如果一定要访问基类的这个数据成员，需要加上作用域——`派生类对象.基类::同名数据成员`
-         <font color=red>**但是这种写法不符合面向对象的原则，不推荐实际使用**</font>
-   
+       ![image-20241209170336940](D:\Typora Picture\image-20241209170336940-17789032351252.png)
+
+       如果一定要访问基类的这个数据成员，需要加上作用域——`派生类对象.基类::同名数据成员`
+       <font color=red>**但是这种写法不符合面向对象的原则，不推荐实际使用**</font>
+
    - 基类成员函数的隐藏
-   
+
      **当派生类声明了与基类同名的成员函数时**，只要名字相同，**即使参数列表不同，也只能看到派生类部分的**，无法通过派生类对象**直接调用**基类的同名函数
-   
+
      <span style=color:red;background:yellow>**派生类对基类的成员函数构成隐藏，只需要派生类中定义一个与基类中成员函数同名的函数即可（函数的返回类型、参数情况都可以不同，依然能隐藏）**</span>
-   
+
      如果一定要调用基类的这个成员函数，需要加上作用域——`派生类对象.基类::同名成员函数()`
      但是这种写法不符合面向对象的原则，不推荐实际使用
 
@@ -8045,297 +8589,297 @@ C++ 除了支持单继承外，还支持多重继承
 
 因为在客观现实世界中，我们经常碰到一个人身兼数职的情况，如在学校里，一个同学可能既是一个班的班长，又是学生中某个部门的部长；在创业公司中，某人既是软件研发部的 CTO ，又是财务部的 CFO ；一个人既是程序员，又是段子手。诸如此类的情况出现时，单一继承解决不了问题，就可以采用多基继承，例如：
 
-![image-20241209181049480](..\0.TyporaPicture\image-20241209181049480.png)
+![image-20241209181049480](D:\Typora Picture\image-20241209181049480-17789032351255.png)
 
 1. **多重继承的派生类对象的构造和析构**
 
    - **多继承的定义方式**
 
-       ~~~cpp
-       class A {
-       public:
-           A() {
-               cout << "A()" << endl; 
-           }
-           ~A() {
-               cout << "~A()" << endl; 
-           }
-           void print() const {
-               cout << "A::print()" << endl;
-           }
-       };
-       
-       class B {
-       public:
-           B()
-           {
-               cout << "B()" << endl; 
-           }
-           ~B()
-           {
-               cout << "~B()" << endl; 
-           }
-           void show() const
-           {
-               cout << "B::show()" << endl;
-           }
-       };
-       
-       class C {
-       public:
-           C() {
-               cout << "C()" << endl; 
-           }
-           ~C() {
-               cout << "~C()" << endl; 
-           }
-           void display() const {
-               cout << "C::display()" << endl;
-           }
-       };
-       
-       class D
-       : public A
-       , B
-       , C
-       {
-       public:
-           D() {
-               cout << "D()" << endl;
-           }
-           ~D() {
-               cout << "~D()" << endl;
-           }
-           //void print() const {
-           //    cout << "D::print()" << endl;
-           //}
-       };
-       
-       void test() {
-           D d;
-           d.print();
-           //d.show(); //error
-           //d.display(); // error
-       }
-       ~~~
+     ~~~cpp
+     class A {
+     public:
+         A() {
+             cout << "A()" << endl; 
+         }
+         ~A() {
+             cout << "~A()" << endl; 
+         }
+         void print() const {
+             cout << "A::print()" << endl;
+         }
+     };
+     
+     class B {
+     public:
+         B()
+         {
+             cout << "B()" << endl; 
+         }
+         ~B()
+         {
+             cout << "~B()" << endl; 
+         }
+         void show() const
+         {
+             cout << "B::show()" << endl;
+         }
+     };
+     
+     class C {
+     public:
+         C() {
+             cout << "C()" << endl; 
+         }
+         ~C() {
+             cout << "~C()" << endl; 
+         }
+         void display() const {
+             cout << "C::display()" << endl;
+         }
+     };
+     
+     class D
+     : public A
+     , B
+     , C
+     {
+     public:
+         D() {
+             cout << "D()" << endl;
+         }
+         ~D() {
+             cout << "~D()" << endl;
+         }
+         //void print() const {
+         //    cout << "D::print()" << endl;
+         //}
+     };
+     
+     void test() {
+         D d;
+         d.print();
+         //d.show(); //error
+         //d.display(); // error
+     }
+     ~~~
 
-       <font color=red>**如果这样定义，那么D类公有继承了A类，但是对B/C类采用的继承方式是默认的private**</font>，如果想要公有继承A/B/C三个类，则：
+     <font color=red>**如果这样定义，那么D类公有继承了A类，但是对B/C类采用的继承方式是默认的private**</font>，如果想要公有继承A/B/C三个类，则：
 
-       ```cpp
-       class D
-       : public A
-       , public B
-       , public C
-       {
-       public:
-           D() { 
-               cout << "D()" << endl;
-           }
-           ~D() {
-               cout << "~D()" << endl;
-           }
-       };
-       ```
-       
+     ```cpp
+     class D
+     : public A
+     , public B
+     , public C
+     {
+     public:
+         D() { 
+             cout << "D()" << endl;
+         }
+         ~D() {
+             cout << "~D()" << endl;
+         }
+     };
+     ```
+
    - **此结构下创建D类对象时，这四个类的构造函数调用顺序：**
 
-       立刻调用D类的构造函数，在此过程中会根据继承的声明顺序，依次调用A、B、C的构造函数，创建出这三个类的基类子对象
+     立刻调用D类的构造函数，在此过程中会根据继承的声明顺序，依次调用A、B、C的构造函数，创建出这三个类的基类子对象
 
    - **D类对象销毁时，这四个类的析构函数调用顺序：**
 
-       立刻调用D类的析构函数，析构函数执行完后，按照继承的声明顺序的逆序，依次调用C、B、A的析构函数
+     立刻调用D类的析构函数，析构函数执行完后，按照继承的声明顺序的逆序，依次调用C、B、A的析构函数
 
 2. **多重继承可能引发的问题**
 
    - 成员名冲突的**访问二义性**
 
-      ![image-20231102131820080](..\0.TyporaPicture\image-20231102131820080.png)
+     ![image-20231102131820080](D:\Typora Picture\image-20231102131820080-177890323512510.png)
 
-      ```cpp
-      class A {
-      public:
-          A() {
-              cout << "A Constructor" << endl;
-          }
-          ~A() {
-              cout << "A Destructor" << endl;
-          }
-          void print() const {
-              cout << "A print()" << endl;
-          }
-      };
-      
-      class B {
-      public:
-          B() {
-              cout << "B Constructor" << endl;
-          }
-          ~B() {
-              cout << "B Destructor" << endl;
-          }
-          
-          void print() const {
-              cout << "B print()" << endl;
-          }
-      };
-      
-      class C {
-      public:
-          C() {
-              cout << "C Constructor" << endl;
-          }
-          ~C() {
-              cout << "C Destructor" << endl;
-          }
-          void print() const {
-              cout << "C print()" << endl;
-          }
-          int m_b
-      };
-      
-      class D
-      : public A
-      , public B
-      , public C
-      {
-      public:
-          D() {
-              cout << "D Constructor" << endl;
-          }
-          ~D() {
-              cout << "D Destructor" << endl;
-          }
-          /* void print() const
-          {
-              cout << "D print()" << endl;
-          } */
-      };
-      
-      // 多继承的二义性    
-      void test3() {
-          D d{};
-          /* d.print(); // error: 成员名访问冲突*/
-          // member 'print' found in multiple base classes of different types
-          // 通过类名::作用域方式解决冲突 , 指明调用是哪个基类的方法
-          d.A::print();
-          d.B::print();
-          d.C::print();
-      }
-      ```
-   
-      解决成员名访问冲突的方法：**加类作用域（不推荐）**—— 应该尽量避免
-   
-      同时，<span style=color:red;background:yellow>**如果D类中声明了同名的成员，可以对基类的这些成员造成隐藏效果**</span>，那么就可以直接通过成员名进行访问
-   
-      ```cpp
-          D d;
-          d.A::print();
-          d.B::print();
-          d.C::print();
-          d.print(); // ok
-      ```
-   
+     ```cpp
+     class A {
+     public:
+         A() {
+             cout << "A Constructor" << endl;
+         }
+         ~A() {
+             cout << "A Destructor" << endl;
+         }
+         void print() const {
+             cout << "A print()" << endl;
+         }
+     };
+     
+     class B {
+     public:
+         B() {
+             cout << "B Constructor" << endl;
+         }
+         ~B() {
+             cout << "B Destructor" << endl;
+         }
+         
+         void print() const {
+             cout << "B print()" << endl;
+         }
+     };
+     
+     class C {
+     public:
+         C() {
+             cout << "C Constructor" << endl;
+         }
+         ~C() {
+             cout << "C Destructor" << endl;
+         }
+         void print() const {
+             cout << "C print()" << endl;
+         }
+         int m_b
+     };
+     
+     class D
+     : public A
+     , public B
+     , public C
+     {
+     public:
+         D() {
+             cout << "D Constructor" << endl;
+         }
+         ~D() {
+             cout << "D Destructor" << endl;
+         }
+         /* void print() const
+         {
+             cout << "D print()" << endl;
+         } */
+     };
+     
+     // 多继承的二义性    
+     void test3() {
+         D d{};
+         /* d.print(); // error: 成员名访问冲突*/
+         // member 'print' found in multiple base classes of different types
+         // 通过类名::作用域方式解决冲突 , 指明调用是哪个基类的方法
+         d.A::print();
+         d.B::print();
+         d.C::print();
+     }
+     ```
+
+     解决成员名访问冲突的方法：**加类作用域（不推荐）**—— 应该尽量避免
+
+     同时，<span style=color:red;background:yellow>**如果D类中声明了同名的成员，可以对基类的这些成员造成隐藏效果**</span>，那么就可以直接通过成员名进行访问
+
+     ```cpp
+         D d;
+         d.A::print();
+         d.B::print();
+         d.C::print();
+         d.print(); // ok
+     ```
+
    - ==**存储二义性**==
-   
-      - 菱形(diamond)继承结构
-   
-        一个派生类同时继承两个直接基类，而这两个直接基类又共同继承自同一个间接基类
-      
-        ```cpp
-        class A {
-        public:
-            void print() const{
-                cout << "A::print()" << endl;
-            }
-            double m_a;
-        };
-        
-        class B : public A {
-        public:
-            double m_b;
-        };
-        
-        class C : public A {
-        public:
-            double m_c;
-        };
-        
-        class D
-        : public B
-        , public C
-        {
-        public:
-            double m_d;
-        };
-        ```
-   
-        ![image-20241209210610186](..\0.TyporaPicture\image-20241209210610186.png)
-   
-        菱形继承情况下，D类对象的创建会生成一个B类子对象，其中包含一个A类子对象；还会生成一个C类子对象，其中也包含一个A类子对象
-   
-        所以D类对象的内存布局中有多个A类子对象，访问继承自A的成员时会发生二义性**（无论是否涉及A类的数据成员，单纯访问A类的成员函数也会冲突）**
-   
-        因为编译器需要通过基类子对象去调用，但是不知道应该调用哪个基类子对象的成员函数，除非使用作用域限定符::
-   
-        **报错信息：**
-   
-        `non-static member 'print' found in multiple base-class subobjects of type 'A'`
-   
-        ![image-20241209211442119](..\0.TyporaPicture\image-20241209211442119.png)
-   
-        当然，D类如果再写一个同名成员函数，会发生隐藏
-   
-      - <span style=color:red;background:yellow>**解决存储二义性的方法：中间层的基类采用虚继承顶层基类的方式解决存储二义性**</span>
-      
-        ```cpp
-        class A {
-        public:
-            void print() const{
-                cout << "A::print()" << endl;
-            }
-            double m_a;
-        };
-        
-        class B : virtual public A {
-        public:
-            double m_b;
-        };
-        
-        class C : virtual public A {
-        public:
-            double m_c;
-        };
-        
-        class D
-        : public B
-        , public C
-        {
-        public:
-            double m_d;
-        };
-        ```
-   
-        ![image-20241209211645768](..\0.TyporaPicture\image-20241209211645768.png)
-   
-        采用虚拟继承的方式处理菱形继承问题，实际上改变了派生类的内存布局。**B类和C类对象的内存布局中多出一个虚基类指针，位于所占内存空间的起始位置，同时继承自A类的内容被放在了这片空间的最后位置**。D类对象中**只会有一份A类的基类子对象**
-   
-        ![image-20241209211855786](..\0.TyporaPicture\image-20241209211855786.png)
-      
-        > 通过VS验证，查看D类的内存布局：
-        >
-        > <img src="..\0.TyporaPicture\image-20240527165621041.png" alt="image-20240527165621041" style="zoom:67%;" />
-        >
-        > <img src="..\0.TyporaPicture\image-20240527165649690.png" alt="image-20240527165649690" style="zoom:67%;" />
-        >
-        > <img src="..\0.TyporaPicture\image-20240527165713475.png" alt="image-20240527165713475" style="zoom:67%;" />
-        >
-        > <img src="..\0.TyporaPicture\image-20240527165747487.png" alt="image-20240527165747487" style="zoom:67%;" />
-        >
-        > 
-        >
-        > 验证得到的结果：
-        >
-        > <img src="..\0.TyporaPicture\image-20240527165747487.png" alt="image-20250227182206756" style="zoom:50%;" />
+
+     - 菱形(diamond)继承结构
+
+       一个派生类同时继承两个直接基类，而这两个直接基类又共同继承自同一个间接基类
+
+       ```cpp
+       class A {
+       public:
+           void print() const{
+               cout << "A::print()" << endl;
+           }
+           double m_a;
+       };
+       
+       class B : public A {
+       public:
+           double m_b;
+       };
+       
+       class C : public A {
+       public:
+           double m_c;
+       };
+       
+       class D
+       : public B
+       , public C
+       {
+       public:
+           double m_d;
+       };
+       ```
+
+       ![image-20241209210610186](D:/Typora Picture/image-20241209210610186.png)
+
+       菱形继承情况下，D类对象的创建会生成一个B类子对象，其中包含一个A类子对象；还会生成一个C类子对象，其中也包含一个A类子对象
+
+       所以D类对象的内存布局中有多个A类子对象，访问继承自A的成员时会发生二义性**（无论是否涉及A类的数据成员，单纯访问A类的成员函数也会冲突）**
+
+       因为编译器需要通过基类子对象去调用，但是不知道应该调用哪个基类子对象的成员函数，除非使用作用域限定符::
+
+       **报错信息：**
+
+       `non-static member 'print' found in multiple base-class subobjects of type 'A'`
+
+       ![image-20241209211442119](D:\Typora Picture\image-20241209211442119-17789032351257.png)
+
+       当然，D类如果再写一个同名成员函数，会发生隐藏
+
+     - <span style=color:red;background:yellow>**解决存储二义性的方法：中间层的基类采用虚继承顶层基类的方式解决存储二义性**</span>
+
+       ```cpp
+       class A {
+       public:
+           void print() const{
+               cout << "A::print()" << endl;
+           }
+           double m_a;
+       };
+       
+       class B : virtual public A {
+       public:
+           double m_b;
+       };
+       
+       class C : virtual public A {
+       public:
+           double m_c;
+       };
+       
+       class D
+       : public B
+       , public C
+       {
+       public:
+           double m_d;
+       };
+       ```
+
+       ![image-20241209211645768](D:\Typora Picture\image-20241209211645768-17789032351258.png)
+
+       采用虚拟继承的方式处理菱形继承问题，实际上改变了派生类的内存布局。**B类和C类对象的内存布局中多出一个虚基类指针，位于所占内存空间的起始位置，同时继承自A类的内容被放在了这片空间的最后位置**。D类对象中**只会有一份A类的基类子对象**
+
+       ![image-20241209211855786](D:/Typora Picture/image-20241209211855786.png)
+
+       > 通过VS验证，查看D类的内存布局：
+       >
+       > <img src="D:\Typora Picture\image-20240527165621041-177890323512614.png" alt="image-20240527165621041" style="zoom:67%;" />
+       >
+       > <img src="D:\Typora Picture\image-20240527165649690-17789032351259.png" alt="image-20240527165649690" style="zoom:67%;" />
+       >
+       > <img src="D:\Typora Picture\image-20240527165713475-177890323512511.png" alt="image-20240527165713475" style="zoom:67%;" />
+       >
+       > <img src="D:\Typora Picture\image-20240527165747487-177890323512513.png" alt="image-20240527165747487" style="zoom:67%;" />
+       >
+       > 
+       >
+       > 验证得到的结果：
+       >
+       > <img src="D:\Typora Picture\image-20240527165747487-177890323512513.png" alt="image-20250227182206756" style="zoom:50%;" />
 
 
 ## 四、基类与派生类之间的转换
@@ -8378,7 +8922,7 @@ C++ 除了支持单继承外，还支持多重继承
 
    - 向下转型有风险——以指针为例
 
-     ![image-20241210105102397](..\0.TyporaPicture\image-20241210105102397.png)
+     ![image-20241210105102397](D:\Typora Picture\image-20241210105102397-177890323512616.png)
 
      - 派生类指针指向基类对象，除了操纵基类对象的空间，还需要操纵一片空间，但是这片空间对于此指针来说是非法空间，所以会报错
 
@@ -8410,7 +8954,7 @@ C++ 除了支持单继承外，还支持多重继承
 
         这种转型合理的原因如图：
 
-        ![image-20241210113529514](..\0.TyporaPicture\image-20241210113529514.png)
+        ![image-20241210113529514](D:/Typora Picture/image-20241210113529514.png)
 
         注意：在使用dynamic_cast时还<span style=color:red;background:yellow>**需要有多态的内容**</span>，我们需要加上一个虚函数
 
@@ -8454,7 +8998,7 @@ C++ 除了支持单继承外，还支持多重继承
 
      - **当派生类中有显式定义复制控制函数时，不会再自动完成基类部分的复制控制操作，需要显式地调用**
 
-     ![image-20241210114804352](..\0.TyporaPicture\image-20241210114804352.png)
+     ![image-20241210114804352](D:\Typora Picture\image-20241210114804352-177890323512615.png)
 
      **对于拷贝构造**
 
@@ -8675,27 +9219,27 @@ C++ 除了支持单继承外，还支持多重继承
 
    - **结果**
 
-       ```cpp
-       Base::display()
-       Base::display()
-       sizeof(Base):8
-       sizeof(Derived):16
-       ```
+     ```cpp
+     Base::display()
+     Base::display()
+     sizeof(Base):8
+     sizeof(Derived):16
+     ```
 
    - **若是给Base中的display函数加上virtual关键字修饰，得到的结果**
 
-       ```cpp
-       Base::display()
-       Derived::display()
-       sizeof(Base):16
-       sizeof(Derived):24
-       ```
+     ```cpp
+     Base::display()
+     Derived::display()
+     sizeof(Base):16
+     sizeof(Derived):24
+     ```
 
-       从运行结果中我们发现，virtual关键字加入后，发生了一件“奇怪”的事情 —— 用基类指针指向派生类对象后，**通过这个基类对象竟然可以调用派生类的成员函数**。而且，**基类和派生类对象所占空间的大小都改变了，说明其内存结构发生了变化**
+     从运行结果中我们发现，virtual关键字加入后，发生了一件“奇怪”的事情 —— 用基类指针指向派生类对象后，**通过这个基类对象竟然可以调用派生类的成员函数**。而且，**基类和派生类对象所占空间的大小都改变了，说明其内存结构发生了变化**
 
    - **内存结构变化**
 
-       ![image-20241211102255253](..\0.TyporaPicture\image-20241211102255253.png)
+     ![image-20241211102255253](D:\Typora Picture\image-20241211102255253.png)
 
 ## 二、虚函数的实现原理
 
@@ -8707,11 +9251,11 @@ C++ 除了支持单继承外，还支持多重继承
 
      - 若是没有在Derived中定义display函数
 
-       ![image-20241211103810170](..\0.TyporaPicture\image-20241211103810170.png)
+       ![image-20241211103810170](D:\Typora Picture\image-20241211103810170-17789187775913.png)
 
      - 若是在Derived类中又定义了display函数，则触发了==**覆盖机制**==（override），<font color=red>**覆盖的是虚函数表中虚函数的入口地址**</font>
 
-       ![image-20241211103827119](..\0.TyporaPicture\image-20241211103827119.png)
+       ![image-20241211103827119](D:\Typora Picture\image-20241211103827119-17789187775912.png)
 
        Base* p 去指向Derived对象，<font color=red>**依然只能访问到基类的部分**</font>。用**指针p去调用display函数，发现是一个虚函数**，那么会<font color=red>**通过vfptr找到虚表**</font>，此时虚表中存放的是Derived::display的入口地址，所以调用到Derived的display函数
 
@@ -8850,7 +9394,6 @@ C++ 除了支持单继承外，还支持多重继承
    但是**静态成员函数没有this指针，所以无法访问到vfptr**
 
    > vfptr是属于一个特定对象的部分，虚函数机制起作用必然需要通过vfptr去间接调用虚函数，而静态成员函数找不到这样特定的对象
-   >
 
 3. ==Inline函数不能设为虚函数==
 
@@ -8934,11 +9477,11 @@ C++ 除了支持单继承外，还支持多重继承
 
      说明**即使Parent中没有对Grandpa中的func1和fucn2覆盖，在Son中也可以对func1和func2覆盖**
 
-     ![image-20231103150156687](..\0.TyporaPicture\image-20231103150156687.png)
+     ![image-20231103150156687](D:\Typora Picture\image-20231103150156687-17789187775901.png)
 
    - <font color=red>**如果在Parent类的构造和析构函数中调用虚函数**</font>
 
-     ![undefined202403191632256](..\0.TyporaPicture\undefined202403191632256.png)
+     ![undefined202403191632256](D:/Typora Picture/undefined202403191632256.png)
 
      - 构造函数中调用虚函数
 
@@ -9198,13 +9741,14 @@ C++ 除了支持单继承外，还支持多重继承
    a2.operator=(a1); // 左操作数 a2 必须写，不能省
    ```
 
-   # Day17_多态2
+
+# Day17_多态2
 
 ## ==一、析构函数设为虚函数==
 
 虽然**构造函数不能被定义成虚函数**，但**析构函数可以定义为虚函数**，一般来说，如果类中定义了虚函数，析构函数也应被定义为虚析构函数，尤其是**类内有申请的动态内存**，需要清理和释放的时候
 
-在C++中，**虚析构函数（virtual destructor）** 的==**作用**是确保通过基类指针删除派生类对象时，能够正确调用派生类的析构函数==，**从而避免资源泄漏和不完整销毁的问题**
+在C++中，**虚析构函数（virtual destructor）** 的==**作用**是**确保通过基类指针删除派生类对象时，能够正确调用派生类的析构函数**==，**从而避免资源泄漏和不完整销毁的问题**
 
 ```cpp
 class Base {
@@ -9264,13 +9808,19 @@ void test0() {
 
 - （没有将析构函数设置为虚函数）**首先会去调用Derived的析构函数(因为删除的是Derived对象所占的空间的基地址，所以删除后则会自动调用其析构函数**)，**但是此时是通过一个Base类指针去调用，无法访问到，只能跳过**，再去调用Base的析构函数，回收掉存放10这个数据的这片空间，最后调用operator delete回收掉什堆对象本身所占的整片空间（**编译器知道需要回收的是堆上的Derived对象，会自动计算应该回收多大的空间，与delete语句中指针的类别没有关系——delete pbase**）
 
-![image-20241213092715064](..\0.TyporaPicture\image-20241213092715064.png)
+  > 上述解释存疑
+  >
+  > **正确的过程（当 `Base` 析构函数不是虚函数时）：**
+  > `delete pbase` → 只调用 `Base::~Base()` → 释放 `pbase` 指向的内存（整个对象的内存会被释放，但 `Derived` 析构函数没运行，派生类自己的资源没有清理）。
+  > **这属于未定义行为**，因为通过基类指针删除派生类对象而非虚析构函数是标准明确禁止的。
+
+![image-20241213092715064](D:\Typora Picture\image-20241213092715064-17789187874309.png)
 
 由图中可知，由于根本没有调用派生类子对象的析构函数，所以派生类子对象内部的指针成员申请的空间即20所在的堆空间没有被释放，造成内存泄露
 
 - 为了让基类指针能够调用派生类的析构函数，**所以需要将Base的析构函数也设为虚函数**，所以Derived类中发生虚函数的覆盖，将Derived的虚函数表中记录的虚函数地址改变了。==**析构函数尽管不重名，也认为发生了覆盖**==
 
-  ![image-20241213092816012](..\0.TyporaPicture\image-20241213092816012.png)
+  ![image-20241213092816012](D:\Typora Picture\image-20241213092816012-17789187874298.png)
 
   在派生类析构函数执行完毕后，会自动调用基类析构函数。这是由编译器在析构函数调用序列中隐式安排的，这个过程不依赖于虚函数表，属于C++的语言规则，由此，就完成了所有申请的堆空间的释放，没有内存泄漏
 
@@ -9409,279 +9959,279 @@ Derived::show()
 
 验证了虚表中存放虚函数的顺序，是按照基类中虚函数的声明顺序去存放的
 
-![image-20241213110810548](..\0.TyporaPicture\image-20241213110810548.png)
+![image-20241213110810548](D:\Typora Picture\image-20241213110810548-177891878743010.png)
 
-![image-20241213110945496](..\0.TyporaPicture\image-20241213110945496.png)
+![image-20241213110945496](D:\Typora Picture\image-20241213110945496-177891878743011.png)
 
 ## 三、带虚函数的多继承
 
 1. **场景前提**
 
-    Base1、Base2、Base3都拥有虚函数f、g、h，Derived公有继承以上三个类，在Derived中覆盖了虚函数f，还有一个普通的成员函数g1，四个类各有一个double成员
+   Base1、Base2、Base3都拥有虚函数f、g、h，Derived公有继承以上三个类，在Derived中覆盖了虚函数f，还有一个普通的成员函数g1，四个类各有一个double成员
 
-    ```cpp
-    class Base1 {
-    public:
-        Base1() 
-        : m_base1(10) 
-        {
-            cout << "Base1()" << endl;
-        }
-        virtual void f() {
-            cout << "Base1::f()" << endl;
-        }
-        virtual void g() {
-            cout << "Base1::g()" << endl;
-        }
-        virtual void h() {
-            cout << "Base1::h()" << endl;
-        }
-        virtual ~Base1() {}
-    private:
-        double m_base1;
-    };
-    
-    class Base2 {
-    public:
-        // ...省略构造、f、g、h
-    private:
-        double m_base2;
-    };
-    
-    class Base3 {
-    public:
-        // ...省略构造、f、g、h、析构
-    private:
-        double m_base3;
-    };
-    
-    class Derived 
-    : public Base1
-    , public Base2
-    , public Base3
-    {
-    public:
-        Derived()
-        : m_derived(10000) 
-        {
-            cout << "Derived()" << endl;
-        }
-        void f() {
-            cout << "Derived::f()" << endl;
-        }
-        virtual void g1() {
-            cout << "Derived::g1()" << endl;
-        }
-    private:
-        double m_derived;
-    };
-    
-    int main(void) {
-        cout << sizeof(Derived) << endl;
-    
-        Derived d;
-        Base1* pBase1 = &d;
-        Base2* pBase2 = &d;
-        Base3* pBase3 = &d;
-    
-        cout << "&Derived = " << &d << endl; 
-        cout << "pBase1 = " << pBase1 << endl; 
-        cout << "pBase2 = " << pBase2 << endl; 
-        cout << "pBase3 = " << pBase3 << endl; 
-    
-        return 0;
-    }
-    ```
+   ```cpp
+   class Base1 {
+   public:
+       Base1() 
+       : m_base1(10) 
+       {
+           cout << "Base1()" << endl;
+       }
+       virtual void f() {
+           cout << "Base1::f()" << endl;
+       }
+       virtual void g() {
+           cout << "Base1::g()" << endl;
+       }
+       virtual void h() {
+           cout << "Base1::h()" << endl;
+       }
+       virtual ~Base1() {}
+   private:
+       double m_base1;
+   };
+   
+   class Base2 {
+   public:
+       // ...省略构造、f、g、h
+   private:
+       double m_base2;
+   };
+   
+   class Base3 {
+   public:
+       // ...省略构造、f、g、h、析构
+   private:
+       double m_base3;
+   };
+   
+   class Derived 
+   : public Base1
+   , public Base2
+   , public Base3
+   {
+   public:
+       Derived()
+       : m_derived(10000) 
+       {
+           cout << "Derived()" << endl;
+       }
+       void f() {
+           cout << "Derived::f()" << endl;
+       }
+       virtual void g1() {
+           cout << "Derived::g1()" << endl;
+       }
+   private:
+       double m_derived;
+   };
+   
+   int main(void) {
+       cout << sizeof(Derived) << endl;
+   
+       Derived d;
+       Base1* pBase1 = &d;
+       Base2* pBase2 = &d;
+       Base3* pBase3 = &d;
+   
+       cout << "&Derived = " << &d << endl; 
+       cout << "pBase1 = " << pBase1 << endl; 
+       cout << "pBase2 = " << pBase2 << endl; 
+       cout << "pBase3 = " << pBase3 << endl; 
+   
+       return 0;
+   }
+   ```
 
-    ```cpp
-    // 结果
-    56
-    Base1()
-    Base2()
-    Base3()
-    Derived()
-    &Derived = 0x7ffeb5e5d320
-    pBase1 = 0x7ffeb5e5d320
-    pBase2 = 0x7ffeb5e5d330
-    pBase3 = 0x7ffeb5e5d340
-    ```
+   ```cpp
+   // 结果
+   56
+   Base1()
+   Base2()
+   Base3()
+   Derived()
+   &Derived = 0x7ffeb5e5d320
+   pBase1 = 0x7ffeb5e5d320
+   pBase2 = 0x7ffeb5e5d330
+   pBase3 = 0x7ffeb5e5d340
+   ```
 
-    **结果分析：**
+   **结果分析：**
 
-    <span style=color:red;background:yellow>**三种不同的基类类型指针指向派生类对象时，实际指向的位置是相应类型的基类子对象的位置**</span>
+   <span style=color:red;background:yellow>**三种不同的基类类型指针指向派生类对象时，实际指向的位置是相应类型的基类子对象的位置**</span>
 
-    ![image-20241213113556205](..\0.TyporaPicture\image-20241213113556205.png)
+   ![image-20241213113556205](D:\Typora Picture\image-20241213113556205-177891878743012.png)
 
-    VS上验证布局和虚函数表存放的内容
+   VS上验证布局和虚函数表存放的内容
 
-    ![image-20241213115205142](..\0.TyporaPicture\image-20241213115205142.png)
+   ![image-20241213115205142](D:\Typora Picture\image-20241213115205142.png)
 
 2. **布局规则**
 
-    通过VS平台展示类对象内存布局的功能，我们可以总结出以下规则：
+   通过VS平台展示类对象内存布局的功能，我们可以总结出以下规则：
 
-    1. 每个基类都有自己的虚函数表（前提是基类定义了虚函数）
+   1. 每个基类都有自己的虚函数表（前提是基类定义了虚函数）
 
-    2. 派生类如果有自己的虚函数，会被加入到第一个虚函数表之中——希望尽快访问到虚函数，也就是说省去一个虚表指针
+   2. **==（前提为虚基继承，而非普通继承）==派生类如果没有自己的新增的虚函数，即只是重写基类虚函数，则重写的虚函数地址会被加入到第一个虚函数表之中（覆盖）——希望尽快访问到虚函数，也就是说省去一个虚表指针**
 
-       > 设计目的：**最快访问速度 + 节省对象内存**
+      > 设计目的：**最快访问速度 + 节省对象内存**
 
-       ![image-20241213115247030](..\0.TyporaPicture\image-20241213115247030.png)
+      ![image-20241213115247030](D:\Typora Picture\image-20241213115247030-177891878743015.png)
 
-    3. 内存布局中，其基类的布局按照基类被声明时的顺序进行排列（<font color=red>**有虚函数的基类会往上放——希望尽快访问到虚函数**</font>）
+   3. 内存布局中，其基类的布局按照基类被声明时的顺序进行排列（<font color=red>**有虚函数的基类会往上放——希望尽快访问到虚函数**</font>）
 
-       如果继承顺序为Base1/Base2/Base3，在Derived对象的内存布局中就会先是Base1类的基类子对象，然后是Base2、Base3基类子对象
+      如果继承顺序为Base1/Base2/Base3，在Derived对象的内存布局中就会先是Base1类的基类子对象，然后是Base2、Base3基类子对象
 
-       此时，如果Base1中没有定义虚函数，那么内存排布上会将Base1基类子对象排在Base2、Base3基类子对象之后
+      此时，如果Base1中没有定义虚函数，那么内存排布上会将Base1基类子对象排在Base2、Base3基类子对象之后
 
-       ![image-20241213115316275](..\0.TyporaPicture\image-20241213115316275.png)
+      ![image-20241213115316275](D:\Typora Picture\image-20241213115316275-177891878743014.png)
 
-    4. 派生类**覆盖**基类的虚函数**时**，**只有第一个虚函数表中存放的是真实的被覆盖的函数的地址**；**其它的虚函数表中**对应位置存放的并不是真实的对应的虚函数的地址，而是一条**跳转指令** —— 指示到哪里去寻找被覆盖的虚函数的地址
+   4. 派生类**覆盖**基类的虚函数**时**，**只有第一个虚函数表中存放的是真实的被覆盖的函数的地址**；**其它的虚函数表中**对应位置存放的并不是真实的对应的虚函数的地址，而是一条**跳转指令** —— 指示到哪里去寻找被覆盖的虚函数的地址
 
-       > **派生类没有覆盖虚函数时，其他虚函数表中不再是跳转指令，而是直接存放对应基类虚函数的真实地址**，完全没有跳板（Thunk）
+      > **派生类没有覆盖虚函数时，其他虚函数表中不再是跳转指令，而是直接存放对应基类虚函数的真实地址**，完全没有跳板（Thunk）
 
-       ![image-20241213115717692](..\0.TyporaPicture\image-20241213115717692.png)
+      ![image-20241213115717692](D:\Typora Picture\image-20241213115717692-177891878743016.png)
 
 3. **带虚函数的多重继承的二义性**
 
-    - **示例：**
+   - **示例：**
 
-        ```cpp
-        class A {
-        public:
-            virtual void a() { cout << "A::a()" << endl; } 
-            virtual void b() { cout << "A::b()" << endl; } 
-            virtual void c() { cout << "A::c()" << endl; } 
-        };
-        
-        class B {
-        public:
-            virtual void a() { cout << "B::a()" << endl; } 
-            virtual void b() { cout << "B::b()" << endl; } 
-            void c() { cout << "B::c()" << endl; } 
-            void d() { cout << "B::d()" << endl; } 
-        };
-        
-        class C
-        : public A
-        , public B
-        {
-        public:
-            virtual void a() { cout << "C::a()" << endl; } 
-            void c() { cout << "C::c()" << endl; } 
-            void d() { cout << "C::d()" << endl; } 
-        };
-        
-        // 先不看D类
-        class D : public C {
-        public:
-            void c() { cout << "D::c()" << endl; }
-        };
-        ```
+     ```cpp
+     class A {
+     public:
+         virtual void a() { cout << "A::a()" << endl; } 
+         virtual void b() { cout << "A::b()" << endl; } 
+         virtual void c() { cout << "A::c()" << endl; } 
+     };
+     
+     class B {
+     public:
+         virtual void a() { cout << "B::a()" << endl; } 
+         virtual void b() { cout << "B::b()" << endl; } 
+         void c() { cout << "B::c()" << endl; } 
+         void d() { cout << "B::d()" << endl; } 
+     };
+     
+     class C
+     : public A
+     , public B
+     {
+     public:
+         virtual void a() { cout << "C::a()" << endl; } 
+         void c() { cout << "C::c()" << endl; } 
+         void d() { cout << "C::d()" << endl; } 
+     };
+     
+     // 先不看D类
+     class D : public C {
+     public:
+         void c() { cout << "D::c()" << endl; }
+     };
+     ```
 
-    - **内存结构的示意图：**
+   - **内存结构的示意图：**
 
-        ![image-20241213120147255](..\0.TyporaPicture\image-20241213120147255.png)
+     ![image-20241213120147255](D:\Typora Picture\image-20241213120147255-177891878743013.png)
 
-    - <font color=red>**各种调用情况的结果**</font>
+   - <font color=red>**各种调用情况的结果**</font>
 
-        ```cpp
-        void test(){
-            C c;
-            c.a();
-            /* c.b(); // error */
-            c.c();
-            c.d();
-        
-            cout << endl;
-            A* pa = &c;
-            pa->a();
-            pa->b();
-            pa->c();
-            /* pa->d(); // error */
-        
-            cout << endl;
-            B* pb = &c;
-            pb->a();
-            pb->b();
-            pb->c();
-            pb->d();
-        
-        
-            cout << endl;
-            C * pc = &c;
-            pc->a();
-            /* pc->b(); // error */
-            pc->c();
-            pc->d();
-        }
-        ```
+     ```cpp
+     void test(){
+         C c;
+         c.a();
+         /* c.b(); // error */
+         c.c();
+         c.d();
+     
+         cout << endl;
+         A* pa = &c;
+         pa->a();
+         pa->b();
+         pa->c();
+         /* pa->d(); // error */
+     
+         cout << endl;
+         B* pb = &c;
+         pb->a();
+         pb->b();
+         pb->c();
+         pb->d();
+     
+     
+         cout << endl;
+         C * pc = &c;
+         pc->a();
+         /* pc->b(); // error */
+         pc->c();
+         pc->d();
+     }
+     ```
 
-        ```cpp
-        // 结果
-        C::a()
-        C::c()
-        C::d()
-        
-        C::a()
-        A::b()
-        C::c()
-        
-        C::a()
-        B::b()
-        B::c()
-        B::d()
-        
-        C::a()
-        C::c()
-        C::d()
-        ```
+     ```cpp
+     // 结果
+     C::a()
+     C::c()
+     C::d()
+     
+     C::a()
+     A::b()
+     C::c()
+     
+     C::a()
+     B::b()
+     B::c()
+     B::d()
+     
+     C::a()
+     C::c()
+     C::d()
+     ```
 
-    - **结果分析**
+   - **结果分析**
 
-        ![image-20241213165940757](..\0.TyporaPicture\image-20241213165940757.png)
+     ![image-20241213165940757](D:\Typora Picture\image-20241213165940757-177891878743017.png)
 
-        ![image-20241213170123524](..\0.TyporaPicture\image-20241213170123524.png)
+     ![image-20241213170123524](D:\Typora Picture\image-20241213170123524-177891878743018.png)
 
-        **问题补充：pc->c()这里的c函数是不是虚函数**
+     **问题补充：pc->c()这里的c函数是不是虚函数**
 
-        - 从内存的角度分析：C::c()已经在第一张虚函数表中了，所以应该当成是虚函数处理**即通过第一张虚表直接访问,没有跳转**（不算动态是因为直接通过C对象的同类型指针访问的，没有向上转换）
+     - 从内存的角度分析：C::c()已经在第一张虚函数表中了，所以应该当成是虚函数处理**即通过第一张虚表直接访问,没有跳转**（不算动态是因为直接通过C对象的同类型指针访问的，没有向上转换）
 
-          > ==**虚函数**只是提供了多态的**能力**，**向上转型**（基类指针 / 引用指向派生类）才是触发多态的**开关**==
-          >
-          > 只要没有向上转型，无论你用：
-          >
-          > - 派生类对象本身
-          > - 派生类指针
-          > - 派生类引用
-          >
-          > 去调用重写后的虚函数，**全都是静态绑定，编译期就确定调用哪个函数，不走虚表动态查找，不是多态**
+       > ==**虚函数**只是提供了多态的**能力**，**向上转型**（基类指针 / 引用指向派生类）才是触发多态的**开关**==
+       >
+       > 只要没有向上转型，无论你用：
+       >
+       > - 派生类对象本身
+       > - 派生类指针
+       > - 派生类引用
+       >
+       > 去调用重写后的虚函数，**全都是静态绑定，编译期就确定调用哪个函数，不走虚表动态查找，不是多态**
 
-        - 验证：D类继承C类，重新定义c()函数，用C类指针指向D类对象，并调用c()函数
+     - 验证：D类继承C类，重新定义c()函数，用C类指针指向D类对象，并调用c()函数
 
-          ![image-20241213170711443](..\0.TyporaPicture\image-20241213170711443.png)
+       ![image-20241213170711443](D:\Typora Picture\image-20241213170711443-177891878743019.png)
 
-          如果将A类中c函数的virtual关键字去掉，毫无疑问C中c函数是一个普通函数（发生的仅是**隐藏**）
+       如果将A类中c函数的virtual关键字去掉，毫无疑问C中c函数是一个普通函数（发生的仅是**隐藏**）
 
-    > **总结：**
-    >
-    > - ==**静态绑定——访问成员函数**==
-    >
-    >   如果**通过==对象==来调用函数**，(**不管是虚函数，还是非虚函数**)都不会通过虚表来找虚函数，取决于对象的静态类型，跟`virtual`关键字无关,因为编译器从一开始就确定调用函数的对象是什么类型，直接到程序代码区中找到对应函数的实现
-    >
-    > - ==**动态绑定——经典多态**==
-    >
-    >   如果**基类指针指向派生类对象**，**通过==基类指针==调用函数**
-    >
-    >   - 通过指针调用虚函数：
-    >     - 若派生类中对这个虚函数进行了覆盖（重写-override），那么<font color=red>**符合动态多态的触发机制**</font>，最终的效果是基类指针调用到了派生类定义的虚函数
-    >     - 如果派生类对这个虚函数没有进行覆盖，也会通过虚表访问，访问到的是基类自己定义的虚函数的入口地址
-    >   - 通过指针调用非虚函数
-    >     - 则调用的函数由指针或引用的静态类型决定
-    >
-    > - ==**静态绑定——虚函数机制，但没有多态**==
-    >
-    >   如果是**==派生类指针==指向本类对象**，调用虚函数时，也会通过虚表去访问虚函数。若本类中对基类的虚函数进行覆盖，那么调用到的就是本类的虚函数实现，如果没有覆盖，那么会调用到基类实现的虚函数
+   > **总结：**
+   >
+   > - ==**静态绑定——访问成员函数**==
+   >
+   >   如果**通过==对象==来调用函数**，(**不管是虚函数，还是非虚函数**)都不会通过虚表来找虚函数，取决于对象的静态类型，跟`virtual`关键字无关,因为编译器从一开始就确定调用函数的对象是什么类型，直接到程序代码区中找到对应函数的实现
+   >
+   > - ==**动态绑定——经典多态**==
+   >
+   >   如果**基类指针指向派生类对象**，**通过==基类指针==调用函数**
+   >
+   >   - 通过指针调用虚函数：
+   >     - 若派生类中对这个虚函数进行了覆盖（重写-override），那么<font color=red>**符合动态多态的触发机制**</font>，最终的效果是基类指针调用到了派生类定义的虚函数
+   >     - 如果派生类对这个虚函数没有进行覆盖，也会通过虚表访问，访问到的是基类自己定义的虚函数的入口地址
+   >   - 通过指针调用非虚函数
+   >     - 则调用的函数由指针或引用的静态类型决定
+   >
+   > - ==**静态绑定——虚函数机制，但没有多态**==
+   >
+   >   如果是**==派生类指针==指向本类对象**，调用虚函数时，也会通过虚表去访问虚函数。若本类中对基类的虚函数进行覆盖，那么调用到的就是本类的虚函数实现，如果没有覆盖，那么会调用到基类实现的虚函数
 
 ## 四、虚拟继承
 
@@ -9735,11 +10285,11 @@ Derived::show()
 
    2. 虚拟继承的内存结构
 
-      ![image-20241213171357631](..\0.TyporaPicture\image-20241213171357631.png)
+      ![image-20241213171357631](D:\Typora Picture\image-20241213171357631-177891878743020.png)
 
    3. 如果虚基类中包含了虚函数，将A中的3个run()函数增加virtual关键字修饰
 
-      ![image-20250302164442517](..\0.TyporaPicture\image-20250302164442517.png)
+      ![image-20250302164442517](D:\Typora Picture\image-20250302164442517-177891878743021.png)
 
    4. 如果派生类中又定义了新的虚函数，会在内存中多出一个属于派生类的虚函数指针，指向一张新的虚表（VS的实现）
 
@@ -9773,13 +10323,13 @@ Derived::show()
       };
       ```
 
-      ![image-20241213171723557](..\0.TyporaPicture\image-20241213171723557.png)
+      ![image-20241213171723557](D:\Typora Picture\image-20241213171723557-177891878743022.png)
 
    5. 带虚函数的菱形继承——虚拟继承方式
 
-      ![image-20241213171748752](..\0.TyporaPicture\image-20241213171748752.png)
+      ![image-20241213171748752](D:\Typora Picture\image-20241213171748752-177891878743123.png)
 
-      ![image-20241213171807623](..\0.TyporaPicture\image-20241213171807623.png)
+      ![image-20241213171807623](D:\Typora Picture\image-20241213171807623-177891878743124.png)
 
 3. **虚拟继承时派生类对象的构造和析构**
 
@@ -9845,11 +10395,11 @@ Derived::show()
    };
    ```
 
-   ![undefined202403201441781](..\0.TyporaPicture\undefined202403201441781.png)
+   ![undefined202403201441781](D:\Typora Picture\undefined202403201441781-177891878743125.png)
 
    <font color=red>**在虚拟继承的结构中，最底层的派生类不仅需要显式调用中间层基类的构造函数，还要在初始化列表最开始调用顶层基类的构造函数**</font>
 
-   ![image-20250302174944194](..\0.TyporaPicture\image-20250302174944194.png)
+   ![image-20250302174944194](D:\Typora Picture\image-20250302174944194-177891878743126.png)
 
    **注意：A类构造并不会调用3次**
 
@@ -9857,7 +10407,7 @@ Derived::show()
 
    对于析构函数，同样存在这样的压抑效果，D类析构执行完后，根据继承声明顺序的反序调用C类的析构函数，C的析构函数执行完后并没有自动调用A的析构函数，而是接下来调用B的析构函数，最后调用A的析构函数
 
-   ![image-20241213172109831](..\0.TyporaPicture\image-20241213172109831.png)
+   ![image-20241213172109831](D:\Typora Picture\image-20241213172109831-177891878743127.png)
 
 ## 五、补充
 
@@ -9976,7 +10526,105 @@ Derived::show()
    *
    ```
 
+2. **1.中的结果以及其余情况的原理分析**
+
+   - 关于1.中的结果
+
+     **主要原因：MSVC 对“无新增虚函数”的虚拟继承做了指针合并优化**
+
+     - `Phone`：有虚函数（`print`、`getData`），自身包含 `vfptr` + 成员
+     - `Phone2`：**virtual 继承** `Phone`，重写了 `print`，但**没有新增任何虚函数**（没有声明 `Phone` 中没有的虚函数）
+
+     在 MSVC 的对象模型里：
+
+     1. **Phone2 内部必须有一个虚基类表指针（vbptr）**，因为它是虚拟继承，需要 `vbptr` 指向的虚基类表来存放 `Phone` 子对象相对于 `Phone2` 起始位置的偏移量。
+     2. **Phone2 本身没有定义新虚函数**，按道理它不需要一个完全独立的 `vfptr`，它可以直接复用基类 `Phone` 的 `vfptr` 来完成虚函数调用。可是在虚拟继承下，当通过 `Phone2*` 调用虚函数时，可能需要调整 `this` 到 `Phone` 子对象的正确位置，这种调整信息也必须保存在某个地方。
+
+     为了**节省 8 字节（一个指针）空间**，MSVC 在这种情况下做了合并：
+     把 `vbptr` 和一个用于虚函数分发的指针**合并成一个指针**（你可以称为“合并指针”或 `vbtable` 中内嵌的虚函数表指针）。这个合并指针指向的结构里，既包含了到虚基类的偏移量，也包含了实际虚函数表的地址（可能进行过 thunk 调整）。
+
+     于是 **Phone2 对象的内存顶部只有一个 8 字节的合并指针**，而不是“一个 vfptr + 一个 vbptr”共 16 字节。
+
+     **Phone2 的对象布局**
+
+     ![image-20260516163339722](D:\Typora Picture\image-20260516163339722.png)
+
+     而 `Phone` 基类子对象**仍然保留了自己的 `vfptr`**，因为当通过 `Phone*` 指针操作时，它就是直接使用这个 `vfptr`，完全不需要知道外面还有一层合并指针。
+     因此整个 `Phone2` 占用 8 + 8 + 16 = 32 字节
    
+   - 当派生类**定义了新的虚函数**（基类中完全没有的虚函数）时，情况就不同了
+   
+     比如再加上一个：
+   
+     ```cpp
+     class Phone2Plus : virtual public Phone {
+     public:
+         void print() override { cout << "Phone2Plus" << endl; }
+         virtual void newVirtual() {}   // 新增虚函数
+     private:
+         double m_p2;
+     };
+     ```
+   
+     这时 MSVC 无法只用合并指针来同时容纳“新增虚函数的虚函数表”和“虚基类偏移表”，它就会为派生类分配**独立的 vfptr 和 vbptr**（各 8 字节，共 16 字节），对象布局变成：
+   
+     ![image-20260516163515865](D:\Typora Picture\image-20260516163515865.png)
+   
+     此时就是两个指针，没有合并。
+   
+   - **==总结==**
+   
+     - **普通继承（非虚拟）**
+       - 没有新增虚函数：直接复用基类的 `vfptr`，不产生新指针。
+       - 有新增虚函数：派生类对象开头插入自己的 `vfptr`（扩展基类的虚函数表或新建表），基类部分仍用自己的 `vfptr`。
+     - **虚拟继承（基类有虚函数）**
+       - **没有新增虚函数**：派生类产生一个**合并指针**（vbptr + 虚函数相关间接指针），代替独立的 `vfptr` 和 `vbptr`，节省空间。
+       - **有新增虚函数**：派生类会同时拥有独立的 `vfptr` 和 `vbptr`，不合并。
+   
+     你的 `Phone2` 正是“虚拟继承 + 无新增虚函数”的情况，因此出现了合并指针。这属于 MSVC 的一种空间优化，不是标准规定，但在 Windows 平台下非常稳定
+   
+   - 在==没有虚拟继承==的情况下，C++ 对象模型会简单很多。我们可以把情况分为两种：**只重写虚函数** 和 **新增虚函数**。但无论哪种，核心结论都是：
+   
+     > **单一普通继承下，==无论是只重写还是新增虚函数==，派生类对象中永远只有一个虚函数表指针（`vfptr`），它位于对象内存的起始位置（即基类子对象的起始位置）。**
+   
+     1. 只重写虚函数（无新增虚函数）
+   
+        ![image-20260516163821339](D:\Typora Picture\image-20260516163821339.png)
+   
+        - 对象最前面依然是 `Phone` 子对象，其首部的 `vfptr` 被派生类继承使用。
+        - 虚函数表（vftable）里，`print` 和 `getData` 的地址已经被替换为 `Phone1::print` 和 `Phone1::getData` 的地址。
+        - **对象大小** = 基类大小（16 字节） + 派生类新成员（8 字节） = 24 字节。
+   
+     2. 新增虚函数（基类中没有的虚函数）
+   
+        ![image-20260516163843885](D:\Typora Picture\image-20260516163843885.png)
+   
+        - ==对象布局与“只重写”时**完全一样**==，仍然只有一个 `vfptr`，仍然放在基类部分的开头。
+        - ==发生变化的是虚函数表本身==：编译器会为 `Phone1` 生成一个**新的、更大的虚函数表**，表里依次包含：
+          - `Phone1::print` （重写）
+          - `Phone1::getData` （重写）
+          - `Phone1::newVirtual` （新增）
+        - **对象大小不变**：因为新增虚函数只影响虚函数表的内容，不会在对象里增加任何指针或数据成员。
+   
+        > **注意**：如果派生类本身没有虚函数，而基类也没有虚函数，派生类第一个声明虚函数，这时编译器才会在对象起始处插入一个全新的 `vfptr`。但在 `Phone` → `Phone1` 的例子中，基类已有 `vfptr`，所以派生类直接复用，不会增加新指针。
+   
+   - 为什么虚拟继承会特殊
+   
+     为了支持虚拟继承，对象里必须有一个**虚基类表指针（`vbptr`）** 来定位共享的 `Phone` 子对象。同时，由于 `Phone` 本身有虚函数，`Phone2` 如果没有新增虚函数，MSVC 会通过**合并指针**把 `vbptr` 和必要的虚函数间接信息合二为一，所以 `Phone2` 对象顶部只有一个 8 字节的合并指针，而不是独立的 `vfptr` + `vbptr`
+   
+   - **==真正的总结==**
+   
+     | 继承方式     | 派生类操作          | 指针情况                                 |
+     | :----------- | :------------------ | :--------------------------------------- |
+     | **普通继承** | 只重写 / 新增虚函数 | **1 个 vfptr**（位于基类起始）           |
+     | **虚拟继承** | 无新增虚函数        | **1 个合并指针**（vbptr + 虚函数重定向） |
+     | **虚拟继承** | 新增虚函数          | **独立的 vfptr + vbptr**（2 个指针）     |
+   
+     ```tex
+     如何用 VS 验证？
+     在项目属性 → C/C++ → 命令行 → 其他选项中添加：
+     /d1 reportSingleClassLayoutPhone1
+     ```
 
 # Day18
 
@@ -10013,24 +10661,24 @@ Derived::show()
 
    - <span style=color:red;background:yellow>**模板（将数据类型作为参数）**</span>
 
-       上述问题用函数模板的方式就可以轻松解决：
+     上述问题用函数模板的方式就可以轻松解决：
 
-       ```cpp
-       // 希望将类型参数化
-       // 使用class关键字或typename关键字都可以，完全没有区别
-       template <class T>
-       T add(T x, T y) {
-        return x + y;
-       }
-       
-       int main(void) {
-           // 处理int数据
-           cout << add(1,2) << endl;
-           // 处理double数据
-           cout << add(1.2,3.4) << endl;
-           return 0;
-       }
-       ```
+     ```cpp
+     // 希望将类型参数化
+     // 使用class关键字或typename关键字都可以，完全没有区别
+     template <class T>
+     T add(T x, T y) {
+      return x + y;
+     }
+     
+     int main(void) {
+         // 处理int数据
+         cout << add(1,2) << endl;
+         // 处理double数据
+         cout << add(1.2,3.4) << endl;
+         return 0;
+     }
+     ```
 
    - **函数模板的优点：**
 
@@ -10038,9 +10686,9 @@ Derived::show()
 
    - <span style=color:red;background:yellow>**模板发生的时机是在编译时**</span>
 
-       **模板本质**上就是一个**代码生成器**，它的作用就是让编译器根据实际调用来生成代码
+     **模板本质**上就是一个**代码生成器**，它的作用就是让编译器根据实际调用来生成代码
 
-       编译器去处理时，实际上由函数模板生成了多个模板函数，或者由类模板生成了多个模板类
+     编译器去处理时，实际上由函数模板生成了多个模板函数，或者由类模板生成了多个模板类
 
 2. **模板的定义**
 
@@ -10055,7 +10703,7 @@ Derived::show()
 
    - 模板的形式如下：
 
-     ![image-20241216162022545](..\0.TyporaPicture\image-20241216162022545.png)
+     ![image-20241216162022545](D:\Typora Picture\image-20241216162022545-17791717882911.png)
 
      T1、T2可以是任何合法的C++类型，如`int`、`double`、自定义类等
 
@@ -10323,11 +10971,11 @@ Derived::show()
 
    > - 单独编译“实现文件”，使之生成目标文件，查看目标文件，会发现没有生成与add名称相关的函数
    >
-   >   ![image-20241217093316612](..\0.TyporaPicture\image-20241217093316612.png)
+   >   ![image-20241217093316612](D:\Typora Picture\image-20241217093316612-17791717882922.png)
    >
    > - 单独编译测试文件，发现有与add名称相关的函数，但是没有地址，这就表示只有声明
    >
-   >   ![image-20241217093316612](..\0.TyporaPicture\image-20241217093316612.png)
+   >   ![image-20241217093316612](D:\Typora Picture\image-20241217093316612-17791717882922.png)
 
    看起来与普通函数的情况有些不一样，从原理上进行分析，这是因为函数模板定义好之后并不会直接产生一个具体的模板函数，只有在调用时才会实例化出具体的模板函数
 
@@ -10337,41 +10985,41 @@ Derived::show()
    >
    > 1. **在”实现文件“中要进行调用，因为有了调用才有推导，才能由函数模板生成需要的函数**
    >
-   >     ```cpp
-   >     // add.cc
-   >     template <class T>
-   >     T add(T t1, T t2) {
-   >         return t1 + t2;
-   >     }
-   >     
-   >     // 在这个文件中如果只是写出了函数模板的实现
-   >     // 并没有调用的话，就不会实例化出模板函数
-   >     void test1() { 
-   >     cout << add(1,2) << endl;
-   >     }
-   >     ```
+   >    ```cpp
+   >    // add.cc
+   >    template <class T>
+   >    T add(T t1, T t2) {
+   >        return t1 + t2;
+   >    }
+   >    
+   >    // 在这个文件中如果只是写出了函数模板的实现
+   >    // 并没有调用的话，就不会实例化出模板函数
+   >    void test1() { 
+   >    cout << add(1,2) << endl;
+   >    }
+   >    ```
    >
-   >     此时单独编译实现文件，发现生成了对应的函数
+   >    此时单独编译实现文件，发现生成了对应的函数
    >
-   >     ![image-20241217093851514](..\0.TyporaPicture\image-20241217093851514.png)
+   >    ![image-20241217093851514](D:\Typora Picture\image-20241217093851514.png)
    >
-   >     但是在“实现文件”中对函数模板进行了调用，这种做法不仅不优雅，还**破坏封装，不可扩展，绝不能使用**
+   >    但是在“实现文件”中对函数模板进行了调用，这种做法不仅不优雅，还**破坏封装，不可扩展，绝不能使用**
    >
    > 2. 另一种方法的设想：如果在测试文件调用时，在推导的过程中，<font color=red>**看到的是完整的模板的代码**</font>，那么应该可以解决这个问题
    >
-   >     ```cpp
-   >     // add.h
-   >     template <class T>
-   >     T add(T t1, T t2);
-   >                 
-   >     #include "add.cc"
-   >     ```
+   >    ```cpp
+   >    // add.h
+   >    template <class T>
+   >    T add(T t1, T t2);
+   >                   
+   >    #include "add.cc"
+   >    ```
    >
-   >     可以在头文件中加上#include "add.cc"，即使实现文件中没有调用函数模板来生成模板函数，但在单独编译testAdd.cc，也可以发现问题已经解决即可以生成模板函数
+   >    可以在头文件中加上#include "add.cc"，即使实现文件中没有调用函数模板来生成模板函数，但在单独编译testAdd.cc，也可以发现问题已经解决即可以生成模板函数
    >
-   >     因为本质上相当于把函数模板的定义写到了头文件中（其实就是合并了链各个源文件，但是会引发重定义的错误）
+   >    因为本质上相当于把函数模板的定义写到了头文件中（其实就是合并了链各个源文件，但是会引发重定义的错误）
    >
-   >     **极易引发循环包含和重定义，高危操作，违反规范，绝不能使用**
+   >    **极易引发循环包含和重定义，高危操作，违反规范，绝不能使用**
    >
    > **正确的解决方法：**
    >
@@ -10600,99 +11248,99 @@ Derived::show()
 2. **成员函数模板**
 
    - 在普通类中也可以定义成员函数模板，如下：
-   
-       ```cpp
-       class Point {
-       public:
-           Point(double x,double y)
-       	: m_x(x)
-       	, m_y(y)
-       	{}
-           // 定义一个成员函数模板
-           // 将m_x转换成目标类型
-           template <class T>
-               T convert() {
-               return (T)m_x;
-           }
-       private:
-        	double m_x;
-       	double m_y;
-       };
-       
-       void test0() {
-       	Point pt(1.1,2.2);
-           cout << pt.convert<int>() << endl;
-           cout << pt.convert() << endl; // error
-       }
-       ```
 
-       此时调用这个成员函数模板，不能采用隐式实例化的方式，因为编译器不知道要将`pt.m_x`转换成什么类型
-   
+     ```cpp
+     class Point {
+     public:
+         Point(double x,double y)
+     	: m_x(x)
+     	, m_y(y)
+     	{}
+         // 定义一个成员函数模板
+         // 将m_x转换成目标类型
+         template <class T>
+             T convert() {
+             return (T)m_x;
+         }
+     private:
+      	double m_x;
+     	double m_y;
+     };
+     
+     void test0() {
+     	Point pt(1.1,2.2);
+         cout << pt.convert<int>() << endl;
+         cout << pt.convert() << endl; // error
+     }
+     ```
+
+     此时调用这个成员函数模板，不能采用隐式实例化的方式，因为编译器不知道要将`pt.m_x`转换成什么类型
+
    - 可以给成员函数模板中类型参数赋默认值，有了默认值后才可以进行隐式实例化
-   
-       ```cpp
-       // 定义一个成员函数模板
-       // 将m_x转换成目标类型
-       template <class T = int>
-       T convert() {
-       	return (T)m_x;
-       }
-       
-       cout << pt.convert() << endl; // ok
-       ```
-   
+
+     ```cpp
+     // 定义一个成员函数模板
+     // 将m_x转换成目标类型
+     template <class T = int>
+     T convert() {
+     	return (T)m_x;
+     }
+     
+     cout << pt.convert() << endl; // ok
+     ```
+
    - 示例
-   
-       在Point类中定义一个add函数模板
-   
-       ```cpp
-       class Point {
-       public:
-       	Point(double x,double y)
-       	: m_x(x)
-       	, m_y(y)
-       	{}
-       	template <class T>
-       	T add(T t1) {
-       		return m_x + m_y + t1;
-       	}
-       private:
-       	double m_x;
-       	double m_y;
-       };
-       
-       void test0() {
-           Point pt(1.5,3.8);
-       	cout << pt.add(8.8) << endl;
-       }
-       ```
-   
-       - 在add函数模板中可以访问Point的数据成员，说明成员函数模板的使用原理同普通函数模板一样，在调用时会实例化出一个模板成员函数
-       - 普通的成员函数会有隐含的this指针作为参数，这里生成的模板成员函数中也会有。如果定义一个static的成员函数模板，那么在其中就不能访问非静态数据成员（与普通的static成员函数一样没有this指针）
-       - <span style=color:red;background:yellow>**成员函数模板不能加上virtual修饰**</span>，否则编译器报错，因为函数模板是在编译时生成函数，而虚函数机制起作用的时机是在运行时
-   
+
+     在Point类中定义一个add函数模板
+
+     ```cpp
+     class Point {
+     public:
+     	Point(double x,double y)
+     	: m_x(x)
+     	, m_y(y)
+     	{}
+     	template <class T>
+     	T add(T t1) {
+     		return m_x + m_y + t1;
+     	}
+     private:
+     	double m_x;
+     	double m_y;
+     };
+     
+     void test0() {
+         Point pt(1.5,3.8);
+     	cout << pt.add(8.8) << endl;
+     }
+     ```
+
+     - 在add函数模板中可以访问Point的数据成员，说明成员函数模板的使用原理同普通函数模板一样，在调用时会实例化出一个模板成员函数
+     - 普通的成员函数会有隐含的this指针作为参数，这里生成的模板成员函数中也会有。如果定义一个static的成员函数模板，那么在其中就不能访问非静态数据成员（与普通的static成员函数一样没有this指针）
+     - <span style=color:red;background:yellow>**成员函数模板不能加上virtual修饰**</span>，否则编译器报错，因为函数模板是在编译时生成函数，而虚函数机制起作用的时机是在运行时
+
    - 如果要将成员函数模板在类之外进行实现，需要<span style=color:red;background:yellow>**注意带上模板的声明**</span>
-   
-       ```cpp
-       class Point {
-       public:
-               Point(double x,double y)
-               : m_x(x)
-               , m_y(y)
-               {}
-               // ...
-           template <class T>
-               T add(T t1);
-       private:
-           double m_x;
-           double m_y;
-       };
-       
-       template <class T>
-       T Point::add(T t1) {
-               return m_x + m_y + t1;
-       }
-       ```
+
+     ```cpp
+     class Point {
+     public:
+             Point(double x,double y)
+             : m_x(x)
+             , m_y(y)
+             {}
+             // ...
+         template <class T>
+             T add(T t1);
+     private:
+         double m_x;
+         double m_y;
+     };
+     
+     template <class T>
+     T Point::add(T t1) {
+             return m_x + m_y + t1;
+     }
+     ```
 
 ## 五、可变参数模板
 
@@ -10707,7 +11355,7 @@ Derived::show()
 
    回想一下C语言中的`printf`函数，其实是比较特殊的。`printf`函数的参数个数可能有很多个，用...表示，参数的个数、类型、顺序可以随意，可以写0到任意多个参数
 
-   ![image-20241218094433651](..\0.TyporaPicture\image-20241218094433651.png)
+   ![image-20241218094433651](D:\Typora Picture\image-20241218094433651-17791717882923.png)
 
 2. **基本语法**
 
@@ -10929,7 +11577,7 @@ Derived::show()
 
 1. **用类模板的方式实现一个Stack类，可以存放任意类型的数据，模拟栈的相关操作**
 
-   ![image-20241218105957026](..\0.TyporaPicture\image-20241218105957026.png)
+   ![image-20241218105957026](D:\Typora Picture\image-20241218105957026-17791717882924.png)
 
    ```cpp
    template <typename T, size_t capacity = 10>
@@ -10997,8 +11645,6 @@ Derived::show()
        }
    }
    ```
-
-   
 
 # Day19_移动语义与资源管理
 
@@ -11184,7 +11830,7 @@ Derived::show()
 
    对rRef取地址是可行的，rRef2本身是一个左值。但这并不代表右值引用本身一定是左值
 
-   <span style=color:red;background:yellow>**实际上，右值引用本身既可以是左值（比如：作为函数的参数、有名字的变量），也可以是右值（函数的返回类型），只不过其只能绑定右值**</span>
+   <span style=color:red;background:yellow>**实际上，右值引用既可以是左值（比如：作为函数的参数、有名字的变量），也可以是右值（函数的返回类型）**</span>
 
 4. **移动构造函数**
 
@@ -11209,7 +11855,7 @@ Derived::show()
      };
      ```
 
-     ![image-20250123145016684](..\0.TyporaPicture\image-20250123145016684.png)
+     ![image-20250123145016684](D:\Typora Picture\image-20250123145016684-17792643381122.png)
 
      给String类加上移动构造函数，在**初始化列表中完成浅拷贝**，使s3的m_pstr指向临时对象的m_pstr所指向的空间（复用），还不能忘记要将右操作数（临时对象）的m_pstr设为空指针，因为这个**临时对象会马上销毁**（**要避免临时对象销毁时调用析构函数回收掉这片堆空间,否则可能出现double free**）
 
@@ -11228,7 +11874,7 @@ Derived::show()
 
    - 对比函数形参的三种写法
 
-     ![image-20250123144821592](..\0.TyporaPicture\image-20250123144821592.png)
+     ![image-20250123144821592](D:\Typora Picture\image-20250123144821592-17792643381121.png)
 
    - 移动构造函数的特点
 
@@ -11244,66 +11890,66 @@ Derived::show()
 
    - 原理及语法
 
-       有了移动构造函数的成功经验，很容易想到原本的赋值运算符函数
+     有了移动构造函数的成功经验，很容易想到原本的赋值运算符函数
 
-       比如，进行如下操作时
+     比如，进行如下操作时
 
-       ```cpp
-       String s3("hello");
-       s3 = String("wangdao");
-       ```
+     ```cpp
+     String s3("hello");
+     s3 = String("wangdao");
+     ```
 
-       原本赋值运算符函数的做法
+     原本赋值运算符函数的做法
 
-       ![image-20250123152213648](..\0.TyporaPicture\image-20250123152213648.png)
+     ![image-20250123152213648](D:\Typora Picture\image-20250123152213648-17792643381124.png)
 
-       我们希望复用临时对象申请的空间，那么也同样需要赋值运算符函数能够分辨出接收的参数是左值还是右值，同样可以利用右值引用
+     我们希望复用临时对象申请的空间，那么也同样需要赋值运算符函数能够分辨出接收的参数是左值还是右值，同样可以利用右值引用
 
-       ![image-20250123152530601](..\0.TyporaPicture\image-20250123152530601.png)
+     ![image-20250123152530601](D:\Typora Picture\image-20250123152530601-17792643381123.png)
 
-       所以移动赋值运算符函数可以写为
+     所以移动赋值运算符函数可以写为
 
-       ```cpp
-       String& operator=(String&& rhs){
-           if(this != &rhs){
-               delete [] m_pstr;
-               // 浅拷贝
-               m_pstr = rhs.m_pstr;
-               rhs.m_pstr = nullptr;
-               cout << "String& operator=(String&&)" << endl;
-           }
-           return *this;
-       }
-       /*
-       rhs和传入的原始右值生命周期完全绑定
-       既然生命周期一致，为什么不会出问题？
-       关键：对象 ≠ 资源
-       临时对象（右值）会销毁，但它持有的资源已经被我们偷走了
-       我们用 rhs.m_pstr = nullptr 把临时对象和资源切断了联系
-       （即资源是由对象的指针所指向的，而不是对象本身，而临时对象销毁时只是其本身被销毁了，但是其所持有的资源不会仅因此而销毁）
-       */
-       ```
+     ```cpp
+     String& operator=(String&& rhs){
+         if(this != &rhs){
+             delete [] m_pstr;
+             // 浅拷贝
+             m_pstr = rhs.m_pstr;
+             rhs.m_pstr = nullptr;
+             cout << "String& operator=(String&&)" << endl;
+         }
+         return *this;
+     }
+     /*
+     rhs和传入的原始右值生命周期完全绑定
+     既然生命周期一致，为什么不会出问题？
+     关键：对象 ≠ 资源
+     临时对象（右值）会销毁，但它持有的资源已经被我们偷走了
+     我们用 rhs.m_pstr = nullptr 把临时对象和资源切断了联系
+     （即资源是由对象的指针所指向的，而不是对象本身，而临时对象销毁时只是其本身被销毁了，但是其所持有的资源不会仅因此而销毁）
+     */
+     ```
 
    - 移动赋值函数的特点
 
-        1. 如果**没有显式定义构造函数、拷贝构造、赋值运算符函数、析构函数，编译器会自动生成移动赋值函数**。**使用右值**的内容进行**赋值会调用移动赋值函数**。
+     1. 如果**没有显式定义构造函数、拷贝构造、赋值运算符函数、析构函数，编译器会自动生成移动赋值函数**。**使用右值**的内容进行**赋值会调用移动赋值函数**。
 
-        2. 如果**显式定义了赋值运算符函数，而没有显式定义移动赋值函数**，那么**使用右值**的内容进行**赋值会调用赋值运算符函数**。
-        3. 如果**显式定义了移动赋值函数和赋值运算符函数**，那么**使用右值**的内容进行**赋值会调用移动赋值函数**。
+     2. 如果**显式定义了赋值运算符函数，而没有显式定义移动赋值函数**，那么**使用右值**的内容进行**赋值会调用赋值运算符函数**。
+     3. 如果**显式定义了移动赋值函数和赋值运算符函数**，那么**使用右值**的内容进行**赋值会调用移动赋值函数**。
 
-        <span style=color:red;background:yellow>**移动赋值函数优先级也是高于赋值运算符函数**</span>
+     <span style=color:red;background:yellow>**移动赋值函数优先级也是高于赋值运算符函数**</span>
 
    - **注意：移动赋值函数中的自赋值判断有没有必要？**
 
-       ```cpp
-       String s1("hello");
-       // 右值给左值赋值，肯定不是同一个对象
-       s1 = String("world");
-       // 创建了两个内容相同的临时对象，也不是同一对象
-       String("wangdao") = String("wangdao");
-       ```
+     ```cpp
+     String s1("hello");
+     // 右值给左值赋值，肯定不是同一个对象
+     s1 = String("world");
+     // 创建了两个内容相同的临时对象，也不是同一对象
+     String("wangdao") = String("wangdao");
+     ```
 
-       似乎去掉自复制判断不会造成问题，但是c++11提出了一种方式，将左值转为右值，就是std::move函数，其会导致移动赋值函数的自复制情况出现问题
+     似乎去掉自复制判断不会造成问题，但是c++11提出了一种方式，将左值转为右值，就是std::move函数，其会导致移动赋值函数的自复制情况出现问题
 
    **总结**
 
@@ -11313,68 +11959,68 @@ Derived::show()
 
 6. **`std::move`函数**
 
-      - 为什么需要`std::move`
+   - 为什么需要`std::move`
 
-        在一些使用移动语义的场景下，有时需要将左值转为右值，std::move函数的作用是**显式的将一个左值转换为右值**，<span style=color:red;background:yellow>**其实现本质上就是一个强制转换**</span>
-      
-        - 修改`std::move`返回值导致的问题
-      
-          当**将一个左值转换为右值后**，如果**利用右值引用绑定std::move的返回值**，并**进行修改操作**，**那么原来的左值对象也会随之修改**，可能无法正常工作了，所以**原对象必须要重新赋值才可以继续使用**
-      
-          ```cpp
-          void test() {
-              int a = 1;
-              &(std::move(a)); // error，左值转成了右值
-              
-          	String s1("hello");
-          	s1.print();
-              // 如果经历了std::move的强转后没有进行修改操作，之后s1对象还是可以正常使用的
-              std::move(s1); // 没有使用返回值
-              s1.print(); // 原左值对象仍能正常使用
-              
-              // 若是使用std::move的返回值调用移动赋值运算符函数，在移动赋值运算符函数中形参String&& rhs = std::move(s1)即使用右值引用，在移动赋值函数中：rhs.m_pstr = nullptr; 进行了修改操作，会使得s1对象本身的m_pstr变成空指针 再进行print操作时会出现问题
-              String s2("abc");
-              s2 = std::move(s1);
-              s1.print(); // 这里程序中断
-              s2.print();
-          }
-          ```
-      
-      - **移动赋值函数**在使用`std::move`时**需要考虑自复制问题**
-      
-          如果将移动赋值函数的自赋值判断去除，如下情况依然会调用移动赋值函数，但是s1的pstr所指向的空间被回收，且被设为了空指针，会出错
-      
-          ```cpp
-          String s1("hello");
-          s1 = std::move(s1);
-          s1.print();
-          ```
-      
-          - **验证**
-      
-            去掉移动赋值函数中的浅拷贝，移动赋值函数中：先让左操作数s1 的 `m_pstr`**重新指向一片空间**，再将右操作数rhs的 `m_pstr`设为空指针
-      
-            ```cpp
-            String& operator=(String&& rhs){
-                delete [] m_pstr;
-                m_pstr = new char[1]();
-                rhs.m_pstr = nullptr;
-                cout << "String& operator=(String&&)" << endl;
-                return *this;
-            }
-            ```
-      
-            即使这样，但通过输出流运算符输出s1的 `m_pstr`仍然造成了程序的中断，所以说明对std::move(s1)的内容进行修改，会导致s1的内容也被修改
-      
-            > `std::move`的返回值是右值引用
-            >
-            > std::move(s1).m_pstr = nullptr;——合法，但是不推荐，因为会内存泄漏、破坏对象，不要手动修改 move 后的对象成员，交给移动构造 / 移动赋值处理
-      
-      - **`std::move`原理**
-      
-        `std::move`的本质是在底层做了类型转换来标记一个对象为右值（它本身并**不移动数据或资源**，只是**为移动操作提供条件**，使得移动构造函数和移动赋值运算符函数能够被调用）
-      
-        `std::move()` 的关键作用是告诉编译器，“我不再需要这个对象的资源，你可以安全地转移它”，所以==**移动赋值函数的自赋值判断不应该省略**==
+     在一些使用移动语义的场景下，有时需要将左值转为右值，std::move函数的作用是**显式的将一个左值转换为右值**，<span style=color:red;background:yellow>**其实现本质上就是一个强制转换**</span>
+
+     - 修改`std::move`返回值导致的问题
+
+       当**将一个左值转换为右值后**，如果**利用右值引用绑定std::move的返回值**，并**进行修改操作**，**那么原来的左值对象也会随之修改**，可能无法正常工作了，所以**原对象必须要重新赋值才可以继续使用**
+
+       ```cpp
+       void test() {
+           int a = 1;
+           &(std::move(a)); // error，左值转成了右值
+           
+       	String s1("hello");
+       	s1.print();
+           // 如果经历了std::move的强转后没有进行修改操作，之后s1对象还是可以正常使用的
+           std::move(s1); // 没有使用返回值
+           s1.print(); // 原左值对象仍能正常使用
+           
+           // 若是使用std::move的返回值调用移动赋值运算符函数，在移动赋值运算符函数中形参String&& rhs = std::move(s1)即使用右值引用，在移动赋值函数中：rhs.m_pstr = nullptr; 进行了修改操作，会使得s1对象本身的m_pstr变成空指针 再进行print操作时会出现问题
+           String s2("abc");
+           s2 = std::move(s1);
+           s1.print(); // 这里程序中断
+           s2.print();
+       }
+       ```
+
+   - **移动赋值函数**在使用`std::move`时**需要考虑自复制问题**
+
+     如果将移动赋值函数的自赋值判断去除，如下情况依然会调用移动赋值函数，但是s1的pstr所指向的空间被回收，且被设为了空指针，会出错
+
+     ```cpp
+     String s1("hello");
+     s1 = std::move(s1);
+     s1.print();
+     ```
+
+     - **验证**
+
+       去掉移动赋值函数中的浅拷贝，移动赋值函数中：先让左操作数s1 的 `m_pstr`**重新指向一片空间**，再将右操作数rhs的 `m_pstr`设为空指针
+
+       ```cpp
+       String& operator=(String&& rhs){
+           delete [] m_pstr;
+           m_pstr = new char[1]();
+           rhs.m_pstr = nullptr;
+           cout << "String& operator=(String&&)" << endl;
+           return *this;
+       }
+       ```
+
+       即使这样，但通过输出流运算符输出s1的 `m_pstr`仍然造成了程序的中断，所以说明对std::move(s1)的内容进行修改，会导致s1的内容也被修改
+
+       > `std::move`的返回值是右值引用
+       >
+       > std::move(s1).m_pstr = nullptr;——合法，但是不推荐，因为会内存泄漏、破坏对象，不要手动修改 move 后的对象成员，交给移动构造 / 移动赋值处理
+
+   - **`std::move`原理**
+
+     `std::move`的本质是在底层做了类型转换来标记一个对象为右值（它本身并**不移动数据或资源**，只是**为移动操作提供条件**，使得移动构造函数和移动赋值运算符函数能够被调用）
+
+     `std::move()` 的关键作用是告诉编译器，“我不再需要这个对象的资源，你可以安全地转移它”，所以==**移动赋值函数的自赋值判断不应该省略**==
 
 7. **右值引用本身的性质**
 
@@ -11406,58 +12052,57 @@ Derived::show()
    > }
    > 
    > void test1() {
-   >     // &func(1,2); // 无法取址
-   >     int&& ref = func(1,2);
-   >     &ref; 
-   >     // cout << ref << endl; // error
+   >  // &func(1,2); // 无法取址
+   >  int&& ref = func(1,2);
+   >  &ref; 
+   >  // cout << ref << endl; // error
    > }
    > ```
 
 8. ==**拷贝构造函数调用时机的补充**==
 
-      - **函数返回值是一个将亡值时**
+   - **函数返回值是一个将亡值时**
 
-          ```cpp
-          String func2(){
-              String str1("wangdao");
-           str1.print();
-              return str1; // 这里返回的是对象而非引用
-          }
-          
-          void test2(){
-              func2();
-              // &func2(); // error,右值
-               String&& ref = func2(); // 这个ref跟func2中的str1没有关系，因为str1在函数结束时已经销毁了，ref绑定的是函数返回的临时对象，但由于ref是右值引用，所以能延长这个临时对象的生命周期
-              &ref; // 右值引用本身为左值
-          }
-          // 若是将返回类型与返回值改为右值引用与右值，ref不但仍旧与str1没有关系，反而还会出现问题，这就是上述"7.右值引用本身的性质"中补充的例子
-          // 原因在于ref没有直接绑定str1，而是返回值即一个临时右值引用直接绑定的str1
-          ```
+     ```cpp
+     String func2(){
+         String str1("wangdao");
+      str1.print();
+         return str1; // 这里返回的是对象而非引用
+     }
+     
+     void test2(){
+         func2();
+         // &func2(); // error,右值
+          String&& ref = func2(); // 这个ref跟func2中的str1没有关系，因为str1在函数结束时已经销毁了，ref绑定的是函数返回的临时对象，但由于ref是右值引用，所以能延长这个临时对象的生命周期
+         &ref; // 右值引用本身为左值
+     }
+     // 若是将返回类型与返回值改为右值引用与右值，ref不但仍旧与str1没有关系，反而还会出现问题，这就是上述"7.右值引用本身的性质"中补充的例子
+     // 原因在于ref没有直接绑定str1，而是返回值即一个临时右值引用直接绑定的str1
+     ```
 
-          在这里func2的调用按以前的理解会调用拷贝构造函数，但是发现**结果是调用了移动构造函数**
+     在这里func2的调用按以前的理解会调用拷贝构造函数，但是发现**结果是调用了移动构造函数**
 
-          这是因为<font color=red>**当返回的对象其本身生命周期即将结束，就不再调用拷贝构造函数，而是调用移动构造函数**</font>
-          
-          ![image-20250124104555895](..\0.TyporaPicture\image-20250124104555895.png)
-          
-- <font color=red>**如果返回的对象其本身生命周期大于函数生命周期时，执行return语句时还是调用拷贝构造函数**</font>
-        
-          ```cpp
-                String str1("beijing");
-                String func3() {
-                    str1.print();
-                    return str1;
-                }
-                
-                void test3() {
-                    func3(); // 调用拷贝构造函数
-                }
-          ```
-          
-          ![image-20250124104716862](..\0.TyporaPicture\image-20250124104716862.png)
-          
-      
-**总结：**当类中同时定义移动构造函数和拷贝构造函数，需要对以前的规则进行补充，<span style=color:red;background:yellow>**调用哪个函数还需要取决于返回的对象本体的生命周期**</span>
+     这是因为<font color=red>**当返回的对象其本身生命周期即将结束，就不再调用拷贝构造函数，而是调用移动构造函数**</font>
+
+     ![image-20250124104555895](D:\Typora Picture\image-20250124104555895-17792643381126.png)
+
+   - <font color=red>**如果返回的对象其本身生命周期大于函数生命周期时，执行return语句时还是调用拷贝构造函数**</font>
+
+     ```cpp
+           String str1("beijing");
+           String func3() {
+               str1.print();
+               return str1;
+           }
+           
+           void test3() {
+               func3(); // 调用拷贝构造函数
+           }
+     ```
+
+     ![image-20250124104716862](D:\Typora Picture\image-20250124104716862-17792643381125.png)
+
+   **总结：**当类中同时定义移动构造函数和拷贝构造函数，需要对以前的规则进行补充，<span style=color:red;background:yellow>**调用哪个函数还需要取决于返回的对象本体的生命周期**</span>
 
 ## 二、资源管理
 
@@ -11631,6 +12276,7 @@ void test0() {
 4. <span style=color:red;background:yellow>**RAII技术的本质**</span>
 
    利用**栈对象**的生命周期管理资源，因为栈对象在离开作用域时候，会执行析构函数
+
 # Day20_移动语义与资源管理2
 
 ## 一、智能指针
@@ -11749,58 +12395,59 @@ void test0() {
 
      - 而构建右值的方式有：
 
-         1. 可以直接**使用unique_ptr的构造函数，创建匿名对象**（临时对象）来构建右值
-         2. `std::move()`函数
+       1. 可以直接**使用unique_ptr的构造函数，创建匿名对象**（临时对象）来构建右值
+       2. `std::move()`函数
 
-         ```cpp
-         vector<unique_ptr<Point>> vec;
-         
-         unique_ptr<Point> up4(new Point(10, 20));
-         // up4是一个左值
-         // 将up4这个对象作为参数传给了push_back函数，会调用拷贝构造
-         // 但是unique_ptr的拷贝构造已经删除了
-         // 所以这样写会报错
-         vec.push_back(up4);  // error
-         
-         vec.push_back(unique_ptr<Point>(new Point(10, 20))); // ok
-         vec.push_back(std::move(up4));  // ok
-         ```
+       ```cpp
+       vector<unique_ptr<Point>> vec;
+       
+       unique_ptr<Point> up4(new Point(10, 20));
+       // up4是一个左值
+       // 将up4这个对象作为参数传给了push_back函数，会调用拷贝构造
+       // 但是unique_ptr的拷贝构造已经删除了
+       // 所以这样写会报错
+       vec.push_back(up4);  // error
+       
+       vec.push_back(unique_ptr<Point>(new Point(10, 20))); // ok
+       vec.push_back(std::move(up4));  // ok
+       ```
 
-         > 补充
-         >
-         > - 方法 3：`std::make_unique<数据类型>(构造参数)`函数（C++14起）
-         > - 方法 4：函数返回值（纯右值，编译器优化，编译器开启 RVO 返回值优化，无拷贝 / 移动，直接插入容器）
-         >
-         > - 方法 5：`emplace` 系列**原地构造右值**（✅ 最优推荐）
-         >
-         > - 方法 6：方法1的特殊情况，字符串字面量、字面值**隐式构造临时右值**（前提：构造函数没有关键字`explicit`修饰）
-         >
-         >   > 如果加了 `explicit`，这个隐式转换会直接报错，只能用显式构造
-         >   >
-         >   > 字面值隐式构造的**唯一条件**（字符串字面量同理，因为字符串字面量是C++ 标准定义的「字面值（字面量）」的一种）：
-         >   >
-         >   > **构造函数是单参数 + 无 `explicit` + 传入的值能匹配构造函数的参数类型**
-         >
-         > ```cpp
-         > vec.push_back(std::make_unique<Point>(10, 20));
-         > vec.push_back(makePoint(30, 40));
-         > vec.emplace_back(new Point(50, 60));
-         > vec_name.push_back("原点坐标"); // 对象的数据成员为字符串时
-         > // 注意：unique_ptr是指针，所以接收的是地址
-         > 
-         > // vec_name.push_back(&{70, 80}); // 想当然传入一个指针
-         > // error1(语法上)：C++根本不允许对{}初始化列表直接取地址
-         > // error2(逻辑上): 列表初始化方式，在这里是不合理的，因为unique_ptr管理的是堆上的资源，而这里的Point对象是栈上的资源，栈上资源是系统自动管理的
-         > ```
+       > 补充
+       >
+       > - 方法 3：`std::make_unique<数据类型>(构造参数)`函数（C++14起）
+       >
+       > - 方法 4：函数返回值（纯右值，编译器优化，编译器开启 RVO 返回值优化，无拷贝 / 移动，直接插入容器）
+       >
+       > - 方法 5：`emplace` 系列**原地构造右值**（✅ 最优推荐）
+       >
+       > - 方法 6：方法1的特殊情况，字符串字面量、字面值**隐式构造临时右值**（前提：构造函数没有关键字`explicit`修饰）
+       >
+       >   > 如果加了 `explicit`，这个隐式转换会直接报错，只能用显式构造
+       >   >
+       >   > 字面值隐式构造的**唯一条件**（字符串字面量同理，因为字符串字面量是C++ 标准定义的「字面值（字面量）」的一种）：
+       >   >
+       >   > **构造函数是单参数 + 无 `explicit` + 传入的值能匹配构造函数的参数类型**
+       >
+       > ```cpp
+       > vec.push_back(std::make_unique<Point>(10, 20));
+       > vec.push_back(makePoint(30, 40));
+       > vec.emplace_back(new Point(50, 60));
+       > vec_name.push_back("原点坐标"); // 对象的数据成员为字符串时
+       > // 注意：unique_ptr是指针，所以接收的是地址
+       > 
+       > // vec_name.push_back(&{70, 80}); // 想当然传入一个指针
+       > // error1(语法上)：C++根本不允许对{}初始化列表直接取地址
+       > // error2(逻辑上): 列表初始化方式，在这里是不合理的，因为unique_ptr管理的是堆上的资源，而这里的Point对象是栈上的资源，栈上资源是系统自动管理的
+       > ```
 
-         > 注意：
-         >
-         > vector的元素一定在堆上，而up4是在栈上的智能指针对象，但`vec.push_back(std::move(up4));`这里并没有发生复制，因为unique_ptr的拷贝构造是被删除的，所以说明了这里实际上是移交管理权，up4不再拥有(10,20)这个Point对象的管理权
-         >
-         > ```cpp
-         > up4->print(); // error
-         > vec[0]->print(); // ok
-         > ```
+       > 注意：
+       >
+       > vector的元素一定在堆上，而up4是在栈上的智能指针对象，但`vec.push_back(std::move(up4));`这里并没有发生复制，因为unique_ptr的拷贝构造是被删除的，所以说明了这里实际上是移交管理权，up4不再拥有(10,20)这个Point对象的管理权
+       >
+       > ```cpp
+       > up4->print(); // error
+       > vec[0]->print(); // ok
+       > ```
 
    - unique_ptr作为容器元素的注意事项
 
@@ -11915,7 +12562,7 @@ void test0() {
      cout << "childPtr.use_count():" << childPtr.use_count() << endl;
      ```
 
-     ![image-20250204214053867](..\0.TyporaPicture\image-20250204214053867.png)
+     ![image-20250204214053867](D:\Typora Picture\image-20250204214053867.png)
 
      再进行如下的智能指针绑定操作：
 
@@ -11929,7 +12576,7 @@ void test0() {
 
      至此形成了这样的结构：
 
-     ![image-20250304165311716](..\0.TyporaPicture\image-20250304165311716.png)
+     ![image-20250304165311716](D:\Typora Picture\image-20250304165311716.png)
 
      但是在程序结束时，发现**堆上的Parent对象和child对象的析构函数都没有被调用**
 
@@ -11939,7 +12586,7 @@ void test0() {
      >
      > 注意：这里两个类对象资源本身不在栈上，而是在堆上由两个智能指针所托管，但是其内部还存在智能指针且相互引用，所以栈上的两个智能指针丧失了绝对管理权，这样也体现了共享的含义，但这是一种不合理的共享
 
-     ![image-20250205094319879](..\0.TyporaPicture\image-20250205094319879.png)
+     ![image-20250205094319879](D:\Typora Picture\image-20250205094319879.png)
 
    - 循环引用问题的解决思路——`weak_ptr`的引入
 
@@ -11947,49 +12594,49 @@ void test0() {
 
      例如：将Parent类中的shared_ptr类型指针换成weak_ptr
 
-     ![image-20250205100631944](..\0.TyporaPicture\image-20250205100631944.png)
+     ![image-20250205100631944](D:\Typora Picture\image-20250205100631944.png)
 
      栈上的childPtr对象销毁，会使堆上的Child对象的引用计数减1，因为这个Child对象的引用计数原本是1，所以现在减为0，从而回收了这个Child对象，造成了堆上的Parent对象的引用计数也减1（因为此Child内部的智能指针也销毁，所以触发其析构函数从而检查引用计数）
 
-     ![image-20250205100836157](..\0.TyporaPicture\image-20250205100836157.png)
+     ![image-20250205100836157](D:\Typora Picture\image-20250205100836157.png)
 
      然后，当parentPtr销毁时，会再让堆上的Parent对象的引用计数从1减为0，所以Parent对象也能够回收，从而就解决了循环引用的问题
 
-     ![image-20250205102757308](..\0.TyporaPicture\image-20250205102757308.png)
+     ![image-20250205102757308](D:\Typora Picture\image-20250205102757308.png)
 
 4. **`weak_ptr`**
 
    weak_ptr是**弱引用的智能指针**，它是shared_ptr的一个补充，**使用它进行复制或者赋值时，并不会导致引用计数加1**，是为了解决shared_ptr的循环引用问题而诞生的
-   
+
    weak_ptr知道所托管的对象是否还存活，且如果存活，**必须要提升为shared_ptr才能对资源进行访问**，不能直接访问
-   
+
    - 初始化
-   
+
      ```cpp
      weak_ptr<int> wp; // 无参的方式创建weak_ptr，!!!所有智能指针的默认值均为nullptr
      
      // 也可以利用shared_ptr创建weak_ptr 
      weak_ptr<int> wp2(sp);
      ```
-   
+
    - 判断关联的空间是否还在
-   
+
      1. **可以直接使用use_count函数**
-   
+
         如果use_count的返回值大于0，表明关联的空间还在
-   
+
      2. **将weak_ptr提升为shared_ptr**
-   
+
         ```cpp
         shared_ptr<int> sp(new int(10));
         weak_ptr<int> wp; // 无参的方式创建weak_ptr
         wp = sp; // 赋值
         ```
-   
+
         虽然通过shared_ptr赋值可以让wp也能够托管这片空间，但是它作为一个`weak_ptr`时仍不能够去管理，甚至连访问都不允许（weak_ptr不支持直接解引用）
-   
+
         **想要真正地去进行管理需要使用`lock()`成员函数将`weak_ptr`提升为`shared_ptr`**
-   
+
         ```cpp
         shared_ptr<int> sp2 = wp.lock(); // 若是没有shared_ptr对象来接收lock()返回值的话，在表达式结束之后，引用计数不变(+1-1=0)
         if (sp2) {
@@ -11999,27 +12646,27 @@ void test0() {
         	cout << "提升失败，托管的空间已经被销毁" << endl;
         }
         ```
-   
+
         如果托管的资源没有被销毁，就可以成功提升为shared_ptr，否则就会返回一个空的shared_ptr（空指针）
-   
+
         > **lock函数的说明**
         >
         > ```cpp
         > std::shared_ptr<T> lock() const noexcept;
         > // 将weak_ptr提升成一个shared_ptr，然后再来判断shared_ptr，进而知道weak_ptr指向的空间还在不在
         > ```
-   
+
      3. **可以使用expired函数**
-   
+
         ```cpp
         bool expired() const noexcept;
         // weak_ptr去判断托管的资源有没有被回收
         ```
-   
+
         该函数返回true等价于use_count() == 0
-   
+
         示例：
-   
+
         ```cpp
         bool flag = wp.expired();
         if (flag) {
@@ -12039,11 +12686,11 @@ void test0() {
 
    `std::unique_ptr`的类模板：
 
-   ![image-20250205150959959](..\0.TyporaPicture\image-20250205150959959.png)
+   ![image-20250205150959959](D:\Typora Picture\image-20250205150959959.png)
 
    定义unique_ptr时，如果没有指定删除器参数，就会使用默认的删除器。点开默认删除器的std::default_delete的说明可以发现其重载了()运算符：
 
-   ![image-20250205151039467](..\0.TyporaPicture\image-20250205151039467.png)
+   ![image-20250205151039467](D:\Typora Picture\image-20250205151039467.png)
 
    **默认删除器类型重载了函数调用运算符**，**底层还是利用函数对象的delete实现资源回收**
 
@@ -12079,7 +12726,7 @@ void test0() {
 
        这样做会有<font color=red>**一个问题**</font>：内容msg并没有写到文件中去，因为没有fclose的调用，msg的内容存在缓冲区中，并不会刷新到文件流中
 
-       ![image-20250205151438948](..\0.TyporaPicture\image-20250205151438948.png)
+       ![image-20250205151438948](D:\Typora Picture\image-20250205151438948.png)
 
        但是显式进行fclose，又会出现double free的问题，即已回收的文件资源，由默认的删除器又会尝试进行一次回收
 
@@ -12117,37 +12764,39 @@ void test0() {
 
 2. **shared_ptr对应的删除器**
 
-   <span style=color:red;background:yellow>**unique_ptr 和 shared_ptr区别：**</span>
+   - <span style=color:red;background:yellow>**unique_ptr 和 shared_ptr区别：**</span>
 
-   - 对于unique_ptr，**删除器**是**模板参数**
+     - 对于unique_ptr，**删除器**是**模板参数**
 
-     ![image-20250205151628132](..\0.TyporaPicture\image-20250205151628132.png)
+       ![image-20250205151628132](D:\Typora Picture\image-20250205151628132.png)
 
-   - 对于shared_ptr，**删除器**是**构造函数参数**
-
-     ![image-20250205151643129](..\0.TyporaPicture\image-20250205151643129.png)
-
-   所以传入删除器参数的位置不同：
-
-   ```cpp
-   void test1() {
-       string msg = "hello,world\n";
-       // 在unique_ptr的模板参数中加入删除器类
-       unique_ptr<FILE，FILECloser> up(fopen("res2.txt", "a+"));
-       fwrite(msg.c_str(), 1, msg.size(), up.get());
-   }
    
+     - 对于shared_ptr，**删除器**是**构造函数参数**
    
-   void test2() {
-       string msg = "hello,world\n";
-       FILECloser fc;
-       //在shared_ptr的构造函数参数中加入删除器对象
-       shared_ptr<FILE> sp(fopen("res3.txt", "a+"), fc);
-       // 另一种写法
-       // shared_ptr<FILE> sp2(fopen("res3.txt", "a+"), FILECloser()); // 这里的FILECloser()既不是函数也不是operator()成员函数，而是一个临时对象(使用无参构造函数)
-       fwrite(msg.c_str(), 1, msg.size(), sp.get());
-   }
-   ```
+       ![image-20250205151643129](D:\Typora Picture\image-20250205151643129.png)
+   
+
+   - 所以传入删除器参数的位置不同：
+   
+     ```cpp
+     void test1() {
+         string msg = "hello,world\n";
+         // 在unique_ptr的模板参数中加入删除器类
+         unique_ptr<FILE，FILECloser> up(fopen("res2.txt", "a+"));
+         fwrite(msg.c_str(), 1, msg.size(), up.get());
+     }
+     
+     
+     void test2() {
+         string msg = "hello,world\n";
+         FILECloser fc;
+         //在shared_ptr的构造函数参数中加入删除器对象
+         shared_ptr<FILE> sp(fopen("res3.txt", "a+"), fc);
+         // 另一种写法
+         // shared_ptr<FILE> sp2(fopen("res3.txt", "a+"), FILECloser()); // 这里的FILECloser()既不是函数也不是operator()成员函数，而是一个临时对象(使用无参构造函数)
+         fwrite(msg.c_str(), 1, msg.size(), sp.get());
+     }
+     ```
 
 ## 三、智能指针的误用
 
@@ -12248,9 +12897,9 @@ void test0() {
 
         使用智能指针辅助类`class enable_shared_from_this`的成员函数`shared_from_this()`
 
-        ![image-20250205152452832](..\0.TyporaPicture\image-20250205152452832.png)
+        ![image-20250205152452832](D:\Typora Picture\image-20250205152452832.png)
 
-        ![image-20250205152641659](..\0.TyporaPicture\image-20250205152641659.png)
+        ![image-20250205152641659](D:\Typora Picture\image-20250205152641659.png)
 
         在Point的addPoint函数中需要使用shared_from_this函数返回的shared_ptr作为返回值，要想在Point类中调用enable_shared_from_this的成员函数，最佳方案可以**让Point类继承enable_shared_from_this类**
 
@@ -12281,6 +12930,16 @@ void test0() {
    根本原因：**只有将临时对象绑定到函数外部的引用变量才能延长其生命周期**，而函数参数（即使是引用）在函数返回后即销毁，无法充当那个外部载体。与生命周期长短比较无关
 
    > **智能指针的构造函数形参是指针，这决定了它根本接收不了指针指向的对象**
+
+2. **C++提供了哪几种智能指针，其各自的特点是什么？**
+
+   | 智能指针     | 引用类型 | 所有权 | 拷贝 / 移动      | 引用计数 | 状态 | 核心用途     |
+   | ------------ | -------- | ------ | ---------------- | -------- | ---- | ------------ |
+   | `auto_ptr`   | 强引用   | 独占   | 允许拷贝（危险） | 无       | 废弃 | 已淘汰       |
+   | `unique_ptr` | 强引用   | 独占   | 禁拷贝，仅移动   | 无       | 推荐 | 独占资源     |
+   | `shared_ptr` | 强引用   | 共享   | 支持拷贝 / 移动  | 有       | 推荐 | 共享资源     |
+   | `weak_ptr`   | 弱引用   | 无     | 支持拷贝 / 移动  | 无       | 推荐 | 解决循环引用 |
+
 # Day21_STL标准模板库-序列式容器
 
 ## 一、标准模板库与STL六大组件
@@ -12336,7 +12995,7 @@ void test0() {
 
 3. **数据结构 + 算法 = 程序**
 
-   ![image-20260302155445054](..\0.TyporaPicture\image-20260302155445054.png)
+   ![image-20260302155445054](D:\Typora Picture\image-20260302155445054-17798579803984.png)
 
 4. **STL六大组件之间的关系**
 
@@ -12439,7 +13098,7 @@ box.pop_front(); // 1 2 3
 
 - **vector**
 
-  ![image-20250314113757563](..\0.TyporaPicture\image-20250314113757563.png)
+  ![image-20250314113757563](D:\Typora Picture\image-20250314113757563-17798579803971.png)
 
   vector头部是固定的，不能通过`push_front`与`pop_front`进行插入与删除，因为其没有这两个成员函数，只提供了在尾部进行插入与删除的操作，如果真的要在头部插入或者删除，必须用通用的 **`insert()`** 和 **`erase()`**，但是这样的话，其他的元素会发生移动，这样操作就比较复杂（时间复杂度O(n)）
 
@@ -12449,7 +13108,7 @@ box.pop_front(); // 1 2 3
 
 - **deque**
 
-  ![image-20250314113918079](..\0.TyporaPicture\image-20250314113918079.png)
+  ![image-20250314113918079](D:\Typora Picture\image-20250314113918079-17798579803983.png)
 
   **实现效果**是**双端队列**
 
@@ -12457,7 +13116,7 @@ box.pop_front(); // 1 2 3
 
 - **list**
 
-  ![image-20250314114024724](..\0.TyporaPicture\image-20250314114024724.png)
+  ![image-20250314114024724](D:\Typora Picture\image-20250314114024724-17798579803982.png)
 
   list的**实现效果**是**双向链表**
 
@@ -12469,7 +13128,7 @@ box.pop_front(); // 1 2 3
 
   1. 继承图
 
-     ![image-20241114211419722](..\0.TyporaPicture\image-20241114211419722.png)
+     ![image-20241114211419722](D:\Typora Picture\image-20241114211419722-17798579803985.png)
 
   2. 源码
 
@@ -12499,15 +13158,15 @@ box.pop_front(); // 1 2 3
 
   3. 获取vector的第一个元素的首地址，应该怎么做？
 
-     ![image-20240806111634713](..\0.TyporaPicture\image-20240806111634713.png)
+     ![image-20240806111634713](D:\Typora Picture\image-20240806111634713-17798579803986.png)
 
      验证如下：
 
-     ![image-20250314144207535](..\0.TyporaPicture\image-20250314144207535.png)
+     ![image-20250314144207535](D:\Typora Picture\image-20250314144207535-17798579803987.png)
 
      vector中`at()`与`operator[]`都具备随机访问的含义，但是**operator[]完全不做范围检查**，存在越界的风险，也就是不安全，但是**at具备范围限制，更加安全**，测试如下：
 
-     ![image-20250314144256583](..\0.TyporaPicture\image-20250314144256583.png)
+     ![image-20250314144256583](D:\Typora Picture\image-20250314144256583-177985798039810.png)
 
      > - **迭代器 ≠ 原生地址**，它是**对指针 / 节点的封装（抽象化的指针）**
      >
@@ -12558,7 +13217,7 @@ box.pop_front(); // 1 2 3
 
   1. 继承图
 
-     ![image-20250324164403999](..\0.TyporaPicture\image-20250324164403999.png)
+     ![image-20250324164403999](D:\Typora Picture\image-20250324164403999-17798579803988.png)
 
   2. 原理
 
@@ -12600,13 +13259,13 @@ box.pop_front(); // 1 2 3
 
           在deque头部添加元素或者尾部添加元素的过程中，原本已经存在deque中的元素始终没有改变位置，这一点与vector形成很大的区别
 
-          ![image-20250315160520768](..\0.TyporaPicture\image-20250315160520768.png)
+          ![image-20250315160520768](D:\Typora Picture\image-20250315160520768-177985798039811.png)
 
      - 每个缓冲区片段的元素个数
 
        每个缓冲区是**固定大小的连续数组**（SGI 实现默认 512 字节）
 
-       ![image-20250314162540413](..\0.TyporaPicture\image-20250314162540413.png)
+       ![image-20250314162540413](D:\Typora Picture\image-20250314162540413-17798579803989.png)
 
        如果deque存放的元素类型的大小小于 512 字节。每个缓冲区片段的大小为 512 字节，512 除以元素类型的大小，就可以得到每个缓冲区片段能够存放的元素数量
 
@@ -12620,9 +13279,9 @@ box.pop_front(); // 1 2 3
 
        deque的迭代器比vector的迭代器复杂得多，`vector<T>`的迭代器实际是对T*的包装，但deque的迭代器实际应该视为对象，数据成员包含四个指针，并且进行了一系列的运算符重载，使得迭代器能够像指针一样被使用
 
-       ![image-20250315161915597](..\0.TyporaPicture\image-20250315161915597.png)
-  
-       ![image-20250315161952642](..\0.TyporaPicture\image-20250315161952642.png)
+       ![image-20250315161915597](D:\Typora Picture\image-20250315161915597-177985798039812.png)
+
+       ![image-20250315161952642](D:\Typora Picture\image-20250315161952642-177985798039813.png)
 
 #### ==1.7 insert操作==
 
@@ -12632,7 +13291,7 @@ box.pop_front(); // 1 2 3
 
 - 它们都具备以下四种插入的功能
 
-  ![image-20240806144651816](..\0.TyporaPicture\image-20240806144651816.png)
+  ![image-20240806144651816](D:\Typora Picture\image-20240806144651816.png)
 
   ```cpp
   vector<int> box{1,2,3,4,5};
@@ -12667,39 +13326,39 @@ box.pop_front(); // 1 2 3
   print(box); // 1 1000 2000 10 20 30 200 200 100 2 3 4 5
   cout << "*it2=" << *it2 << endl; // 1000
   ```
-  
+
 - 以list为例
 
   1. 双向链表由于其底层结构的原因，插入是非常方便的
 
-     ![image-20241203105613687](..\0.TyporaPicture\image-20241203105613687.png)
+     ![image-20241203105613687](D:\Typora Picture\image-20241203105613687-177985798039926.png)
 
   2. 从参考文档出发可知三种序列式容器都有这样的插入方式，但insert过程中的细节却值得注意
 
-     ![image-20241203112930981](..\0.TyporaPicture\image-20241203112930981.png)
+     ![image-20241203112930981](D:\Typora Picture\image-20241203112930981-177985798039914.png)
 
   3. 如果把list换成deque，情况会有所不同
 
-     ![image-20241203151641204](..\0.TyporaPicture\image-20241203151641204.png)
+     ![image-20241203151641204](D:\Typora Picture\image-20241203151641204-177985798039916.png)
 
   4. 在利用迭代器遍历容器元素并做出处理时，往往需要更新迭代器
 
      <span style=color:red;background:yellow>**虽然insert函数有多种形式，但它们的返回值都是指向第一个被插入元素的迭代器**</span>
 
-     ![image-20241203152546132](..\0.TyporaPicture\image-20241203152546132.png)
-  
+     ![image-20241203152546132](D:\Typora Picture\image-20241203152546132-177985798039915.png)
+
   5. 对于vector，insert操作执行过程中还存在着更大的隐患，可能导致<span style=color:red;background:yellow>**迭代器失效**</span>
-  
-     ![image-20241203162022141](..\0.TyporaPicture\image-20241203162022141.png)
-  
+
+     ![image-20241203162022141](D:\Typora Picture\image-20241203162022141-177985798039917.png)
+
      这是因为当vector使用insert进行插入时，可能会发生动态扩容。比如上述的nums是一个“存满”状态的vector，此时size和capacity的结果是一样的。增加新的元素会进行扩容
-  
+
      扩容的过程中会申请一块新的空间，然后将老的空间上的元素拷贝到新的空间来，然后会清理老的空间、这时如果还继续使用原本的迭代器，对应的也就是老的空间的地址，会出现问题，因为此时迭代器已经失效了
-  
+
      <span style=color:red;background:yellow>**所以，每次在使用迭代器进行insert操作时，更新迭代器（重新置位）**</span>
-  
-     ![image-20241203175553874](..\0.TyporaPicture\image-20241203175553874.png)
-  
+
+     ![image-20241203175553874](D:\Typora Picture\image-20241203175553874-177985798039918.png)
+
      > <span style=color:red;background:yellow>**补充**</span>
      >
      > 之前在学习vector的push_back操作时，我们了解了2倍扩容机制。而insert导致的扩容，规则更复杂一些。
@@ -12714,13 +13373,12 @@ box.pop_front(); // 1 2 3
      > // (2) n - m < t < m   	按照2*size()进行扩容
      > // (3) n - m < t, m < t	按照t + m进行扩容，即新插入的元素的数量大于当前元素个数，仅将容量单纯扩大为当前元素个数的2倍仍装不下
      > ```
-     >
 
 #### ==1.8 erase操作==
 
 三种序列式容器都可以进行erase操作，用来删除容器中的单个元素或多个元素
 
-![image-20240806160154610](..\0.TyporaPicture\image-20240806160154610.png)
+![image-20240806160154610](D:\Typora Picture\image-20240806160154610-177985798039919.png)
 
 - **list的erase操作**
 
@@ -12728,7 +13386,7 @@ box.pop_front(); // 1 2 3
 
   <span style=color:red;background:yellow>**erase函数的返回值为被删除元素后一位元素对应的迭代器**</span>
 
-  ![image-20241202175257615](..\0.TyporaPicture\image-20241202175257615.png)
+  ![image-20241202175257615](D:\Typora Picture\image-20241202175257615-177985798039927.png)
 
 - **deque的erase操作**
 
@@ -12742,11 +13400,11 @@ box.pop_front(); // 1 2 3
   > - 可以把**被删位置前面的元素整体往后移一位**（覆盖被删元素）
   > - 或者把**被删位置后面的元素整体往前移一位**（覆盖被删元素）
 
-  ![image-20241203093724218](..\0.TyporaPicture\image-20241203093724218.png)
+  ![image-20241203093724218](D:\Typora Picture\image-20241203093724218-177985798039920.png)
 
   如果想要在erase之后继续正常使用it这个迭代器，那么同样建议进行迭代器更新
 
-  ![image-20241203093928234](..\0.TyporaPicture\image-20241203093928234.png)
+  ![image-20241203093928234](D:\Typora Picture\image-20241203093928234-177985798039921.png)
 
 - **vector的erase操作**
 
@@ -12760,7 +13418,7 @@ box.pop_front(); // 1 2 3
   >
   > - 例如：使用vector时很可能写出这样的代码
   >
-  >   ![image-20241204110148074](..\0.TyporaPicture\image-20241204110148074.png)
+  >   ![image-20241204110148074](D:\Typora Picture\image-20241204110148074-177985798039922.png)
   >
   >   此时通过`it = nums.erase(it)`这样简单更新迭代器并不能解决问题（效果一样）。问题的**根本在于无论是对于该删除的元素还是不该删除的元素，迭代器的偏移采取的是统一的方式**
   >
@@ -12772,15 +13430,15 @@ box.pop_front(); // 1 2 3
   >
   >   因为list在物理存储上是不连续的，所以erase后仍旧指向已经失效的被删除元素，所以需要更新erase即向后移动一次
   >
-  >   ![image-20241204115650449](..\0.TyporaPicture\image-20241204115650449.png)
+  >   ![image-20241204115650449](D:\Typora Picture\image-20241204115650449-177985798039928.png)
 
 #### 1.9 元素的清空
 
-![image-20240806162826639](..\0.TyporaPicture\image-20240806162826639.png)
+![image-20240806162826639](D:\Typora Picture\image-20240806162826639-177985798039923.png)
 
-![image-20240806162838101](..\0.TyporaPicture\image-20240806162838101.png)
+![image-20240806162838101](D:\Typora Picture\image-20240806162838101-177985798039924.png)
 
-![image-20240806162848551](..\0.TyporaPicture\image-20240806162848551.png)
+![image-20240806162848551](D:\Typora Picture\image-20240806162848551-177985798039925.png)
 
 <span style=color:red;background:yellow>**总结**</span>：
 
@@ -12812,15 +13470,15 @@ const_reference back() const;
 - `emplace` 与 `insert`对比，前者是直接在指定位置构造对象，后者是将一个已存在的对象复制并插入到容器中指定位置
 - `emplace_back` 与 `push_back`对比， 前者是直接在容器尾部构造对象，后者是将一个已存在的对象复制并插入到容器末尾
 
-![image-20250317095728675](..\0.TyporaPicture\image-20250317095728675.png)
+![image-20250317095728675](D:\Typora Picture\image-20250317095728675-177985798039929.png)
 
 - `emplace_back`的效果
 
-  ![image-20240806164845608](..\0.TyporaPicture\image-20240806164845608.png)
+  ![image-20240806164845608](D:\Typora Picture\image-20240806164845608-177985798040031.png)
 
 - `emplace`的效果
 
-  ![image-20250317104810864](..\0.TyporaPicture\image-20250317104810864.png)
+  ![image-20250317104810864](D:\Typora Picture\image-20250317104810864-177985798039930.png)
 
 > 补充：**STL中的emplace_back和push_back有什么区别？**
 >
@@ -12857,47 +13515,47 @@ list还具有一些vector与deque没有的**独占成员函数**
 
   将list中的元素排序
 
-  ![image-20241205154048844](..\0.TyporaPicture\image-20241205154048844.png)
+  ![image-20241205154048844](D:\Typora Picture\image-20241205154048844-177985798040033.png)
 
 - **无参版本的示例**
 
   如果使用**无参版本的sort函数**，则list中的元素**默认以升序排列**
 
-  ![image-20241205154657832](..\0.TyporaPicture\image-20241205154657832.png)
+  ![image-20241205154657832](D:\Typora Picture\image-20241205154657832-177985798040049.png)
 
 - **有参版本**
 
   第二个版本的sort函数有一个参数，参数为Compare类型的对象。关于Compare，第一次见到应该是在set类模板声明中
 
-  ![image-20241206162659730](..\0.TyporaPicture\image-20241206162659730.png)
+  ![image-20241206162659730](D:\Typora Picture\image-20241206162659730-177985798040032.png)
 
   之前在简单使用set时我们知道元素会默认按照升序排序，这里就**是使用了`std::less<key>`的效果**：
 
-  ![image-20241206162926925](..\0.TyporaPicture\image-20241206162926925.png)
+  ![image-20241206162926925](D:\Typora Picture\image-20241206162926925-177985798040034.png)
 
   效果和无参的sort版本是一样的，同样采用升序排序
 
   **这里对std::less的使用与之前unique_ptr的默认删除器的使用是很相似的**
 
-  ![image-20241206163620509](..\0.TyporaPicture\image-20241206163620509.png)
+  ![image-20241206163620509](D:\Typora Picture\image-20241206163620509-177985798040035.png)
 
   - `std::less`类的内部
 
     通过cpp参考文档能够了解到std::less进行了函数调用运算符的重载，在`operator()`函数中接受两个参数，代表两个元素，在函数定义中对两个元素进行了比较
 
-    ![image-20241206164121319](..\0.TyporaPicture\image-20241206164121319.png)
+    ![image-20241206164121319](D:\Typora Picture\image-20241206164121319-177985798040036.png)
 
   - 降序排列
 
     如果想要按照降序排列，对应位置可以换成std::greater
 
-    ![image-20241209102349777](..\0.TyporaPicture\image-20241209102349777.png)
+    ![image-20241209102349777](D:\Typora Picture\image-20241209102349777-177985798040038.png)
 
   - 定制化Compare
 
     当然，针对需要排序的各种元素类型，可能需要更灵活的Compare，那么我们可以像定制化删除器一样定制化Compare
 
-    ![image-20241209105703516](..\0.TyporaPicture\image-20241209105703516.png)
+    ![image-20241209105703516](D:\Typora Picture\image-20241209105703516-177985798040037.png)
 
     会发现自定义的Compare对象被当成函数调用了很多次，可以简单阅读list的**sort**函数源码，发现**其底层实现实际是一种基于归并排序的做法**
 
@@ -12986,17 +13644,17 @@ list还具有一些vector与deque没有的**独占成员函数**
 
 #### 2.2 reverse——将list中所有元素顺序反转
 
-![image-20241209114609938](..\0.TyporaPicture\image-20241209114609938.png)
+![image-20241209114609938](D:\Typora Picture\image-20241209114609938-177985798040039.png)
 
 > 注意和vector的reserve函数(预留空间)区分，拼写上非常相似
 
-![image-20250317155350549](..\0.TyporaPicture\image-20250317155350549.png)
+![image-20250317155350549](D:\Typora Picture\image-20250317155350549-177985798040040.png)
 
 #### 2.3 unique——去重list中重复的元素
 
 **必须先排序**（无论是从小到大还是从大到小），才能够实现效果
 
-![image-20250317154753075](..\0.TyporaPicture\image-20250317154753075.png)
+![image-20250317154753075](D:\Typora Picture\image-20250317154753075-177985798040041.png)
 
 #### 2.4 merge——将一个list合并到当前list中
 
@@ -13006,9 +13664,9 @@ list还具有一些vector与deque没有的**独占成员函数**
 >
 > 想要合并后的list结果是有序的，需要<span style=color:red;background:yellow>**合并前两个list中的元素先排好序**</span>
 
-![image-20250818212441074](..\0.TyporaPicture\image-20250818212441074.png)
+![image-20250818212441074](D:\Typora Picture\image-20250818212441074-177985798040042.png)
 
-![image-20250818212500682](..\0.TyporaPicture\image-20250818212500682.png)
+![image-20250818212500682](D:\Typora Picture\image-20250818212500682-177985798040043.png)
 
 #### 2.5 remove & remove_if——移除元素
 
@@ -13016,23 +13674,23 @@ list还具有一些vector与deque没有的**独占成员函数**
 
 - remove_if函数能够**移除所有符合条件的元素**，==需要传入一个一元谓词（返回值为bool的一元函数）——如果某元素作为函数参数能够返回true，则判定为应该删除的元素==
 
-  ![image-20250808154243844](..\0.TyporaPicture\image-20250808154243844.png)
+  ![image-20250808154243844](D:\Typora Picture\image-20250808154243844-177985798040044.png)
 
 #### 2.6 splice——移动元素
 
 > `splice` 是**直接修改原数组**的方法，它会从数组中**物理移除**元素，返回的是被移除元素组成的新数组
 
-![image-20240807100112283-1733123638304-4](..\0.TyporaPicture\image-20240807100112283-1733123638304-4.png)
+![image-20240807100112283-1733123638304-4](D:\Typora Picture\image-20240807100112283-1733123638304-4-177985798040045.png)
 
 ==第一个参数相当于是移动的目的地==
 
-![image-20240807100952020-1733123638304-5](..\0.TyporaPicture\image-20240807100952020-1733123638304-5.png)
+![image-20240807100952020-1733123638304-5](D:\Typora Picture\image-20240807100952020-1733123638304-5-177985798040046.png)
 
-![image-20240807101035059-1733123638304-6](..\0.TyporaPicture\image-20240807101035059-1733123638304-6.png)
+![image-20240807101035059-1733123638304-6](D:\Typora Picture\image-20240807101035059-1733123638304-6-177985798040047.png)
 
 <span style=color:red;background:yellow>**注意：**</span>如果在同一个链表中进行splice操作
 
-![image-20240807101633898-1733123638304-7](..\0.TyporaPicture\image-20240807101633898-1733123638304-7.png)
+![image-20240807101633898-1733123638304-7](D:\Typora Picture\image-20240807101633898-1733123638304-7-177985798040048.png)
 
 **可能会出现问题（取决于范围有没有交叉）**
 
@@ -13054,15 +13712,16 @@ list还具有一些vector与deque没有的**独占成员函数**
 >   比如现在有 1 2 3 4 四个元素逐一存到容器中，限制容量为4
 >   刚存放完       插入元素3      插入元素5      插入元素4
 >   4 3 2 1 ----> 3 4 2 1 ----> 5 3 4 2  ---> 4 5 3 2
->       
+>   
 >   // 假设现在插入元素2   
 >   int number = tmp.back();
 >   tmp.pop_back();
 >   tmp.push_front(number);
->       
+>   
 >   // 如果明确了是用list存储，可以使用splice函数，
 >   tmp.splice(tmp.begin(), tmp, --tmp.end());
 >   ```
+
 # Day22_STL标准模板库2-关联式容器与无序关联式容器
 
 ## 一、关联式容器
@@ -13084,7 +13743,7 @@ list还具有一些vector与deque没有的**独占成员函数**
 
 ### 1.1 构造
 
-![image-20250317175534262](..\0.TyporaPicture\image-20250317175534262.png)
+![image-20250317175534262](D:\Typora Picture\image-20250317175534262-177985800979199.png)
 
 - **无参构造**
 
@@ -13096,45 +13755,45 @@ list还具有一些vector与deque没有的**独占成员函数**
 
 ### 1.2 基本特征
 
-![image-20240807115258806](..\0.TyporaPicture\image-20240807115258806-1733124502629-22.png)
+![image-20240807115258806](D:\Typora Picture\image-20240807115258806-1733124502629-22-1779858009791100.png)
 
 ### 1.3 查找
 
-![image-20240807112809259](..\0.TyporaPicture\image-20240807112809259-1733124502628-19.png)
+![image-20240807112809259](D:\Typora Picture\image-20240807112809259-1733124502628-19-1779858009791102.png)
 
 ### 1.4 insert操作
 
-![image-20240807113245685](..\0.TyporaPicture\image-20240807113245685-1733124502629-20.png)
+![image-20240807113245685](D:\Typora Picture\image-20240807113245685-1733124502629-20-1779858009791101.png)
 
-![image-20240807114212763](..\0.TyporaPicture\image-20240807114212763-1733124502629-21.png)
+![image-20240807114212763](D:\Typora Picture\image-20240807114212763-1733124502629-21-1779858009791103.png)
 
 ==**注意：关联式容器都没有头部插入/删除或者尾部插入/删除的函数（因为插入之后是自动排序的，根本不需要关心一开始插入的位置）**==
 
 ### 1.5 erase操作
 
-![image-20240807114416260](..\0.TyporaPicture\image-20240807114416260-1733124502629-23.png)
+![image-20240807114416260](D:\Typora Picture\image-20240807114416260-1733124502629-23-1779858009791104.png)
 
 > <span style=color:red;background:yellow>**注意**</span>
 >
 > - **set不支持下标操作，因为没有operator[]函数**
 >
->   ![image-20240807114916461](..\0.TyporaPicture\image-20240807114916461-1733124502629-25.png)
+>   ![image-20240807114916461](D:\Typora Picture\image-20240807114916461-1733124502629-25-1779858009791105.png)
 >
 >   所以**访问set的元素只能通过迭代器方式**，但通过迭代器访问到的元素**只能进行读操作**
 >
 > - **set的元素不支持修改**
 >
->   ![image-20240807115114358](..\0.TyporaPicture\image-20240807115114358-1733124502629-24.png)
+>   ![image-20240807115114358](D:\Typora Picture\image-20240807115114358-1733124502629-24-1779858009791107.png)
 
 ### ==1.6 针对于自定义类型的写法==
 
-![image-20240808102542239](..\0.TyporaPicture\image-20240808102542239-1733124502629-26.png)
+![image-20240808102542239](D:\Typora Picture\image-20240808102542239-1733124502629-26-1779858009791106.png)
 
 对于set而言，因为第二个模板参数Compare默认会采用std::less，但是std::less针对的Key如果不能比较大小即当Key类型是类类型的时候，就需要进行改写
 
 因为直接定义一个存放Point的set，编译一定会报错，根本原因在于默认的std::less针对Point对象并不知道该如何比较大小
 
-<img src="..\0.TyporaPicture\image-20250317183935132.png" alt="image-20250317183935132" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20250317183935132-1779858009791110.png" alt="image-20250317183935132" style="zoom:67%;" />
 
 改写的方式有三种：<span style=color:red;background:yellow>**模板的特化、运算符的重载、函数对象**</span>
 
@@ -13144,37 +13803,37 @@ list还具有一些vector与deque没有的**独占成员函数**
 
   **为std::less准备一个特化版本，这个特化模板类中定义函数调用运算符重载函数，定义一套Point对象的比较规则**
 
-  ![image-20250318150258925](..\0.TyporaPicture\image-20250318150258925.png)
+  ![image-20250318150258925](D:\Typora Picture\image-20250318150258925-1779858009791109.png)
 
-    > 自定义对象的**比较规则当然也是自定义的**，例如：
-    >
-    > 先比较到原点的距离（定义getDistance获取点到原点的距离），如果相同再比较横坐标，如果再相同再比较纵坐标。
-    >
-    > ![image-20250318150348968](..\0.TyporaPicture\image-20250318150348968.png)
-    >
-    > <span style=color:red;background:yellow>**注意：**</span>
-    >
-    > - 在operator()函数中需要访问Point的私有成员，可以有两个思路：
-    >
-    >   1. 在自定义类中中作相应的友元声明；
-    >
-    >      <img src="..\0.TyporaPicture\image-20241226224935206.png" alt="image-20241226224935206" style="zoom:67%;" />
-    >
-    >   2. 给Point提供公有的get系列函数，间接访问Point的私有数据成员
-    >
-    > - 函数调用运算符重载函数(即operator())最好设为**const函数**
-    >
-    >   因为在 C++17 中，std::set 要求比较对象必须是 **常量可调用** 的。模板参数列表中的class Compare在set的底层实现中会创建出对象，并作为函数对象使用，也就是调什用operator()函数，这个函数需要是const成员函数
-    >
-    >   - 参考std::less的operator()函数
-    >
-    >
-    >   ![image-20250317193513788](..\0.TyporaPicture\image-20250317193513788.png)
-    >
-    >   - 这涉及了set的内部实现的版本演变，不做探究
-    >
-    >
-    >   <img src="..\0.TyporaPicture\image-20250317192201592.png" alt="image-20250317192201592" style="zoom:67%;" />
+> 自定义对象的**比较规则当然也是自定义的**，例如：
+>
+> 先比较到原点的距离（定义getDistance获取点到原点的距离），如果相同再比较横坐标，如果再相同再比较纵坐标。
+>
+> ![image-20250318150348968](D:\Typora Picture\image-20250318150348968.png)
+>
+> <span style=color:red;background:yellow>**注意：**</span>
+>
+> - 在operator()函数中需要访问Point的私有成员，可以有两个思路：
+>
+>   1. 在自定义类中中作相应的友元声明；
+>
+>      <img src="D:\Typora Picture\image-20241226224935206.png" alt="image-20241226224935206" style="zoom:67%;" />
+>
+>   2. 给Point提供公有的get系列函数，间接访问Point的私有数据成员
+>
+> - 函数调用运算符重载函数(即operator())最好设为**const函数**
+>
+>   因为在 C++17 中，std::set 要求比较对象必须是 **常量可调用** 的。模板参数列表中的class Compare在set的底层实现中会创建出对象，并作为函数对象使用，也就是调什用operator()函数，这个函数需要是const成员函数
+>
+>   - 参考std::less的operator()函数
+>
+>
+>   ![image-20250317193513788](D:\Typora Picture\image-20250317193513788.png)
+>
+>   - 这涉及了set的内部实现的版本演变，不做探究
+>
+>
+>   <img src="D:\Typora Picture\image-20250317192201592.png" alt="image-20250317192201592" style="zoom:67%;" />
 
 2. **(对象)运算符重载**
 
@@ -13182,7 +13841,7 @@ list还具有一些vector与deque没有的**独占成员函数**
 
    operator< 以友元方式重载：（也可以重载为类的成员函数）
 
-   ![image-20240808102807663](..\0.TyporaPicture\image-20240808102807663-1733124502629-28.png)
+   ![image-20240808102807663](D:\Typora Picture\image-20240808102807663-1733124502629-28-1779858009791111.png)
 
    **这个场景下，如果特化模板与运算符重载同时存在，==模板特化优先级高于运算符重载==**
 
@@ -13192,7 +13851,7 @@ list还具有一些vector与deque没有的**独占成员函数**
 
    Compare类重载函数调用运算符，set的底层实现中使用Compare类对象作为<span style=color:red;background:yellow>**函数对象**</span>，以此来规定元素的排序
 
-   ![image-20240808102837821](..\0.TyporaPicture\image-20240808102837821-1733124502629-29.png)
+   ![image-20240808102837821](D:\Typora Picture\image-20240808102837821-1733124502629-29-1779858009791108.png)
 
 ## 2.multiset的使用
 
@@ -13200,7 +13859,7 @@ list还具有一些vector与deque没有的**独占成员函数**
 
 包含于`<set>`头文件
 
-![image-20240808110150953](..\0.TyporaPicture\image-20240808110150953-1733124502629-30.png)
+![image-20240808110150953](D:\Typora Picture\image-20240808110150953-1733124502629-30-1779858009791112.png)
 
 ### 2.2 其他功能
 
@@ -13212,20 +13871,20 @@ multiset**也没有[]下标操作，也同样不支持使用迭代器修改元�
 
 注意：**equal_range返回的范围仍然是前闭后开的范围（返回的是一对数据即一个pair对象，其中包含两个迭代器）**
 
-<img src="..\0.TyporaPicture\image-20241210101903143.png" alt="image-20241210101903143" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20241210101903143-1779858009791114.png" alt="image-20241210101903143" style="zoom:67%;" />
 
-<img src="..\0.TyporaPicture\image-20250318143726479.png" alt="image-20250318143726479"  />
+<img src="D:\Typora Picture\image-20250318143726479-1779858009791113.png" alt="image-20250318143726479"  />
 
-<img src="..\0.TyporaPicture\image-20250318143624627.png" alt="image-20250318143624627"  />
+<img src="D:\Typora Picture\image-20250318143624627-1779858009791115.png" alt="image-20250318143624627"  />
 
-<img src="..\0.TyporaPicture\image-20250318143647024.png" alt="image-20250318143647024"  />
+<img src="D:\Typora Picture\image-20250318143647024-1779858009791118.png" alt="image-20250318143647024"  />
 
 > 如下，可以用**两种方式找出multiset中所有等于key的元素**
 >
 > 1. **[it11, it22)**
 > 2. **(std::pair)ret**
 >
-> ![image-20240808111636211](..\0.TyporaPicture\image-20240808111636211-1733124502630-31.png)
+> ![image-20240808111636211](D:\Typora Picture\image-20240808111636211-1733124502630-31-1779858009791117.png)
 
 ### 2.4 针对于自定义类型
 
@@ -13235,17 +13894,17 @@ multiset**针对于自定义类型的用法**与set完全一样，**也有三种
 
 ### 3.1 基本特征
 
-![image-20240808113609526](..\0.TyporaPicture\image-20240808113609526-1733124502630-32.png)
+![image-20240808113609526](D:\Typora Picture\image-20240808113609526-1733124502630-32-1779858009791119.png)
 
 ### 3.2 查找
 
-<img src="..\0.TyporaPicture\image-20250318145851453.png" alt="image-20250318145851453"  />
+<img src="D:\Typora Picture\image-20250318145851453-1779858009791116.png" alt="image-20250318145851453"  />
 
-![image-20240808113855833](..\0.TyporaPicture\image-20240808113855833-1733124502630-33.png)
+![image-20240808113855833](D:\Typora Picture\image-20240808113855833-1733124502630-33-1779858009791120.png)
 
 ### 3.3 insert操作
 
-![image-20250318145655104](..\0.TyporaPicture\image-20250318145655104.png)
+![image-20250318145655104](D:\Typora Picture\image-20250318145655104-1779858009791121.png)
 
 map**也有三种插入的方式：插入一个元素、插入迭代器范围的元素、插入大括号范围的元素**
 
@@ -13255,17 +13914,17 @@ map**也有三种插入的方式：插入一个元素、插入迭代器范围的
 >
 > ==插入单个元素可能不成功（即这个元素已经存在于map中）==
 >
-> ![image-20240808114453984](..\0.TyporaPicture\image-20240808114453984-1733124502630-34.png)
+> ![image-20240808114453984](D:\Typora Picture\image-20240808114453984-1733124502630-34-1779858009791122.png)
 
 ### 3.4 erase操作
 
-![image-20240808114701760](..\0.TyporaPicture\image-20240808114701760-1733124502630-35.png)
+![image-20240808114701760](D:\Typora Picture\image-20240808114701760-1733124502630-35-1779858009791123.png)
 
 **map可以删除==迭代器指向的元素==、以及==迭代器范围的元素==**
 
 ### 3.5 下标操作（重要）
 
-![image-20240808121115356](..\0.TyporaPicture\image-20240808121115356-1733124502630-36.png)
+![image-20240808121115356](D:\Typora Picture\image-20240808121115356-1733124502630-36-1779858009792124.png)
 
 <span style=color:red;background:yellow>**注意：**</span>
 
@@ -13275,17 +13934,17 @@ map**也有三种插入的方式：插入一个元素、插入迭代器范围的
 
 ### 3.6 针对于自定义类型
 
-![image-20240808144703570](..\0.TyporaPicture\image-20240808144703570-1733124502630-37.png)
+![image-20240808144703570](D:\Typora Picture\image-20240808144703570-1733124502630-37-1779858009792125.png)
 
 - 如果**key本身是可比较类型(即key是内置类型)**或**仅value是自定义类型**，其实不需要额外的操作，map可以正常进行遍历
 
-  ![image-20240808144700093](..\0.TyporaPicture\image-20240808144700093-1733124502630-38.png)
+  ![image-20240808144700093](D:\Typora Picture\image-20240808144700093-1733124502630-38-1779858009792126.png)
 
 - 如果Key对应的是自定义类型
 
   1. 之前写的函数模板可以遍历前面五种容器的元素，但是map不行，因为map的元素都是pair，而**pair不能直接用输出流运算符进行输出**
 
-     ![image-20241210115238336](..\0.TyporaPicture\image-20241210115238336.png)
+     ![image-20241210115238336](D:\Typora Picture\image-20241210115238336-1779858009792127.png)
 
      此时有两个display构成**函数模板的重载**，第一个适用于任意的容器类型，**第二个专门用于map类型**
 
@@ -13297,13 +13956,13 @@ map**也有三种插入的方式：插入一个元素、插入迭代器范围的
 
      - 但如果用的是**函数对象**的方法，**在遍历时还需要一点改动（==即增添一个模板参数==）**
 
-       <img src="..\0.TyporaPicture\image-20241210171242405.png" alt="image-20241210171242405" style="zoom:67%;" />
+       <img src="D:\Typora Picture\image-20241210171242405-1779858009792128.png" alt="image-20241210171242405" style="zoom:67%;" />
 
 ## 4.multimap的使用
 
 ### 4.1 基本特征
 
-![image-20240808145243572](..\0.TyporaPicture\image-20240808145243572-1733124502630-39.png)
+![image-20240808145243572](D:\Typora Picture\image-20240808145243572-1733124502630-39-1779858009792130.png)
 
 ### 4.2 其他操作
 
@@ -13311,7 +13970,7 @@ multimap的**查找功能（count、find）、插入功能（insert）、删除�
 
 ### 4.3 不支持下标
 
-![image-20240808145436542](..\0.TyporaPicture\image-20240808145436542-1733124502630-40.png)
+![image-20240808145436542](D:\Typora Picture\image-20240808145436542-1733124502630-40-1779858009792133.png)
 
 ### 4.4 针对于自定义类型
 
@@ -13397,8 +14056,7 @@ multimap的**查找功能（count、find）、插入功能（insert）、删除�
 > 2. 1 mod 11 = 1，挂载在下标1位置
 > 3. 23 mod 11 = 1，用链表的形式挂在元素1的后面
 >
-> ![image-20240808151302071](..\0.TyporaPicture\image-20240808151302071-1733125193831-63.png)
->
+> ![image-20240808151302071](D:\Typora Picture\image-20240808151302071-1733125193831-63-1779858009792129.png)
 
 ## 2.unordered_set的使用
 
@@ -13410,15 +14068,15 @@ unordered_set在使用时除了元素的类型，还需要关注几个模板参�
 
 对于内置类型和指针类型，可以直接使用这一容器，如果是自定义类型对象作为元素，则需要为其准备这些模板参数。
 
-<img src="..\0.TyporaPicture\image-20241212113324137.png" alt="image-20241212113324137" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20241212113324137-1779858009792132.png" alt="image-20241212113324137" style="zoom:67%;" />
 
 ### 2.1 基本特征
 
 创建unordered_set的方式和之前的容器没有多大区别
 
-![image-20240808153120111](..\0.TyporaPicture\image-20240808153120111-1733125234824-65.png)
+![image-20240808153120111](D:\Typora Picture\image-20240808153120111-1733125234824-65-1779858009792131.png)
 
-<img src="..\0.TyporaPicture\image-20241212115621977.png" alt="image-20241212115621977" style="zoom:80%;" />
+<img src="D:\Typora Picture\image-20241212115621977-1779858009792134.png" alt="image-20241212115621977" style="zoom:80%;" />
 
 **效果：无序 + 去重**
 
@@ -13428,47 +14086,47 @@ unordered_set的**查找（count、find）、插入（insert）、删除（erase
 
 ### ==2.3 针对于自定义类型==
 
-![image-20240808155505140](..\0.TyporaPicture\image-20240808155505140-1733125234824-68.png)
+![image-20240808155505140](D:\Typora Picture\image-20240808155505140-1733125234824-68-1779858009792137.png)
 
 针对于自定义类型而言，可能需要改写第二个模板参数Hash与第三个模板参数KeyEqual
 
 - Hash
 
-    Hash的默认采用的是std::hash，所以可以**改写的方案有两种**：**模板的特化**、**函数对象的形式**，==与运算符重载没有什么关系==
+  Hash的默认采用的是std::hash，所以可以**改写的方案有两种**：**模板的特化**、**函数对象的形式**，==与运算符重载没有什么关系==
 
-    1. **模板特化**
+  1. **模板特化**
 
-       ![image-20240808163638815](..\0.TyporaPicture\image-20240808163638815-1733125234824-66.png)
+     ![image-20240808163638815](D:\Typora Picture\image-20240808163638815-1733125234824-66-1779858009792135.png)
 
-       **如图，对横纵坐标分别进行左移再异或，其==本质实际就是任意设计出一套哈希函数==**
+     **如图，对横纵坐标分别进行左移再异或，其==本质实际就是任意设计出一套哈希函数==**
 
-    2. **函数对象**
+  2. **函数对象**
 
-       ![image-20240808163705044](..\0.TyporaPicture\image-20240808163705044-1733125234824-67.png)
+     ![image-20240808163705044](D:\Typora Picture\image-20240808163705044-1733125234824-67-1779858009792136.png)
 
 - KeyEqual
 
-    第三个模板参数KeyEqual的传参有**三种方式**：**模板的特化**、**函数对象的形式**、**运算符重载**
+  第三个模板参数KeyEqual的传参有**三种方式**：**模板的特化**、**函数对象的形式**、**运算符重载**
 
-    <font color=red>**注意：在operator()函数中加上打印语句后，可以观察打印的次数，进而能更直观地分析什么时候才会用上equal_to函数对象**</font>
+  <font color=red>**注意：在operator()函数中加上打印语句后，可以观察打印的次数，进而能更直观地分析什么时候才会用上equal_to函数对象**</font>
 
-    1. **模板特化**
+  1. **模板特化**
 
-       ![image-20240808163825379](..\0.TyporaPicture\image-20240808163825379-1733125234824-70.png)
+     ![image-20240808163825379](D:\Typora Picture\image-20240808163825379-1733125234824-70-1779858009792139.png)
 
-    2. **函数对象**
-    
-       ![image-20240808163848707](..\0.TyporaPicture\image-20240808163848707-1733125234824-69.png)
-    
-    3. **运算符重载**
-    
-       ![image-20240808163930278](..\0.TyporaPicture\image-20240808163930278-1733125234824-71.png)
+  2. **函数对象**
+
+     ![image-20240808163848707](D:\Typora Picture\image-20240808163848707-1733125234824-69-1779858009792138.png)
+
+  3. **运算符重载**
+
+     ![image-20240808163930278](D:\Typora Picture\image-20240808163930278-1733125234824-71-1779858009792141.png)
 
 ## 3.unordered_multiset的使用
 
 ### 3.1 基本特征
 
-![image-20240808170654309](..\0.TyporaPicture\image-20240808170654309-1733125234824-72.png)
+![image-20240808170654309](D:\Typora Picture\image-20240808170654309-1733125234824-72-1779858009792140.png)
 
 ### 3.2 其他操作
 
@@ -13482,7 +14140,7 @@ unordered_multiset**针对于自定义类型的写法与unordered_set的用法�
 
 ### 4.1 基本特征
 
-![image-20240808171339880](..\0.TyporaPicture\image-20240808171339880-1733125234824-73.png)
+![image-20240808171339880](D:\Typora Picture\image-20240808171339880-1733125234824-73-1779858009792142.png)
 
 ### 4.2 其他操作
 
@@ -13490,13 +14148,13 @@ unordered_map的**查找（count、find）、插入（insert）、删除（erase
 
 ### ==4.3 支持下标==
 
-![image-20240808171527718](..\0.TyporaPicture\image-20240808171527718-1733125234824-74.png)
+![image-20240808171527718](D:\Typora Picture\image-20240808171527718-1733125234824-74-1779858009792143.png)
 
 ## 5.unordered_multimap的使用
 
 ### 5.1 基本特征
 
-![image-20240808172135639](..\0.TyporaPicture\image-20240808172135639-1733125234825-75.png)
+![image-20240808172135639](D:\Typora Picture\image-20240808172135639-1733125234825-75-1779858009792146.png)
 
 ### 5.2 其他操作
 
@@ -13504,7 +14162,7 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
 
 ### ==5.3 不支持下标==
 
-![image-20240808172248938](..\0.TyporaPicture\image-20240808172248938-1733125234825-76.png)
+![image-20240808172248938](D:\Typora Picture\image-20240808172248938-1733125234825-76-1779858009792147.png)
 
 ## 6.总结
 
@@ -13524,7 +14182,7 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
    >
    > 例如**list中是有sort函数**的，对于**vector与deque可以借鉴使用算法库中的sort函数**进行排序
    >
-   > <img src="..\0.TyporaPicture\image-20241213115102389.png" alt="image-20241213115102389"  />
+   > <img src="D:\Typora Picture\image-20241213115102389-1779858009792144.png" alt="image-20241213115102389"  />
 
 2. **迭代器的类型**
 
@@ -13550,23 +14208,23 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
 
 **容器适配器**的作用其实可以理解为**是对==序列式容器==进行封装**，*使其表现出特定的行为和接口，以满足不同的应用需求*
 
-<img src="..\0.TyporaPicture\image-20241213152152135.png" alt="image-20241213152152135" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20241213152152135-1779858009793151.png" alt="image-20241213152152135" style="zoom:67%;" />
 
 ### 1.栈(stack)
 
-<img src="..\0.TyporaPicture\image-20241213155815990.png" alt="image-20241213155815990" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20241213155815990-1779858009792145.png" alt="image-20241213155815990" style="zoom:67%;" />
 
 ### 2.队列(queue)
 
-<img src="..\0.TyporaPicture\image-20241213160014049.png" alt="image-20241213160014049" style="zoom: 67%;" />
+<img src="D:\Typora Picture\image-20241213160014049-1779858009792148.png" alt="image-20241213160014049" style="zoom: 67%;" />
 
 ### 3.优先级队列(priority_queue)
 
-![image-20240809102130717](..\0.TyporaPicture\image-20240809102130717-1733126644616-89.png)
+![image-20240809102130717](D:\Typora Picture\image-20240809102130717-1733126644616-89-1779858009793153.png)
 
-![image-20241213161252492](..\0.TyporaPicture\image-20241213161252492.png)
+![image-20241213161252492](D:\Typora Picture\image-20241213161252492-1779858009793150.png)
 
-<img src="..\0.TyporaPicture\image-20241213161347228.png" alt="image-20241213161347228" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20241213161347228-1779858009793149.png" alt="image-20241213161347228" style="zoom:67%;" />
 
 对于vector或者deque，value_type就是T，即**priority_queue的Compare要提供的是对容器中元素的比较方式**
 
@@ -13576,9 +14234,9 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
 
   以下的遍历实际上是清空式的遍历，遍历完后优先级队列实际上没有元素了，如果不想进行清空式的遍历，可以在遍历之前先复制一次priority_queue
 
-  ![image-20240809105418557](..\0.TyporaPicture\image-20240809105418557-1733126644617-91.png)
+  ![image-20240809105418557](D:\Typora Picture\image-20240809105418557-1733126644617-91-1779858009793154.png)
 
-  <img src="..\0.TyporaPicture\image-20241213172224047.png" alt="image-20241213172224047" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20241213172224047-1779858009793155.png" alt="image-20241213172224047" style="zoom:67%;" />
 
 
 
@@ -13586,7 +14244,7 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
 
   稍微修改一下代码，往空的优先级队列添加元素，观察填充过程
 
-  <img src="..\0.TyporaPicture\image-20250323172224604.png" alt="image-20250323172224604" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250323172224604-1779858009793152.png" alt="image-20250323172224604" style="zoom:67%;" />
 
   > `priority_queue`（优先级队列）和 `set` 虽然都能用 `compare` 自定义排序，**共用同样的比较函数（less/greater/ 自定义），但语义、效果、底层逻辑完全相反**
   >
@@ -13628,6 +14286,7 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
 ### 3.3 针对于自定义类型
 
 因为**优先级队列的第三个模板参数使用的是Compare，默认值是std::less**，所以**如果自定义类型不能进行比较，就需要进行改写**，**改写的方案与set针对于Compare的改写方式完全一样**，有三种：模板的特化、函数对象的形式、运算符重载
+
 # Day23_STL标准模板库3-迭代器
 
 ## 一、迭代器
@@ -13658,21 +14317,21 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
 4. 双向迭代器(BidirectionIterator)
 5. 随机访问迭代器(RandomAccessIterator)
 
-<img src="..\0.TyporaPicture\image-20250102105616784.png" alt="image-20250102105616784" style="zoom:80%;" />
+<img src="D:\Typora Picture\image-20250102105616784-1779858031386213.png" alt="image-20250102105616784" style="zoom:80%;" />
 
 - **五种迭代器之间的关系（逻辑层面上近似于继承关系）**
 
-  <img src="..\0.TyporaPicture\image-20240809114205549-1733126659853-98.png" alt="image-20240809114205549" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20240809114205549-1733126659853-98-1779858031386214.png" alt="image-20240809114205549" style="zoom:67%;" />
 
   > 举个简单的例子，根据我们对继承关系的了解，我们可以推测出：
   >
-  > ![image-20250102114216223](..\0.TyporaPicture\image-20250102114216223.png)
+  > ![image-20250102114216223](D:\Typora Picture\image-20250102114216223-1779858031386215.png)
 
 - **为什么要定义这么多种迭代器**
 
   为了物尽其用，使得具体的操作使用具体类型的迭代器，避免迭代器的功能太大或者太小，导致使用起来不方便。每个容器及其对应的迭代器的类型图表如下：
 
-  <img src="..\0.TyporaPicture\image-20250102114702572.png" alt="image-20250102114702572" style="zoom: 67%;" />
+  <img src="D:\Typora Picture\image-20250102114702572-1779858031386216.png" alt="image-20250102114702572" style="zoom: 67%;" />
 
 - **总结**
 
@@ -13719,7 +14378,7 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
 
 - **通过cpp参考文档查看输出流迭代器构造函数的说明：**
 
-  <img src="..\0.TyporaPicture\image-20250102152744535.png" alt="image-20250102152744535" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250102152744535-1779858031386218.png" alt="image-20250102152744535" style="zoom:67%;" />
 
   > `std::ostream_iterator` 是模板类，定义在 `<iterator>` 头文件中，**有两个公开构造函数**：
   >
@@ -13737,135 +14396,135 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
   >
   > 最常用的一种使用方式：使用 `std::copy` 算法通过输入流迭代器从文件中读取数据，然后通过输出流迭代器将数据输出到控制台，就像操作普通容器一样
   >
-  > ![image-20250318195617489](..\0.TyporaPicture\image-20250318195617489.png)
+  > ![image-20250318195617489](D:\Typora Picture\image-20250318195617489-1779858031386217.png)
   >
-  > <img src="..\0.TyporaPicture\image-20250102153042767.png" alt="image-20250102153042767" style="zoom:67%;" />
+  > <img src="D:\Typora Picture\image-20250102153042767-1779858031386221.png" alt="image-20250102153042767" style="zoom:67%;" />
   >
   > 
   >
-  > <img src="..\0.TyporaPicture\image-20250102152333957.png" alt="image-20250102152333957" style="zoom:67%;" />
+  > <img src="D:\Typora Picture\image-20250102152333957-1779858031386219.png" alt="image-20250102152333957" style="zoom:67%;" />
   >
   > 其实结果很容易推测出来。**至此，我们发现又多了一种遍历容器元素的方式**，那么这个输出的效果是怎么实现的呢？
 
 - **通过copy源码来认识如何将数据输出到控制台**
 
-     1. 输出流迭代器的类模板形式：
+  1. 输出流迭代器的类模板形式：
 
-         > **补充**
-         >
-         > `_Traits` 必须是一个类似 `std::char_traits` 的类，里面定义了一系列静态方法，告诉标准库如何处理字符，例如：
-         >
-         > - 怎么**比较**两个字符/字符串
-         > - 怎么**复制/移动**字符序列
-         > - 文件结束符 **EOF** 是哪个值
-         > - 怎么**查找**字符长度
-         >
-         > 默认情况下，`_Traits` 取 `char_traits<_CharT>`，也就是**用 _CharT 对应的标准特性**。比如：
-         >
-         > - 当 `_CharT` 是 `char` 时，`_Traits` 默认为 `std::char_traits<char>`（窄字符规则）
-         > - 当 `_CharT` 是 `wchar_t` 时，`_Traits` 默认为 `std::char_traits<wchar_t>`（宽字符规则）
-     
-         ```C++
-         // 类模板定义
-         // _Tp     : 要输出的数据类型（例如 int, string）
-         // _CharT  : 字符类型（默认 char）
-         // _Traits : 字符特性类（默认 char_traits<_CharT>）
-         template <class _Tp, class _CharT = char, class _Traits = char_traits<_CharT> >
-         class ostream_iterator {
-         public:
-             // 为方便使用，定义流类型的别名
-             // （源码中一般会有这行，这里补充并注释）
-             typedef basic_ostream<_CharT, _Traits> ostream_type;
-         
-             // ---------- 构造函数 ----------
-             // 参数：
-             //   __s : 输出流对象（如 std::cout）
-             //   __c : 分隔字符串指针（如 " "），可为空指针（表示无分隔）
-             // 初始化列表：
-             //   _M_stream 指向输出流的指针
-             //   _M_string 指向分隔字符串（浅拷贝，需保证生命周期）
-             ostream_iterator(ostream_type& __s, const _CharT* __c) 
-                 : _M_stream(&__s)   // 保存流地址
-                 , _M_string(__c)    // 保存分隔符地址
-             {}
-         
-             // ---------- 迭代器必需操作 ----------
-             // 解引用操作符：标准要求返回自身引用
-             // 这里不进行实际输出，仅返回迭代器本身
-             ostream_iterator<_Tp>& operator*() { return *this; }
-         
-             // 前置递增：标准要求返回自身引用，不做额外操作
-             ostream_iterator<_Tp>& operator++() { return *this; }
-         
-             // 后置递增：标准要求返回自身引用，不做额外操作
-             ostream_iterator<_Tp>& operator++(int) { return *this; }
-         
-             // ---------- 核心赋值操作 ----------
-             // 当执行 *it = value 时，实际调用此赋值运算符
-             // 1. 将 value 输出到绑定的流中
-             // 2. 如果分隔字符串非空，则再输出分隔字符串
-             ostream_iterator<_Tp>& operator=(const _Tp& __value) { 
-                 *_M_stream << __value;               // 输出数据，如: cout << 1
-                 if (_M_string)                       // 判断分隔符是否存在
-                     *_M_stream << _M_string;         // 输出分隔符，如: cout << "  "
-                 return *this;                        // 返回自身引用，支持链式赋值
-             }
-         
-         private:
-             ostream_type* _M_stream;   // 指向关联的输出流
-             const _CharT* _M_string;   // 指向分隔字符串（空指针表示无分隔）
-         };
-         ```
-     
-     1. copy函数的实现（cpp参考文档相关页直接给出）
-     
-        ```C++
-        template<class InputIt, class OutputIt>
-        OutputIt copy(InputIt first, InputIt last, OutputIt d_first) {
-            while (first != last) {
-                *d_first++ = *first++;
-            }
-            return d_first;
-        }
-        ```
-     
-     1. 以上述例子为参考进行分析
+     > **补充**
+     >
+     > `_Traits` 必须是一个类似 `std::char_traits` 的类，里面定义了一系列静态方法，告诉标准库如何处理字符，例如：
+     >
+     > - 怎么**比较**两个字符/字符串
+     > - 怎么**复制/移动**字符序列
+     > - 文件结束符 **EOF** 是哪个值
+     > - 怎么**查找**字符长度
+     >
+     > 默认情况下，`_Traits` 取 `char_traits<_CharT>`，也就是**用 _CharT 对应的标准特性**。比如：
+     >
+     > - 当 `_CharT` 是 `char` 时，`_Traits` 默认为 `std::char_traits<char>`（窄字符规则）
+     > - 当 `_CharT` 是 `wchar_t` 时，`_Traits` 默认为 `std::char_traits<wchar_t>`（宽字符规则）
 
-        ``` c++
-        // copy(vec.begin(), vec.end(), osi);
-        // first = vec.begin();
-        // last = vec.end()
-        // d_first = osi 
-        OutputIt copy(InputIt first, InputIt last, OutputIt d_first) {
-            while (first != last) {
-                //需要查看ostream_iterator的后置++与解引用（相应的运算符重载函数） 
-                *d_first++ = *first++;//++优先级高于解引用
-            }
-            return d_first;
-        }
-        
-        //	*******分析过程*******
-        osi = 1 // ostream_iterator调用operator=函数
-                last
-        1 5 9 7
-        f ------> f
-        ```
+     ```C++
+     // 类模板定义
+     // _Tp     : 要输出的数据类型（例如 int, string）
+     // _CharT  : 字符类型（默认 char）
+     // _Traits : 字符特性类（默认 char_traits<_CharT>）
+     template <class _Tp, class _CharT = char, class _Traits = char_traits<_CharT> >
+     class ostream_iterator {
+     public:
+         // 为方便使用，定义流类型的别名
+         // （源码中一般会有这行，这里补充并注释）
+         typedef basic_ostream<_CharT, _Traits> ostream_type;
+     
+         // ---------- 构造函数 ----------
+         // 参数：
+         //   __s : 输出流对象（如 std::cout）
+         //   __c : 分隔字符串指针（如 " "），可为空指针（表示无分隔）
+         // 初始化列表：
+         //   _M_stream 指向输出流的指针
+         //   _M_string 指向分隔字符串（浅拷贝，需保证生命周期）
+         ostream_iterator(ostream_type& __s, const _CharT* __c) 
+             : _M_stream(&__s)   // 保存流地址
+             , _M_string(__c)    // 保存分隔符地址
+         {}
+     
+         // ---------- 迭代器必需操作 ----------
+         // 解引用操作符：标准要求返回自身引用
+         // 这里不进行实际输出，仅返回迭代器本身
+         ostream_iterator<_Tp>& operator*() { return *this; }
+     
+         // 前置递增：标准要求返回自身引用，不做额外操作
+         ostream_iterator<_Tp>& operator++() { return *this; }
+     
+         // 后置递增：标准要求返回自身引用，不做额外操作
+         ostream_iterator<_Tp>& operator++(int) { return *this; }
+     
+         // ---------- 核心赋值操作 ----------
+         // 当执行 *it = value 时，实际调用此赋值运算符
+         // 1. 将 value 输出到绑定的流中
+         // 2. 如果分隔字符串非空，则再输出分隔字符串
+         ostream_iterator<_Tp>& operator=(const _Tp& __value) { 
+             *_M_stream << __value;               // 输出数据，如: cout << 1
+             if (_M_string)                       // 判断分隔符是否存在
+                 *_M_stream << _M_string;         // 输出分隔符，如: cout << "  "
+             return *this;                        // 返回自身引用，支持链式赋值
+         }
+     
+     private:
+         ostream_type* _M_stream;   // 指向关联的输出流
+         const _CharT* _M_string;   // 指向分隔字符串（空指针表示无分隔）
+     };
+     ```
+
+  1. copy函数的实现（cpp参考文档相关页直接给出）
+
+     ```C++
+     template<class InputIt, class OutputIt>
+     OutputIt copy(InputIt first, InputIt last, OutputIt d_first) {
+         while (first != last) {
+             *d_first++ = *first++;
+         }
+         return d_first;
+     }
+     ```
+
+  1. 以上述例子为参考进行分析
+
+     ``` c++
+     // copy(vec.begin(), vec.end(), osi);
+     // first = vec.begin();
+     // last = vec.end()
+     // d_first = osi 
+     OutputIt copy(InputIt first, InputIt last, OutputIt d_first) {
+         while (first != last) {
+             //需要查看ostream_iterator的后置++与解引用（相应的运算符重载函数） 
+             *d_first++ = *first++;//++优先级高于解引用
+         }
+         return d_first;
+     }
+     
+     //	*******分析过程*******
+     osi = 1 // ostream_iterator调用operator=函数
+             last
+     1 5 9 7
+     f ------> f
+     ```
 
 #### 3.2 输入流迭代器
 
 - **构造函数**
 
-  <img src="..\0.TyporaPicture\image-20250103091012302.png" alt="image-20250103091012302" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250103091012302-1779858031386220.png" alt="image-20250103091012302" style="zoom:67%;" />
 
 - **使用示例**
 
   可以利用一个通用输入流对象初始化istream_iterator
 
-  <img src="..\0.TyporaPicture\image-20250103090859551.png" alt="image-20250103090859551" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250103090859551-1779858031386222.png" alt="image-20250103090859551" style="zoom:67%;" />
 
   可能出现的段错误
 
-  <img src="..\0.TyporaPicture\image-20250103114516852.png" alt="image-20250103114516852" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250103114516852-1779858031386223.png" alt="image-20250103114516852" style="zoom:67%;" />
 
   > **解析**
   >
@@ -13968,7 +14627,7 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
   > | **`back_insert_iterator`** | **类模板**   | **迭代器适配器本体**，包装容器，实现尾插逻辑       |
   > | **`back_inserter`**        | **函数模板** | 辅助工具，**快速创建** `back_insert_iterator` 对象 |
 
-  <img src="..\0.TyporaPicture\image-20250103114847667.png" alt="image-20250103114847667" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250103114847667-1779858031386224.png" alt="image-20250103114847667" style="zoom:67%;" />
 
 - **源码**
 
@@ -14114,9 +14773,9 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
       return back_insert_iterator<_Container>(__x);
   }
   ```
-  
+
   **back_insert_iterator(==迭代器适配器-类模板==)的实现**
-  
+
   ```cpp
   template <class _Container>
   class back_insert_iterator {
@@ -14195,7 +14854,7 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
 
 - **三组插入迭代器适配器**
 
-  <img src="..\0.TyporaPicture\image-20250103181150482.png" alt="image-20250103181150482" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250103181150482-1779858031386225.png" alt="image-20250103181150482" style="zoom:67%;" />
 
   1. back_inserter是**便捷函数**，该函数返回类型是back_insert_iterator，它们的底层会调用容器的push_back
 
@@ -14208,7 +14867,7 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
 
   **除了以往的常规方式（遍历list的元素，再使用vector的push_back函数添加这些元素），还可以使用迭代器**
 
-  <img src="..\0.TyporaPicture\image-20250106111219439.png" alt="image-20250106111219439" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250106111219439-1779858031387227.png" alt="image-20250106111219439" style="zoom:67%;" />
 
     > **上面两行copy语句是等价的，它们实现的功能一模一样，只是写法上的 “便捷版” 和 “完整版” 区别**
     >
@@ -14238,9 +14897,9 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
 
     再将vector的元素插入到list头部
 
-    <img src="..\0.TyporaPicture\image-20250106111304333.png" alt="image-20250106111304333" style="zoom:67%;" />
+    <img src="D:\Typora Picture\image-20250106111304333-1779858031386226.png" alt="image-20250106111304333" style="zoom:67%;" />
 
-    <img src="..\0.TyporaPicture\image-20250106144924432.png" alt="image-20250106144924432" style="zoom:67%;" />
+    <img src="D:\Typora Picture\image-20250106144924432-1779858031387228.png" alt="image-20250106144924432" style="zoom:67%;" />
 
     从得到的结果可以想到，执行的过程是从头到尾遍历vector的元素，然后一次次执行了push_front函数
 
@@ -14259,10 +14918,10 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
     >        所以下面这种写法**编译不通过**：
     >
     >        ```cpp
-    >        std::list<int> lst = {1,2,3};
-    >        std::vector<int> vec;
-    >        // 错误：vector 不能用 front_inserter
-    >        std::copy(lst.begin(), lst.end(), std::front_inserter(vec));
+    >      std::list<int> lst = {1,2,3};
+    >      std::vector<int> vec;
+    >      // 错误：vector 不能用 front_inserter
+    >      std::copy(lst.begin(), lst.end(), std::front_inserter(vec));
     >        ```
     >
     >      2. 应该使用 insert + 反向迭代器
@@ -14273,11 +14932,11 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
     >        #include <vector>
     >        #include <list>
     >        #include <algorithm>
-    >                  
+    >      
     >        int main() {
     >            std::list<int> lst = {1,2,3};
     >            std::vector<int> vec = {10,20,30};
-    >                  
+    >      
     >            // 把 list 元素整体插到 vector 头部
     >            vec.insert(vec.begin(), lst.begin(), lst.end());
     >            // vec 现在：1,2,3,10,20,30
@@ -14287,8 +14946,8 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
     >        如果希望**逆序插入**（类似 front_inserter 的效果）：
     >
     >        ```cpp
-    >        vec.insert(vec.begin(), lst.rbegin(), lst.rend());
-    >        // vec 变成：3,2,1,10,20,30
+    >      vec.insert(vec.begin(), lst.rbegin(), lst.rend());
+    >      // vec 变成：3,2,1,10,20,30
     >        ```
     >
     >
@@ -14322,98 +14981,98 @@ unordered_multimap的**查找（count、find）、插入（insert）、删除（
     >
     > 2. 将list的元素插入到set中
     >
-    >    ![image-20240809164112172](..\0.TyporaPicture\image-20240809164112172-1733126659852-96.png)
+    >    ![image-20240809164112172](D:\Typora Picture\image-20240809164112172-1733126659852-96-1779858031387229.png)
     >
     > <font color=red>**所以：使用上述三种插入迭代器的时候，如果容器本身不具备对应插入函数的话，那么就不能乱用**</font>
 
 - **copy、front_inserter、front_insert_iterator的源码：**
 
-    ```cpp
-    // ==============================================
-    // 1. std::copy 算法的实现
-    // 将 [first, last) 范围内的元素依次复制到 d_first 开始的位置
-    // ==============================================
-    template<class InputIt, class OutputIt>
-    OutputIt copy(InputIt first, InputIt last, OutputIt d_first)
-    {
-        while (first != last) {
-            // 核心循环：
-            // *d_first++ = *first++;
-            // 1. *first  : 获取当前输入位置的元素
-            // 2. first++ : 输入迭代器前进（后置递增，返回原值后移动）
-            // 3. *d_first++ = 值 : 将值赋给输出迭代器的当前位置，然后输出迭代器前进
-            // 
-            // 对于 front_insert_iterator，*d_first 返回迭代器自身，
-            // ++ 也是空操作，真正的插入发生在赋值运算符中（调用 push_front）
-            *d_first++ = *first++;
-        }
-        return d_first;
-    }
-    
-    // ==============================================
-    // 2. front_inserter 辅助函数
-    // 用于方便地创建 front_insert_iterator 对象
-    // ==============================================
-    template <class _Container>
-    inline front_insert_iterator<_Container> front_inserter(_Container& __x)
-    {
-        // 将容器的引用传递给 front_insert_iterator 的构造函数，
-        // 使其持有指向该容器的指针。
-        return front_insert_iterator<_Container>(__x);
-    }
-    
-    // ==============================================
-    // 3. front_insert_iterator 类模板
-    // 输出迭代器，专用于在容器前端插入元素
-    // ==============================================
-    template <class _Container>
-    class front_insert_iterator {
-    protected:
-        _Container* container;  // 指向目标容器的指针
-    
-    public:
-        // ---- 迭代器特征类型定义 ----
-        typedef _Container          container_type;
-        typedef output_iterator_tag iterator_category; // 标记为输出迭代器
-        typedef void                value_type;
-        typedef void                difference_type;
-        typedef void                pointer;
-        typedef void                reference;
-    
-        // 构造函数：接收容器引用，保存其地址
-        // 使用 explicit 避免隐式转换
-        explicit front_insert_iterator(_Container& __x) : container(&__x) {}
-    
-        // ---- 赋值运算符：核心操作 ----
-        // 当执行 *it = value 时调用此函数
-        front_insert_iterator<_Container>&
-        operator=(const typename _Container::value_type& __value)
-        {
-            // 在容器头部插入元素
-            // 要求容器支持 push_front 操作（如 list, deque, forward_list 等）
-            container->push_front(__value);
-            return *this;
-        }
-    
-        // ---- 以下三个运算符是输出迭代器的接口要求，实现为空操作 ----
-        // operator*：解引用，返回迭代器自身，以便后续赋值
-        front_insert_iterator<_Container>& operator*() { return *this; }
-    
-        // operator++（前置）：前进到下一位置，在此无实际位置概念
-        front_insert_iterator<_Container>& operator++() { return *this; }
-    
-        // operator++(int)（后置）：同样返回自身，维持链式语法兼容性
-        front_insert_iterator<_Container>& operator++(int) { return *this; }
-    };
-    ```
+  ```cpp
+  // ==============================================
+  // 1. std::copy 算法的实现
+  // 将 [first, last) 范围内的元素依次复制到 d_first 开始的位置
+  // ==============================================
+  template<class InputIt, class OutputIt>
+  OutputIt copy(InputIt first, InputIt last, OutputIt d_first)
+  {
+      while (first != last) {
+          // 核心循环：
+          // *d_first++ = *first++;
+          // 1. *first  : 获取当前输入位置的元素
+          // 2. first++ : 输入迭代器前进（后置递增，返回原值后移动）
+          // 3. *d_first++ = 值 : 将值赋给输出迭代器的当前位置，然后输出迭代器前进
+          // 
+          // 对于 front_insert_iterator，*d_first 返回迭代器自身，
+          // ++ 也是空操作，真正的插入发生在赋值运算符中（调用 push_front）
+          *d_first++ = *first++;
+      }
+      return d_first;
+  }
+  
+  // ==============================================
+  // 2. front_inserter 辅助函数
+  // 用于方便地创建 front_insert_iterator 对象
+  // ==============================================
+  template <class _Container>
+  inline front_insert_iterator<_Container> front_inserter(_Container& __x)
+  {
+      // 将容器的引用传递给 front_insert_iterator 的构造函数，
+      // 使其持有指向该容器的指针。
+      return front_insert_iterator<_Container>(__x);
+  }
+  
+  // ==============================================
+  // 3. front_insert_iterator 类模板
+  // 输出迭代器，专用于在容器前端插入元素
+  // ==============================================
+  template <class _Container>
+  class front_insert_iterator {
+  protected:
+      _Container* container;  // 指向目标容器的指针
+  
+  public:
+      // ---- 迭代器特征类型定义 ----
+      typedef _Container          container_type;
+      typedef output_iterator_tag iterator_category; // 标记为输出迭代器
+      typedef void                value_type;
+      typedef void                difference_type;
+      typedef void                pointer;
+      typedef void                reference;
+  
+      // 构造函数：接收容器引用，保存其地址
+      // 使用 explicit 避免隐式转换
+      explicit front_insert_iterator(_Container& __x) : container(&__x) {}
+  
+      // ---- 赋值运算符：核心操作 ----
+      // 当执行 *it = value 时调用此函数
+      front_insert_iterator<_Container>&
+      operator=(const typename _Container::value_type& __value)
+      {
+          // 在容器头部插入元素
+          // 要求容器支持 push_front 操作（如 list, deque, forward_list 等）
+          container->push_front(__value);
+          return *this;
+      }
+  
+      // ---- 以下三个运算符是输出迭代器的接口要求，实现为空操作 ----
+      // operator*：解引用，返回迭代器自身，以便后续赋值
+      front_insert_iterator<_Container>& operator*() { return *this; }
+  
+      // operator++（前置）：前进到下一位置，在此无实际位置概念
+      front_insert_iterator<_Container>& operator++() { return *this; }
+  
+      // operator++(int)（后置）：同样返回自身，维持链式语法兼容性
+      front_insert_iterator<_Container>& operator++(int) { return *this; }
+  };
+  ```
 
 #### 4.2 反向迭代器适配器
 
-![image-20240809170644459](..\0.TyporaPicture\image-20240809170644459-1733126659852-95.png)
+![image-20240809170644459](D:\Typora Picture\image-20240809170644459-1733126659852-95-1779858031387231.png)
 
 **注意遍历时偏移的方式，仍然是自增（只不过这里的自增对应的是向左移动）**
 
-![image-20240809171255460](..\0.TyporaPicture\image-20240809171255460-1733126659853-99.png)
+![image-20240809171255460](D:\Typora Picture\image-20240809171255460-1733126659853-99-1779858031387230.png)
 
 # Day24_STL标准模板库4-算法
 
@@ -14439,7 +15098,7 @@ STL的算法库中的函数，都是属于普通函数（并不是哪一个类�
 
 首先查看cpp参考文档的描述
 
-<img src="..\0.TyporaPicture\image-20250110103033784.png" alt="image-20250110103033784" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20250110103033784-1779858036792252.png" alt="image-20250110103033784" style="zoom:67%;" />
 
 - 第三个参数需要传一个一元函数（或者仿函数），其函数形参只有一个（不一定要有const或者&）
 
@@ -14449,7 +15108,7 @@ STL的算法库中的函数，都是属于普通函数（并不是哪一个类�
 
 - 示例
 
-  <img src="..\0.TyporaPicture\image-20250110104510905.png" alt="image-20250110104510905" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250110104510905-1779858036792251.png" alt="image-20250110104510905" style="zoom:67%;" />
 
   想要通过for_each改变vector中元素的内容，就得在func函数上做文章，可以给func函数形参改成引用
 
@@ -14471,7 +15130,7 @@ STL的算法库中的函数，都是属于普通函数（并不是哪一个类�
 
 以for_each的使用为例，有时**为了使用一些简单的函数**，会经常使用到lambda表达式
 
-<img src="..\0.TyporaPicture\image-20250110141631261.png" alt="image-20250110141631261" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20250110141631261-1779858036792254.png" alt="image-20250110141631261" style="zoom:67%;" />
 
 #### 4.1 语法结构
 
@@ -14494,35 +15153,35 @@ STL的算法库中的函数，都是属于普通函数（并不是哪一个类�
 >
 > {}——函数的**函数体**
 >
-> <img src="..\0.TyporaPicture\image-20250110151601816.png" alt="image-20250110151601816" style="zoom:67%;" />
+> <img src="D:\Typora Picture\image-20250110151601816-1779858036792253.png" alt="image-20250110151601816" style="zoom:67%;" />
 >
 > 如果没有在[]中捕获a、b，那么在匿名函数的函数体中无法访问它们
 >
 > 进一步的，还可以给匿名函数增加函数参数，以及指定函数返回类型
 >
-> <img src="..\0.TyporaPicture\image-20250110154439061.png" alt="image-20250110154439061" style="zoom:67%;" />
+> <img src="D:\Typora Picture\image-20250110154439061-1779858036792256.png" alt="image-20250110154439061" style="zoom:67%;" />
 >
 > <span style=color:red;background:yellow>**注意：**</span>捕获列表捕获的是局部变量，全局变量不需要捕获
 >
-> <img src="..\0.TyporaPicture\image-20250110154541870.png" alt="image-20250110154541870" style="zoom:67%;" />
+> <img src="D:\Typora Picture\image-20250110154541870-1779858036792257.png" alt="image-20250110154541870" style="zoom:67%;" />
 
 #### 4.2 引用捕获与值捕获的区别
 
 如果**想要通过捕获列表(形参)改变局部变量(实参)的值**
 
-<img src="..\0.TyporaPicture\image-20250110163859032.png" alt="image-20250110163859032" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20250110163859032-1779858036792255.png" alt="image-20250110163859032" style="zoom:67%;" />
 
 
 
 函数选项的位置**加上mutable关键字才能对==局部变量==a/b(lambda表达式中的形参)进行修改操作，但这样做也并不能修改a和b实际的值(传给lambda表达式的实参)（==即加上mutable仅为前提==）**
 
-<img src="..\0.TyporaPicture\image-20250110164140708.png" alt="image-20250110164140708" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20250110164140708-1779858036792258.png" alt="image-20250110164140708" style="zoom:67%;" />
 
 看到上述的结果，应该能联想到常规函数的值传递场景，**==想要真正通过形参改变实参==，形参需要写成==引用形式==（==此为核心==）**
 
 那么对于匿名函数而言，如果想要在匿名函数中修改捕获的变量其本身的值，那么应该采用的是<font color=red>**引用捕获**</font>
 
-<img src="..\0.TyporaPicture\image-20250110164446682.png" alt="image-20250110164446682" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20250110164446682-1779858036792259.png" alt="image-20250110164446682" style="zoom:67%;" />
 
 **另外，对于==全局变量和函数参数(形参)==，匿名函数中可以直接完成修改**
 
@@ -14540,7 +15199,7 @@ STL的算法库中的函数，都是属于普通函数（并不是哪一个类�
 
 现在考虑到一个问题，在前面的例子中，匿名函数每次都是当场定义**当场调用**(**表达式函数体结尾的`}`之后加上(实参)**)的，那么匿名函数是否可以像普通的函数一样去复用呢？
 
-![image-20240810112342157](..\0.TyporaPicture\image-20240810112342157-1733126757209-108.png)
+![image-20240810112342157](D:\Typora Picture\image-20240810112342157-1733126757209-108-1779858036793276.png)
 
 > **经典写法与错误：**
 >
@@ -14562,14 +15221,14 @@ STL的算法库中的函数，都是属于普通函数（并不是哪一个类�
 >
 > ```cpp
 > void test() {
->  int a = 10, b = 20;
->  auto f1 = [] { return a; }; // error: 未捕获a
->  auto f2 = [&] { return a++; };
->  auto f3 = [=] { return a; }; 
->  auto f4 = [=] { return a++; }; // error: 值捕获不能进行写操作，a++是写操作
->  auto f5 = [a] { return a + b; }; // error: 未捕获b
->  auto f6 = [a, &b] { return a + (b++); }; 
->  auto f7 = [=, &b] { return a + (b++); }; 
+> int a = 10, b = 20;
+> auto f1 = [] { return a; }; // error: 未捕获a
+> auto f2 = [&] { return a++; };
+> auto f3 = [=] { return a; }; 
+> auto f4 = [=] { return a++; }; // error: 值捕获不能进行写操作，a++是写操作
+> auto f5 = [a] { return a + b; }; // error: 未捕获b
+> auto f6 = [a, &b] { return a + (b++); }; 
+> auto f7 = [=, &b] { return a + (b++); }; 
 > }
 > ```
 >
@@ -14639,7 +15298,7 @@ STL的算法库中的函数，都是属于普通函数（并不是哪一个类�
 
 依旧从cpp参考文档出发
 
-![image-20250110170422501](..\0.TyporaPicture\image-20250110170422501.png)
+![image-20250110170422501](D:\Typora Picture\image-20250110170422501-1779858036792260.png)
 
 - 第三个参数p是一个一元谓词
 
@@ -14655,7 +15314,7 @@ STL的算法库中的函数，都是属于普通函数（并不是哪一个类�
 
 <font color=red>**但是发现没有得到想要的结果**</font>，那么此时可以从源码出发来进行探索
 
-<img src="..\0.TyporaPicture\image-20250110170124860.png" alt="image-20250110170124860" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20250110170124860-1779858036792261.png" alt="image-20250110170124860" style="zoom:67%;" />
 
 #### 5.2 源码
 
@@ -14748,7 +15407,7 @@ STL的算法库中的函数，都是属于普通函数（并不是哪一个类�
 
 也就是说，remove只负责移动，最终的删除还需要调用erase
 
-<img src="..\0.TyporaPicture\image-20250113112112414.png" alt="image-20250113112112414" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20250113112112414-1779858036792262.png" alt="image-20250113112112414" style="zoom:67%;" />
 
 > 思维拓展：
 >
@@ -14756,7 +15415,7 @@ STL的算法库中的函数，都是属于普通函数（并不是哪一个类�
 >
 > 而在我们以往的认知中，同时干两件事总是比较容易出问题。比如多线程环境下，一个线程对某个数据进行写操作，一个线程对它进行读操作，如果不加锁的话，没法确定执行的先后，可能会出现预期之外的值。可以通过下面的例子来理解一下：
 >
-> <img src="..\0.TyporaPicture\image-20250113175527651.png" alt="image-20250113175527651" style="zoom:67%;" />
+> <img src="D:\Typora Picture\image-20250113175527651-1779858036792263.png" alt="image-20250113175527651" style="zoom:67%;" />
 >
 > 大家认为这样一串代码会有什么样的结果呢？运行一下，可能会大跌眼镜
 >
@@ -14764,7 +15423,7 @@ STL的算法库中的函数，都是属于普通函数（并不是哪一个类�
 
 > 很容易想到：更新迭代器的方法
 >
-> <img src="..\0.TyporaPicture\image-20250506170452148.png" alt="image-20250506170452148" style="zoom:67%;" />
+> <img src="D:\Typora Picture\image-20250506170452148-1779858036792264.png" alt="image-20250506170452148" style="zoom:67%;" />
 >
 > 小心迭代器失效，如果有扩容机制，一定得记得更新迭代器
 
@@ -14816,7 +15475,7 @@ void test0() {
 
 > 既然是比较两个数的大小，我们很容易联想到之前已经多次使用的std::less和std::greater，尝试使用会发现一个问题
 >
-> <img src="..\0.TyporaPicture\image-20250330173517241.png" alt="image-20250330173517241" style="zoom:67%;" />
+> <img src="D:\Typora Picture\image-20250330173517241-1779858036792265.png" alt="image-20250330173517241" style="zoom:67%;" />
 >
 > ``` c++
 > // std::less对象作为函数对象，其底层的operator()函数需要两个参数
@@ -14832,7 +15491,7 @@ void test0() {
 
 - **函数原型**
 
-  ![image-20260525201412483](..\0.TyporaPicture\image-20260525201412483.png)
+  ![image-20260525201412483](D:\Typora Picture\image-20260525201412483-1779858036792267.png)
 
 - **源码**
 
@@ -14865,7 +15524,7 @@ void test0() {
 
 - **函数原型**
 
-  ![image-20260525201554174](..\0.TyporaPicture\image-20260525201554174.png)
+  ![image-20260525201554174](D:\Typora Picture\image-20260525201554174-1779858036792266.png)
 
 - **示例**
 
@@ -14928,9 +15587,9 @@ void test0() {
 
 - **非修改式的序列算法：`count`、`find`**
 
-  ![image-20260526195414859](..\0.TyporaPicture\image-20260526195414859.png)
+  ![image-20260526195414859](D:\Typora Picture\image-20260526195414859-1779858036792269.png)
 
-  ![image-20260526195434166](..\0.TyporaPicture\image-20260526195434166.png)
+  ![image-20260526195434166](D:\Typora Picture\image-20260526195434166-1779858036792268.png)
 
   ```cpp
   vector<int> vec = {1, 2, 3, 2, 2, 4};    
@@ -14950,9 +15609,9 @@ void test0() {
 
 - **修改式的序列算法：`replace`、`fill`**
 
-  ![image-20260526195814371](..\0.TyporaPicture\image-20260526195814371.png)
+  ![image-20260526195814371](D:\Typora Picture\image-20260526195814371-1779858036792270.png)
 
-  ![image-20260526195826853](..\0.TyporaPicture\image-20260526195826853.png)
+  ![image-20260526195826853](D:\Typora Picture\image-20260526195826853-1779858036792271.png)
 
   ```cpp
   // 将区间 [first, last) 内所有等于 old_value 的元素替换为 new_value
@@ -14966,11 +15625,11 @@ void test0() {
 
 - **二分搜索的算法：`lower_bound`、`upper_bound`、`equal_range`**
 
-  ![image-20260526200035316](..\0.TyporaPicture\image-20260526200035316.png)
+  ![image-20260526200035316](D:\Typora Picture\image-20260526200035316-1779858036793275.png)
 
-  ![image-20260526200041641](..\0.TyporaPicture\image-20260526200041641.png)
+  ![image-20260526200041641](D:\Typora Picture\image-20260526200041641-1779858036793272.png)
 
-  ![image-20260526200050275](..\0.TyporaPicture\image-20260526200050275.png)
+  ![image-20260526200050275](D:\Typora Picture\image-20260526200050275-1779858036793274.png)
 
   ```cpp
   // 返回第一个不小于(即大于或等于) value 的元素位置，即第一个 *it >= value 的位置
@@ -15028,7 +15687,7 @@ void test0() {
 
      ![image-20260526202139764](D:\Typora Picture\image-20260526202139764-177979822600998.png)
 
-     ![image-20260526202148451](..\0.TyporaPicture\image-20260526202148451.png)
+     ![image-20260526202148451](D:\Typora Picture\image-20260526202148451-1779858036793273.png)
 
   2. **带自定义比较器的版本**
 
@@ -15120,8 +15779,8 @@ void test0() {
   > ```cpp
   > template< class InputIt1, class InputIt2, class OutputIt, class Compare >
   > OutputIt set_intersection( InputIt1 first1, InputIt1 last1,
-  >                            InputIt2 first2, InputIt2 last2,
-  >                            OutputIt d_first, Compare comp );
+  >                         InputIt2 first2, InputIt2 last2,
+  >                         OutputIt d_first, Compare comp );
   > ```
   >
   > ```cpp
@@ -15130,9 +15789,9 @@ void test0() {
   > std::vector<int> b = {8, 7, 7, 4, 3, 2};
   > std::vector<int> result;
   > std::set_intersection(a.begin(), a.end(),
-  >                       b.begin(), b.end(),
-  >                       std::back_inserter(result),
-  >                       std::greater<int>()); // 同样的比较器
+  >                    b.begin(), b.end(),
+  >                    std::back_inserter(result),
+  >                    std::greater<int>()); // 同样的比较器
   > // result: {7, 3}
   > ```
   >
@@ -15158,7 +15817,9 @@ void test0() {
      1. 容器调用`begin()`、`end()`产生迭代器，标记出待操作的数据区间
      2. STL 算法接收迭代器作为参数，以此确定操作范围
      3. 算法通过迭代器实现元素遍历、读写访问，完成查找、排序、移除等逻辑处理
-     4. 依托这套机制，同一套算法可以适配多种不同容器，实现代码通用复用# Day25_STL标准模板库5-算法(函数)适配器
+     4. 依托这套机制，同一套算法可以适配多种不同容器，实现代码通用复用
+
+# Day25_STL标准模板库5-算法(函数)适配器
 
 # 一、算法适配器
 
@@ -15170,9 +15831,9 @@ void test0() {
 
   如下模板形式中，两个函数绑定器的第一个参数就是一个函数，第二个参数就是一个数字，如果F是一个二元函数(普通二元函数或者二元谓词)，我们可以绑定F的第一个参数(bind1st)或者第二个参数(bind2nd)，达到我们想要的效果(使用二元谓词的效果)
 
-  ![image-20240812102558858](..\0.TyporaPicture\image-20240812102558858-1733126757209-110.png)
+  ![image-20240812102558858](D:\Typora Picture\image-20240812102558858-1733126757209-110-1779858062478304.png)
 
-  <img src="..\0.TyporaPicture\image-20250114172229681.png" alt="image-20250114172229681" style="zoom:80%;" />
+  <img src="D:\Typora Picture\image-20250114172229681-1779858062477303.png" alt="image-20250114172229681" style="zoom:80%;" />
 
 - **代码示例**
 
@@ -15256,13 +15917,13 @@ void test0() {
 >   result_type           // 返回值类型
 >   ```
 >
-> <img src="..\0.TyporaPicture\image-20250425102949642.png" alt="image-20250425102949642" style="zoom:67%;" />
+> <img src="D:\Typora Picture\image-20250425102949642-1779858062478309.png" alt="image-20250425102949642" style="zoom:67%;" />
 
 <span style=color:red;background:yellow>**现在有一个更通用的手段——bind**</span>
 
-<img src="..\0.TyporaPicture\image-20240812110817465-1733126757209-116.png" alt="image-20240812110817465" style="zoom:80%;" />
+<img src="D:\Typora Picture\image-20240812110817465-1733126757209-116-1779858062478305.png" alt="image-20240812110817465" style="zoom:80%;" />
 
-<img src="..\0.TyporaPicture\image-20250114180053729.png" alt="image-20250114180053729" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20250114180053729-1779858062478307.png" alt="image-20250114180053729" style="zoom:67%;" />
 
 > **注意**
 >
@@ -15281,70 +15942,70 @@ void test0() {
 
 1. **绑定普通N元函数**
 
-    如下，bind可以绑定N元函数，并用统一的方式进行使用
+   如下，bind可以绑定N元函数，并用统一的方式进行使用
 
-    <img src="..\0.TyporaPicture\image-20250114181459086.png" alt="image-20250114181459086" style="zoom:67%;" />
+   <img src="D:\Typora Picture\image-20250114181459086-1779858062478306.png" alt="image-20250114181459086" style="zoom:67%;" />
 
-    根据cpp参考文档的解释，**第一个参数可以是函数对象、函数指针、函数引用(比较少见)、指向成员函数指针或指向数据成员指针**。如上将函数名直接作为参数，相当于是传入函数指针。其他的几种情况也可以试试：
+   根据cpp参考文档的解释，**第一个参数可以是函数对象、函数指针、函数引用(比较少见)、指向成员函数指针或指向数据成员指针**。如上将函数名直接作为参数，相当于是传入函数指针。其他的几种情况也可以试试：
 
 2. **绑定函数对象**
 
-    <img src="..\0.TyporaPicture\image-20250115144417723.png" alt="image-20250115144417723" style="zoom:67%;" />
+   <img src="D:\Typora Picture\image-20250115144417723-1779858062478308.png" alt="image-20250115144417723" style="zoom:67%;" />
 
 3. **绑定==函数引用==**
 
   ==函数引用的语法与函数指针类似==
 
-  <img src="..\0.TyporaPicture\image-20250115144332359.png" alt="image-20250115144332359" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250115144332359-1779858062478310.png" alt="image-20250115144332359" style="zoom:67%;" />
 
 4. **绑定*成员函数指针***
 
-    > 只能绑定成员函数指针，而不能绑定成员函数本身
-    >
-    > 因为成员函数**只能通过 `&类名::函数` 获取指针**
-    >
-    > ```cpp
-    > // 错误写法
-    > auto f = std::bind(Test::show, &obj, std::placeholders::_1);
-    > auto f = std::bind(obj.show, std::placeholders::_1);
-    > // 唯一正确写法
-    > // std::bind(&类名::成员函数, 对象指针/对象, 参数...);
-    > // 传：成员函数指针&Test::show + 对象地址&obj/对象本身obj
-    > auto f = std::bind(&Test::show, &obj, std::placeholders::_1); // 传入一个地址
-    > auto f = std::bind(&Test::show, obj, std::placeholders::_1); // 传入一个对象，对象拷贝
-    > ```
+   > 只能绑定成员函数指针，而不能绑定成员函数本身
+   >
+   > 因为成员函数**只能通过 `&类名::函数` 获取指针**
+   >
+   > ```cpp
+   > // 错误写法
+   > auto f = std::bind(Test::show, &obj, std::placeholders::_1);
+   > auto f = std::bind(obj.show, std::placeholders::_1);
+   > // 唯一正确写法
+   > // std::bind(&类名::成员函数, 对象指针/对象, 参数...);
+   > // 传：成员函数指针&Test::show + 对象地址&obj/对象本身obj
+   > auto f = std::bind(&Test::show, &obj, std::placeholders::_1); // 传入一个地址
+   > auto f = std::bind(&Test::show, obj, std::placeholders::_1); // 传入一个对象，对象拷贝
+   > ```
 
-    <img src="..\0.TyporaPicture\image-20250115144930383.png" alt="image-20250115144930383" style="zoom:67%;" />
+   <img src="D:/Typora Picture/image-20250115144930383.png" alt="image-20250115144930383" style="zoom:67%;" />
 
-    > **补充：bind绑定成员函数时参数列表中的第一个参数（参数列表即除去真正的第一个参数-调用实体之外的所有参数）**
-    >
-    > 当bind函数绑定类的成员函数(指针)时，需要传入对象的地址以对应this指针这个参数，除此之外还有另一种写法
-    >
-    > ![image-20240812155206272](..\0.TyporaPicture\image-20240812155206272-1733126757209-121.png)
-    >
-    > 即bind绑定成员函数的时候，有两种传递的方式
-    >
-    > - **第一种：直接传递对象的地址**
-    >
-    >   传递的是地址值，那么就只会有一个指针大小的开销
-    >
-    > - **第二种：将对象拷贝进来**
-    >
-    >   传递对象，会拷贝对象，如果对象占据的空间比较大，那么开销也会比较大
-    >
-    > 如果使用的是第一种，传递的是地址值，**如果对象本身已经销毁了，那么有可能会有野指针的情况**，比如对象ex的创建是A线程，bind的绑定是B线程，在bind绑定时传对象的地址值，但A线程已经销毁了，就会出现这样的问题
-    >
-    > 但是如果使用第二种形式，**传递的是对象，那么就不会出现野指针的问题**
-    >
-    > <span style=color:red;background:yellow>**所以在多线程环境下，更建议传对象，而不是传地址**</span>
+   > **补充：bind绑定成员函数时参数列表中的第一个参数（参数列表即除去真正的第一个参数-调用实体之外的所有参数）**
+   >
+   > 当bind函数绑定类的成员函数(指针)时，需要传入对象的地址以对应this指针这个参数，除此之外还有另一种写法
+   >
+   > ![image-20240812155206272](D:\Typora Picture\image-20240812155206272-1733126757209-121-1779858062478313.png)
+   >
+   > 即bind绑定成员函数的时候，有两种传递的方式
+   >
+   > - **第一种：直接传递对象的地址**
+   >
+   >   传递的是地址值，那么就只会有一个指针大小的开销
+   >
+   > - **第二种：将对象拷贝进来**
+   >
+   >   传递对象，会拷贝对象，如果对象占据的空间比较大，那么开销也会比较大
+   >
+   > 如果使用的是第一种，传递的是地址值，**如果对象本身已经销毁了，那么有可能会有野指针的情况**，比如对象ex的创建是A线程，bind的绑定是B线程，在bind绑定时传对象的地址值，但A线程已经销毁了，就会出现这样的问题
+   >
+   > 但是如果使用第二种形式，**传递的是对象，那么就不会出现野指针的问题**
+   >
+   > <span style=color:red;background:yellow>**所以在多线程环境下，更建议传对象，而不是传地址**</span>
 
 5. **绑定指向==数据成员==的指针**（这种写法比较奇特，仅作了解）
 
-    ==返回值则为数据成员的类型==
+   ==返回值则为数据成员的类型==
 
-    <img src="..\0.TyporaPicture\image-20250115145044752.png" alt="image-20250115145044752" style="zoom:67%;" />
+   <img src="D:\Typora Picture\image-20250115145044752-1779858062478315.png" alt="image-20250115145044752" style="zoom:67%;" />
 
-    用**这种方式访问Example类的成员还有一个前提——这些成员都是public权限的**
+   用**这种方式访问Example类的成员还有一个前提——这些成员都是public权限的**
 
 
 ### 2.2 引用折叠
@@ -15353,7 +16014,7 @@ bind的声明形式，第一个参数看起来是一个右值引用，为什么�
 
 1. 如下代码修改成模板后是可以正常运行的：
 
-   <img src="..\0.TyporaPicture\image-20250115152358590.png" alt="image-20250115152358590" style="zoom:67%;" />
+   <img src="D:\Typora Picture\image-20250115152358590-1779858062478312.png" alt="image-20250115152358590" style="zoom:67%;" />
 
 2. 在调用func时，如果传入的实参是左值，那么T会被推导成左值引用；如果实参是右值，那么T会被推导成右值引用
 
@@ -15388,43 +16049,43 @@ bind的声明形式，第一个参数看起来是一个右值引用，为什么�
 
 1. 回到bind的基本使用，似乎每次都需要将被绑定的函数的所有参数都一起传入，但除此之外，还有一种**占位符的写法：**
 
-   ![image-20250116152316060](..\0.TyporaPicture\image-20250116152316060.png)
+   ![image-20250116152316060](D:/Typora Picture/image-20250116152316060.png)
 
 2. 除了bind中指定的1，还使用占位符占据了一个函数参数位置，那么这个std::placeholders::_1占据的是add函数的参数x的位置，还是参数y的位置呢？
 
-   <img src="..\0.TyporaPicture\image-20250330213225163.png" alt="image-20250330213225163" style="zoom:67%;" />
+   <img src="D:\Typora Picture\image-20250330213225163-1779858062478317.png" alt="image-20250330213225163" style="zoom:67%;" />
 
-   <img src="..\0.TyporaPicture\image-20250330213443331.png" alt="image-20250330213443331" style="zoom:67%;" />
+   <img src="D:\Typora Picture\image-20250330213443331-1779858062478316.png" alt="image-20250330213443331" style="zoom:67%;" />
 
    根据上面的结果可以发现，占位符占据的是bind所绑定的函数的参数列表中的哪个参数位置，**取决于==单个占位符在bind参数列表中出现的位置（而其取值则取决于调用时的实参列表）==**
 
 3. 进一步地：
 
-   <img src="..\0.TyporaPicture\image-20250116165041225.png" alt="image-20250116165041225" style="zoom:67%;" />
+   <img src="D:/Typora Picture/image-20250116165041225.png" alt="image-20250116165041225" style="zoom:67%;" />
 
 4. 更多参数的情况：
 
-   <img src="..\0.TyporaPicture\image-20250116173910192.png" alt="image-20250116173910192" style="zoom:67%;" />
+   <img src="D:\Typora Picture\image-20250116173910192-1779858062478320.png" alt="image-20250116173910192" style="zoom:67%;" />
 
-   <img src="..\0.TyporaPicture\image-20250116170139188.png" alt="image-20250116170139188" style="zoom:67%;" />
+   <img src="D:\Typora Picture\image-20250116170139188-1779858062478323.png" alt="image-20250116170139188" style="zoom:67%;" />
 
 > <span style=color:red;background:yellow>**注意**</span>
 >
 > <font color=red>**如果将占位符改换一下，就会出错**</font>
 >
-> <img src="..\0.TyporaPicture\image-20250116170903860.png" alt="image-20250116170903860" style="zoom:67%;" />
+> <img src="D:/Typora Picture/image-20250116170903860.png" alt="image-20250116170903860" style="zoom:67%;" />
 >
 > - **首先，使用了_4这个占位符，那么在传入实参时==至少要传入4个参数==（f调用时可以传很多个参数，多余的参数被舍弃）**
 >
 > - 对于func函数，第一个参数是传入的10，第二个参数是占位符匹配到的20，第三个参数是占位符匹配到的400，第四个和第五个则是传入的number
 >
-><span style=color:red;background:yellow>**可以理解为：占位符整体代表的是形参的位置，占位符中的数字代表的是实参的位置**</span>
+> <span style=color:red;background:yellow>**可以理解为：占位符整体代表的是形参的位置，占位符中的数字代表的是实参的位置**</span>
 
 ### 2.4 引用包装器
 
 > **引入**
 >
-> <img src="..\0.TyporaPicture\image-20250116172739413.png" alt="image-20250116172739413" style="zoom:67%;" />
+> <img src="D:\Typora Picture\image-20250116172739413-1779858062478319.png" alt="image-20250116172739413" style="zoom:67%;" />
 >
 > 上图**说明了bind的默认传递方式是值传递**，如果在bind中想要使用引用传递，需要用到<font color=red>**引用包装器**</font>
 >
@@ -15432,11 +16093,11 @@ bind的声明形式，第一个参数看起来是一个右值引用，为什么�
 
 - bind传参时使用<font color=red>**引用包装器std::ref**</font> (reference)
 
-  <img src="..\0.TyporaPicture\image-20250116175032813.png" alt="image-20250116175032813" style="zoom:67%;" />
+  <img src="D:/Typora Picture/image-20250116175032813.png" alt="image-20250116175032813" style="zoom:67%;" />
 
 - 如果func函数中原本形参形式为const引用，相应地可以使用<font color=red>**常引用包装器std::cref**</font> (const reference)
 
-  <img src="..\0.TyporaPicture\image-20250116175501510.png" alt="image-20250116175501510" style="zoom: 67%;" />
+  <img src="D:/Typora Picture/image-20250116175501510.png" alt="image-20250116175501510" style="zoom: 67%;" />
 
 ### 2.5 函数指针不能接收bind返回值
 
@@ -15491,7 +16152,7 @@ function<int()> f;
 
 ## 3.function
 
-<img src="..\0.TyporaPicture\image-20240812145418894-1733126757209-119.png" alt="image-20240812145418894" style="zoom:67%;" />
+<img src="D:\Typora Picture\image-20240812145418894-1733126757209-119-1779858062478327.png" alt="image-20240812145418894" style="zoom:67%;" />
 
 ![image-20250117103618406](D:\Typora Picture\image-20250117103618406-177978327708439.png)
 
@@ -15551,7 +16212,7 @@ int main() {
 
 对于函数而言，函数的类型包含了两个信息：**函数返回类型 + 函数参数列表(包含了函数参数的类型、个数、顺序)**
 
-<img src="..\0.TyporaPicture\image-20250117100409588.png" alt="image-20250117100409588" style="zoom:67%;" />
+<img src="D:/Typora Picture/image-20250117100409588.png" alt="image-20250117100409588" style="zoom:67%;" />
 
 很多时候，逻辑层面上很好理解，但是原生的语法却并不支持这种表达，STL则提供了一种方式可以支持这种表达——即`std::function`
 
@@ -15562,17 +16223,17 @@ int main() {
   > 1. **函数的调用签名（Signature）**：**返回值类型 + 参数的类型 / 个数**（比如 `int(int, int)`）
   > 2. **函数的逻辑（Logic）**：函数内部具体做什么（加法、乘法、打印、哈希计算、业务判断……）
 
-  <img src="..\0.TyporaPicture\image-20250117104001027.png" alt="image-20250117104001027" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250117104001027-1779858062478328.png" alt="image-20250117104001027" style="zoom:67%;" />
 
   同理，**==打包之后==的逻辑类型应该为int(int)时**，可以写成：
 
-  <img src="..\0.TyporaPicture\image-20250117104615584.png" alt="image-20250117104615584" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250117104615584-1779858062478326.png" alt="image-20250117104615584" style="zoom:67%;" />
 
 - **bind绑定成员函数指针**
 
   对于bind绑定成员函数的结果，也是一样的形式，非常简单
 
-  <img src="..\0.TyporaPicture\image-20250117105554463.png" alt="image-20250117105554463" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250117105554463-1779858062478331.png" alt="image-20250117105554463" style="zoom:67%;" />
 
   **使用function接收bind绑定成员函数的返回值，function对象在初始化与使用时不需要顾及类的信息**
 
@@ -15598,13 +16259,13 @@ int main() {
 
 lambda表达式的返回值，也可以利用std::function进行相应的表示
 
-![image-20240812151459260](..\0.TyporaPicture\image-20240812151459260-1733126757209-112.png)
+![image-20240812151459260](D:\Typora Picture\image-20240812151459260-1733126757209-112-1779858062478329.png)
 
 ### 3.4 function使用的误区
 
 <span style=color:red;background:yellow>**在使用std::function表示lambda表达式时，不要捕获局部变量的引用**</span>
 
-![image-20240812152701250](..\0.TyporaPicture\image-20240812152701250-1733126757209-109.png)
+![image-20240812152701250](D:/Typora Picture/image-20240812152701250-1733126757209-109.png)
 
 ### ==3.5 bind与function结合使用体现多态性==
 
@@ -15739,7 +16400,7 @@ lambda表达式的返回值，也可以利用std::function进行相应的表示
 - **多态的两种写法**
 
   面向对象的写法：继承 + 纯虚函数(或者普通的虚函数)，具有一定的局限性：必须建立继承关系，派生类对基类的虚函数进行覆盖时必须要函数名和函数形式完全一致等
-  
+
   <font color=red>**基于对象(即面向函数)**</font>的写法：std::function + std::bind，这一套写法摒弃了上述的局限性，同样体现出多态性且更灵活
 
 > **补充：两种多态的区别**
@@ -15790,14 +16451,14 @@ lambda表达式的返回值，也可以利用std::function进行相应的表示
 >      // 两个独立逻辑（无继承）
 >      void logicA() { cout << "A逻辑"; }
 >      void logicB() { cout << "B逻辑"; }
->            
+>      
 >      // 使用
 >      function<void()> func;
->            
+>      
 >      // 第一次注册
 >      func = bind(logicA);
 >      func(); // 执行A
->            
+>      
 >      // 想切换成B？必须手动重新赋值！
 >      func = bind(logicB); // 手动切换
 >      func(); // 执行B
@@ -15827,25 +16488,25 @@ lambda表达式的返回值，也可以利用std::function进行相应的表示
 
 1. **示例**
 
-  <img src="..\0.TyporaPicture\image-20250121151937130.png" alt="image-20250121151937130" style="zoom:67%;" />
+  <img src="D:/Typora Picture/image-20250121151937130.png" alt="image-20250121151937130" style="zoom:67%;" />
 
-  <img src="..\0.TyporaPicture\image-20250331210156190.png" alt="image-20250331210156190" style="zoom:67%;" />
+  <img src="D:/Typora Picture/image-20250331210156190.png" alt="image-20250331210156190" style="zoom:67%;" />
 
-  1. **使用成员函数适配器mem_fn对成员函数指针进行简单的包装**即可：
+    1. **使用成员函数适配器mem_fn对成员函数指针进行简单的包装**即可：
 
-  <img src="..\0.TyporaPicture\image-20250121152520023.png" alt="image-20250121152520023" style="zoom:67%;" />
+  <img src="D:/Typora Picture/image-20250121152520023.png" alt="image-20250121152520023" style="zoom:67%;" />
 
-  <img src="..\0.TyporaPicture\image-20250121152629153.png" alt="image-20250121152629153" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250121152629153-1779858062479333.png" alt="image-20250121152629153" style="zoom:67%;" />
 
 2. 上述例子中使用for_each遍历vector时，使用了mem_fn为成员函数print做适配。根据以前学过的知识，还有没有什么方法实现同样效果呢？
 
   **for_each的第三个参数要求是一个一元函数**，成员函数print看起来无参，实际上有隐含的this指针作为参数，它的确是一个一元函数
 
-  <img src="..\0.TyporaPicture\image-20250121162733638.png" alt="image-20250121162733638" style="zoom:67%;" />
+  <img src="D:/Typora Picture/image-20250121162733638.png" alt="image-20250121162733638" style="zoom:67%;" />
 
 3. 或者我们也可以用**function接收bind绑定成员函数的结果**
 
-   ![image-20250121164540811](..\0.TyporaPicture\image-20250121164540811.png)
+   ![image-20250121164540811](D:/Typora Picture/image-20250121164540811.png)
 
 # 二、适配器
 
@@ -15855,7 +16516,7 @@ lambda表达式的返回值，也可以利用std::function进行相应的表示
 
 <span style=color:red;background:yellow>**函数对象也称为仿函数**</span>，严格意义上说函数对象仅仅指重载了函数调用运算符的类的对象。
 
-<img src="..\0.TyporaPicture\image-20250331201115252.png" alt="image-20250331201115252" style="zoom: 67%;" />
+<img src="D:/Typora Picture/image-20250331201115252.png" alt="image-20250331201115252" style="zoom: 67%;" />
 
 <img src="D:\Typora Picture\image-20250331201151276.png" alt="image-20250331201151276" style="zoom:67%;" />
 
@@ -16040,6 +16701,7 @@ lambda表达式的返回值，也可以利用std::function进行相应的表示
    - test3()：绑定了具体对象，**使用 `ref()`，强制绑定了引用**，也没有拷贝
 
      调用 `g()` 时，`modify` 操作的还是 `x` 和 `y` 本身
+
 # Day26_STL标准模板库6-空间适配器
 
 # 一、空间配置器
@@ -16059,7 +16721,7 @@ std::allocator是**可以感知类型的空间分配器**，将**空间的申请
 
 - **std::allocator最重要的成员函数：**
 
-  <img src="..\0.TyporaPicture\image-20250124102502538.png" alt="image-20250124102502538" style="zoom:67%;" />
+  <img src="D:\Typora Picture\image-20250124102502538-1779858107811377.png" alt="image-20250124102502538" style="zoom:67%;" />
 
   ```cpp
   // 申请空间
@@ -16103,11 +16765,11 @@ std::allocator是**可以感知类型的空间分配器**，将**空间的申请
 
   1. 先完成比较简单的
 
-     <img src="..\0.TyporaPicture\image-20250124103233188.png" alt="image-20250124103233188" style="zoom:67%;" />
+     <img src="D:\Typora Picture\image-20250124103233188-1779858107811375.png" alt="image-20250124103233188" style="zoom:67%;" />
 
   2. 尾部插入元素、删除元素，模拟vector的核心问题就是动态扩容
 
-     <img src="..\0.TyporaPicture\image-20250124103731526.png" alt="image-20250124103731526" style="zoom:67%;" />
+     <img src="D:\Typora Picture\image-20250124103731526-1779858107811376.png" alt="image-20250124103731526" style="zoom:67%;" />
 
   3. 完成动态扩容的功能
 
@@ -16149,23 +16811,23 @@ std::allocator是**可以感知类型的空间分配器**，将**空间的申请
 
   4. 析构函数的逻辑类似，也是销毁元素、回收空间
 
-     <img src="..\0.TyporaPicture\image-20250124104636381.png" alt="image-20250124104636381" style="zoom:67%;" />
+     <img src="D:\Typora Picture\image-20250124104636381-1779858107811378.png" alt="image-20250124104636381" style="zoom:67%;" />
 
   5. 测试效果并发现不足
 
-     <img src="..\0.TyporaPicture\image-20250124105021706.png" alt="image-20250124105021706" style="zoom:67%;" />
+     <img src="D:\Typora Picture\image-20250124105021706-1779858107811380.png" alt="image-20250124105021706" style="zoom:67%;" />
 
      如果想遍历容器中的元素，首先想到的肯定是增强for循环方式（没有实现取下标，也没有实现迭代器相关的函数），但会出现错误，说明增强for循环的底层实际上也是通过迭代器实现的
 
-     ![image-20250124105645274](..\0.TyporaPicture\image-20250124105645274.png)
+     ![image-20250124105645274](D:\Typora Picture\image-20250124105645274-1779858107811379.png)
 
   6. 完成迭代器相关函数
 
-     <img src="..\0.TyporaPicture\image-20250124110222143.png" alt="image-20250124110222143" style="zoom:67%;" />
+     <img src="D:\Typora Picture\image-20250124110222143-1779858107811382.png" alt="image-20250124110222143" style="zoom:67%;" />
 
   7. 最终测试
 
-     <img src="..\0.TyporaPicture\image-20250124110309969.png" alt="image-20250124110309969" style="zoom:67%;" />
+     <img src="D:\Typora Picture\image-20250124110309969-1779858107811381.png" alt="image-20250124110309969" style="zoom:67%;" />
 
   完成了简单的模拟后，其实还有很多可以完善的地方，比如取下标、比如insert，可以自行完善，本章主要借此展示了alloctor空间配置器的基本使用
 
@@ -16205,7 +16867,7 @@ std::allocator是**可以感知类型的空间分配器**，将**空间的申请
 
   第一次申请空间时比较麻烦，后续再此申请同等大小的空间可以以O(1)的时间复杂度完成申请。
 
-  ![image-20240813115402461](..\0.TyporaPicture\image-20240813115402461-1733127460324-147.png)
+  ![image-20240813115402461](D:\Typora Picture\image-20240813115402461-1733127460324-147-1779858107811383.png)
 
 - **内存池+自由链表的意义**
 
