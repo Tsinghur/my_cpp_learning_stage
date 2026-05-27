@@ -106,7 +106,7 @@
 
 > **注意**
 >
-> - **std::bind 的本质：是一个**函数适配器 **，底层是 **编译器生成的匿名仿函数对象**（标准可调用实体）**
+> - **std::bind 的本质：是一个**==函数适配器== **，底层是 **编译器生成的匿名仿函数对象**（标准可调用实体）**
 >
 >   它和 lambda 是**同类底层原理**（都是仿函数对象），但分工完全不同：
 >
@@ -258,8 +258,7 @@ bind的声明形式，第一个参数看起来是一个右值引用，为什么�
 >
 > - 对于func函数，第一个参数是传入的10，第二个参数是占位符匹配到的20，第三个参数是占位符匹配到的400，第四个和第五个则是传入的number
 >
->
-> <span style=color:red;background:yellow>**可以理解为：占位符整体代表的是形参的位置，占位符中的数字代表的是实参的位置**</span>
+><span style=color:red;background:yellow>**可以理解为：占位符整体代表的是形参的位置，占位符中的数字代表的是实参的位置**</span>
 
 ### 2.4 引用包装器
 
@@ -631,14 +630,14 @@ lambda表达式的返回值，也可以利用std::function进行相应的表示
 >      // 两个独立逻辑（无继承）
 >      void logicA() { cout << "A逻辑"; }
 >      void logicB() { cout << "B逻辑"; }
->          
+>            
 >      // 使用
 >      function<void()> func;
->          
+>            
 >      // 第一次注册
 >      func = bind(logicA);
 >      func(); // 执行A
->          
+>            
 >      // 想切换成B？必须手动重新赋值！
 >      func = bind(logicB); // 手动切换
 >      func(); // 执行B
@@ -812,3 +811,72 @@ lambda表达式的返回值，也可以利用std::function进行相应的表示
 
      - 一元成员函数 → `mem_fn` 返回一元可调用对象 → 可直接配 `for_each`
      - 二元成员函数 → `mem_fn` 返回二元可调用对象 → 需绑定多余参数变为一元，才能用于 `for_each`
+
+3. **bind的引用包装器的问题**
+
+   ```cpp
+   #include <iostream>
+   #include <functional>
+   
+   using namespace std;
+   using namespace placeholders;
+   
+   void modify(int &a, int &b) {
+   /* void modify(int a, int b) { */
+       a *= 2;
+       b += 10;
+   }
+   
+   void test1() {
+       int x = 5, y = 5;
+       auto f = bind(modify, x, y);
+       f(x, y);
+       cout << x << "," << y << endl; // ?
+   }
+   
+   void test2() {
+       int x = 5, y = 5;
+       auto f = bind(modify, _1, _2);
+       f(x, y);
+       cout << x << "," << y << endl; // ?
+   }
+   
+   void test3() {
+       int x = 5, y = 5;
+       auto g = bind(modify, ref(x), ref(y));
+       g();
+       cout << x << "," << y << endl; // ?
+   }
+   
+   int main() {
+       cout << "---------test1()---------" << endl;
+       test1();
+       cout << "---------test2()---------" << endl;
+       test2();
+       cout << "---------test3()---------" << endl;
+       test3();
+   
+       return 0;
+   }
+   
+   /*
+   ---------test1()---------
+   5,5
+   ---------test2()---------
+   10,15
+   ---------test3()---------
+   10,15
+   */
+   ```
+
+   - test1()：**直接绑定变量名**
+
+     这时 `bind` 会在创建时把 `x` 和 `y` 的值（5,5）拷贝到内部，之后的修改只影响副本，外部 `x` 和 `y` 就不会变。所以输出 `5,5`
+
+   - test2()：使用的是占位符 `_1` 和 `_2`，**并没有绑定具体的值**
+
+     `f(x, y)` 调用时，参数 `x`、`y` 会被**完美转发**给 `modify`。因为 `x`、`y` 是左值，所以 `modify(int&, int&)` 接收到的就是 `x` 和 `y` 本身的引用。因此 `modify` 会直接修改 `x` 和 `y`
+
+   - test3()：绑定了具体对象，**使用 `ref()`，强制绑定了引用**，也没有拷贝
+
+     调用 `g()` 时，`modify` 操作的还是 `x` 和 `y` 本身
