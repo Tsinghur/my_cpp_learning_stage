@@ -1,0 +1,4 @@
+/home/gzh/Git仓库/1.个人仓库/my_cpp_learning_stage/2.Code/Day27/02.CMake_test2/build/CMakeFiles/server.dir
+/home/gzh/Git仓库/1.个人仓库/my_cpp_learning_stage/2.Code/Day27/02.CMake_test2/build/CMakeFiles/client.dir
+/home/gzh/Git仓库/1.个人仓库/my_cpp_learning_stage/2.Code/Day27/02.CMake_test2/build/CMakeFiles/edit_cache.dir
+/home/gzh/Git仓库/1.个人仓库/my_cpp_learning_stage/2.Code/Day27/02.CMake_test2/build/CMakeFiles/rebuild_cache.dir
