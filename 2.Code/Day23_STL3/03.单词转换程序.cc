@@ -27,7 +27,7 @@ public:
             string key, value;
             // while (iss >> key) {
             if (iss >> key) { // 因为每行固定是一对“键+值”，所以改为一个确定性的读取逻辑，避免多余的while造成误解
-                iss >> std::ws; // 空白跳过符
+                iss >> std::ws; // 空白跳过符，因为输入运算符与getline不同，其不会吃掉分隔符，所以需要自己手动跳过
                 // string value(iss.str()); // error: 会将整个iss中的内容拷贝进value
                 // 使用getline是根据当前流的指针位置读取的
                 getline(iss, value);
